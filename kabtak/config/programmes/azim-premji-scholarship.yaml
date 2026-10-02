@@ -1,0 +1,37 @@
+schema_version: 1
+id: azim-premji-scholarship
+name: Azim Premji Scholarship
+provider: Azim Premji Foundation
+onboarding_status: deferred_direct_fetch_blocked
+supported_cycles:
+  - "2026-27"
+application_types:
+  - fresh
+  - renewal
+locale:
+  country: IN
+  comparison_timezone: Asia/Kolkata
+sources:
+  - id: azim-premji-foundation
+    host: azimpremjifoundation.org
+    path_prefixes:
+      - /what-we-do/education/azim-premji-scholarship/
+    role: issuer
+    may_establish:
+      - deadline
+      - eligibility
+      - required_documents
+      - portal_status_at_observation
+  - id: azim-premji-application
+    host: scholarship.azimpremjifoundation.org
+    path_prefixes:
+      - /
+    role: application_portal
+    may_establish:
+      - application_process
+      - portal_status_at_observation
+review_notes:
+  - Direct backend retrieval returned HTTP 403 during the 2026-10-02 Phase 0 probe.
+  - Keep this programme outside the initial five until an allowed, stable issuer endpoint is available.
+  - Fresh and renewal deadlines appear together and must be scoped by application type and cohort.
+  - The live page contains a 2025-26/2026-27 inconsistency in one FAQ answer; affected scope must remain unresolved.

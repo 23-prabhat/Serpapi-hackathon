@@ -1,0 +1,79 @@
+schema_version: 1
+reference_time: "2026-10-02T00:00:00+05:30"
+limits:
+  timeout_seconds: 20
+  max_bytes: 10485760
+  max_pdf_pages: 20
+sources:
+  - id: nmmss-2026-extension-html
+    programme_id: nmmss
+    cycle: "2026-27"
+    format: html
+    url: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48
+    expected_topics: [application_deadline, institute_verification, district_verification, amendment]
+  - id: nmmss-2025-extension-html
+    programme_id: nmmss
+    cycle: "2025-26"
+    format: html
+    url: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2167076&lang=2&reg=48
+    expected_topics: [application_deadline, institute_verification, district_verification, amendment]
+  - id: pm-usp-2026-nsp-html
+    programme_id: pm-usp-csss
+    cycle: "2026-27"
+    format: html
+    url: https://scholarships.gov.in/All-Scholarships
+    expected_topics: [application_type, application_deadline, institute_verification, administrative_verification]
+  - id: pm-usp-2025-faq-pdf
+    programme_id: pm-usp-csss
+    cycle: "2025-26"
+    format: pdf
+    url: https://scholarships.gov.in/public/schemeGuidelines/FAQ_DOHE_CSSS.pdf
+    expected_topics: [eligibility, application_type, required_documents]
+  - id: pm-usp-2026-announcement-html
+    programme_id: pm-usp-csss
+    cycle: "2026-27"
+    format: html
+    url: https://scholarships.gov.in/ViewMoreAnnouncement
+    expected_topics: [application_type, application_deadline, amendment]
+  - id: pragati-2026-nsp-html
+    programme_id: aicte-pragati
+    cycle: "2026-27"
+    format: html
+    url: https://scholarships.gov.in/All-Scholarships
+    expected_topics: [application_deadline, defective_application, institute_verification, administrative_verification]
+  - id: pragati-current-guidelines-pdf
+    programme_id: aicte-pragati
+    cycle: current_portal_document
+    format: pdf
+    url: https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2010_G.pdf
+    expected_topics: [eligibility, required_documents]
+  - id: nos-2026-portal-html
+    programme_id: national-overseas-scholarship
+    cycle: "2026-27"
+    format: html
+    url: https://nosmsje.gov.in/public/
+    expected_topics: [application_deadline, correction_window, portal_status]
+  - id: nos-2026-guidelines-pdf
+    programme_id: national-overseas-scholarship
+    cycle: "2026-27"
+    format: pdf
+    url: https://socialjustice.gov.in/writereaddata/UploadFile/68641776927848.pdf
+    expected_topics: [eligibility, application_process, correction_window]
+  - id: azim-premji-2026-html
+    programme_id: azim-premji-scholarship
+    cycle: "2026-27"
+    format: html
+    url: https://azimpremjifoundation.org/what-we-do/education/azim-premji-scholarship/applications/
+    expected_topics: [fresh_deadline, renewal_deadline, eligibility, required_documents, scope_conflict]
+  - id: top-class-st-2026-nsp-html
+    programme_id: top-class-st
+    cycle: "2026-27"
+    format: html
+    url: https://scholarships.gov.in/All-Scholarships
+    expected_topics: [application_deadline, defective_application, institute_verification, administrative_verification]
+  - id: top-class-st-guidelines-pdf
+    programme_id: top-class-st
+    cycle: current_portal_document
+    format: pdf
+    url: https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipguideline.pdf
+    expected_topics: [eligibility, application_process]

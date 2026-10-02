@@ -1,0 +1,34 @@
+schema_version: 1
+id: aicte-pragati
+name: AICTE Pragati Scholarship Scheme for Girl Students (Technical Degree)
+provider: All India Council for Technical Education
+onboarding_status: phase0_selected
+supported_cycles:
+  - "2026-27"
+application_types:
+  - fresh
+locale:
+  country: IN
+  comparison_timezone: Asia/Kolkata
+sources:
+  - id: pragati-nsp
+    host: scholarships.gov.in
+    path_prefixes:
+      - /All-Scholarships
+      - /ViewMoreAnnouncement
+    role: application_portal
+    may_establish:
+      - deadline
+      - verification_deadline
+      - portal_status_at_observation
+  - id: pragati-aicte-documents
+    host: aicte-india.org
+    path_prefixes:
+      - /sites/default/files/
+    role: issuer_document
+    may_establish:
+      - eligibility
+      - required_documents
+review_notes:
+  - NSP lists separate student, defective-application, institute, and DNO/SNO/MNO dates for 2026-27.
+  - Older AICTE FAQ documents are useful parser cases but cannot establish current-cycle eligibility by themselves.

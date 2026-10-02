@@ -1,0 +1,47 @@
+schema_version: 1
+id: nmmss
+name: National Means-cum-Merit Scholarship Scheme
+provider: Ministry of Education, Department of School Education and Literacy
+onboarding_status: phase0_selected
+supported_cycles:
+  - "2025-26"
+  - "2026-27"
+application_types:
+  - fresh
+  - renewal
+locale:
+  country: IN
+  comparison_timezone: Asia/Kolkata
+sources:
+  - id: nmmss-pib-current
+    host: pib.gov.in
+    path_prefixes:
+      - /PressReleasePage.aspx
+    role: issuer_release
+    may_establish:
+      - deadline
+      - amendment
+      - eligibility
+      - portal_status_at_publication
+  - id: nmmss-moe-documents
+    host: dsel.education.gov.in
+    path_prefixes:
+      - /sites/default/files/update/
+    role: issuer_document
+    may_establish:
+      - deadline
+      - amendment
+      - eligibility
+  - id: nmmss-nsp
+    host: scholarships.gov.in
+    path_prefixes:
+      - /All-Scholarships
+      - /ViewMoreAnnouncement
+    role: application_portal
+    may_establish:
+      - deadline
+      - verification_deadline
+      - portal_status_at_observation
+review_notes:
+  - The 2026-27 PIB release explicitly separates student, institute, and district deadlines.
+  - A later date for verification must never replace the student submission deadline.

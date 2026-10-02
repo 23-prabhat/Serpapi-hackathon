@@ -1,0 +1,471 @@
+{
+  "schema_version": 1,
+  "run_at": "2026-10-02T16:59:21.764837+00:00",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "prompt_version": "phase0-deadline-extraction-v1",
+  "prompt_sha256": "fafb6c44e43a1c92cbfbd6d2ed44407c62705314164bf711b26218f61c377978",
+  "schema_sha256": "eda1806cb4891f1dd77ec7bec9ba15e23a2c68769e807c8a7818e3e7cb717610",
+  "strict_structured_output": true,
+  "budget": {
+    "max_model_calls": 6,
+    "actual_model_calls": 6,
+    "abandoned_preflight_attempts": 15,
+    "serpapi_calls": 0
+  },
+  "summary": {
+    "case_count": 6,
+    "passed": 6,
+    "failed": 0,
+    "selected": true,
+    "usage": {
+      "prompt_tokens": 10858,
+      "completion_tokens": 2542,
+      "total_tokens": 13400
+    },
+    "provider_reported_cost_usd": null
+  },
+  "cases": [
+    {
+      "case_id": "nmmss-2026-actor-separation",
+      "passed": true,
+      "checks": {
+        "deadline_resolution": true,
+        "selected_deadline": true,
+        "other_deadlines": true,
+        "candidate_deadlines": true,
+        "duration_facts": true,
+        "correction_scope": true,
+        "evidence_ids_exist": true,
+        "dates_occur_in_cited_blocks": true,
+        "durations_occur_in_cited_blocks": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "selected_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date_iso": "2026-10-31",
+          "evidence_refs": [
+            "nmmss-2026-extension-html:block_3",
+            "nmmss-2026-extension-html:block_5",
+            "nmmss-2026-extension-html:block_14",
+            "nmmss-2026-extension-html:block_15"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date_iso": "2026-11-15",
+            "evidence_refs": [
+              "nmmss-2026-extension-html:block_5",
+              "nmmss-2026-extension-html:block_14",
+              "nmmss-2026-extension-html:block_15"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date_iso": "2026-11-30",
+            "evidence_refs": [
+              "nmmss-2026-extension-html:block_5",
+              "nmmss-2026-extension-html:block_14",
+              "nmmss-2026-extension-html:block_15"
+            ]
+          }
+        ],
+        "candidate_deadlines": [],
+        "duration_facts": [],
+        "correction_allows_new_registration": null,
+        "unresolved_items": []
+      },
+      "supplied_evidence_block_count": 4,
+      "unavailable_source_ids": [],
+      "usage": {
+        "queue_time": 0.363483414,
+        "prompt_tokens": 2023,
+        "prompt_time": 0.121312193,
+        "completion_tokens": 411,
+        "completion_time": 0.873062394,
+        "total_tokens": 2434,
+        "total_time": 0.994374587,
+        "completion_tokens_details": {
+          "reasoning_tokens": 78
+        }
+      },
+      "elapsed_ms": 2242
+    },
+    {
+      "case_id": "nmmss-2025-historical-extension",
+      "passed": true,
+      "checks": {
+        "deadline_resolution": true,
+        "selected_deadline": true,
+        "other_deadlines": true,
+        "candidate_deadlines": true,
+        "duration_facts": true,
+        "correction_scope": true,
+        "evidence_ids_exist": true,
+        "dates_occur_in_cited_blocks": true,
+        "durations_occur_in_cited_blocks": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "selected_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date_iso": "2025-09-30",
+          "evidence_refs": [
+            "nmmss-2025-extension-html:block_1",
+            "nmmss-2025-extension-html:block_2",
+            "nmmss-2025-extension-html:block_11"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date_iso": "2025-10-15",
+            "evidence_refs": [
+              "nmmss-2025-extension-html:block_8",
+              "nmmss-2025-extension-html:block_11"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date_iso": "2025-10-31",
+            "evidence_refs": [
+              "nmmss-2025-extension-html:block_8",
+              "nmmss-2025-extension-html:block_11"
+            ]
+          }
+        ],
+        "candidate_deadlines": [],
+        "duration_facts": [],
+        "correction_allows_new_registration": null,
+        "unresolved_items": []
+      },
+      "supplied_evidence_block_count": 4,
+      "unavailable_source_ids": [],
+      "usage": {
+        "queue_time": 0.424398769,
+        "prompt_tokens": 2100,
+        "prompt_time": 0.098432154,
+        "completion_tokens": 375,
+        "completion_time": 0.796004047,
+        "total_tokens": 2475,
+        "total_time": 0.894436201,
+        "completion_tokens_details": {
+          "reasoning_tokens": 84
+        }
+      },
+      "elapsed_ms": 1426
+    },
+    {
+      "case_id": "nos-2026-correction-is-not-submission",
+      "passed": true,
+      "checks": {
+        "deadline_resolution": true,
+        "selected_deadline": true,
+        "other_deadlines": true,
+        "candidate_deadlines": true,
+        "duration_facts": true,
+        "correction_scope": true,
+        "evidence_ids_exist": true,
+        "dates_occur_in_cited_blocks": true,
+        "durations_occur_in_cited_blocks": true
+      },
+      "output": {
+        "deadline_resolution": "insufficient",
+        "selected_deadline": null,
+        "other_deadlines": [],
+        "candidate_deadlines": [],
+        "duration_facts": [
+          {
+            "actor": "student",
+            "action": "submit",
+            "duration_days": 40,
+            "evidence_refs": [
+              "nos-2026-guidelines-pdf:block_5",
+              "nos-2026-guidelines-pdf:block_21"
+            ]
+          },
+          {
+            "actor": "student",
+            "action": "correct",
+            "duration_days": 4,
+            "evidence_refs": [
+              "nos-2026-guidelines-pdf:block_5",
+              "nos-2026-guidelines-pdf:block_21"
+            ]
+          }
+        ],
+        "correction_allows_new_registration": false,
+        "unresolved_items": []
+      },
+      "supplied_evidence_block_count": 3,
+      "unavailable_source_ids": [
+        "nos-2026-portal-html"
+      ],
+      "usage": {
+        "queue_time": 0.23265608,
+        "prompt_tokens": 2605,
+        "prompt_time": 0.126530711,
+        "completion_tokens": 253,
+        "completion_time": 0.537200203,
+        "total_tokens": 2858,
+        "total_time": 0.663730914,
+        "completion_tokens_details": {
+          "reasoning_tokens": 60
+        }
+      },
+      "elapsed_ms": 1330
+    },
+    {
+      "case_id": "pm-usp-2026-renewal-conflict",
+      "passed": true,
+      "checks": {
+        "deadline_resolution": true,
+        "selected_deadline": true,
+        "other_deadlines": true,
+        "candidate_deadlines": true,
+        "duration_facts": true,
+        "correction_scope": true,
+        "evidence_ids_exist": true,
+        "dates_occur_in_cited_blocks": true,
+        "durations_occur_in_cited_blocks": true
+      },
+      "output": {
+        "deadline_resolution": "conflicting",
+        "selected_deadline": null,
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date_iso": "2026-10-15",
+            "evidence_refs": [
+              "pm-usp-2026-nsp-html:block_31"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date_iso": "2026-10-15",
+            "evidence_refs": [
+              "pm-usp-2026-nsp-html:block_31"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date_iso": "2026-11-15",
+            "evidence_refs": [
+              "pm-usp-2026-announcement-html:block_5",
+              "pm-usp-2026-announcement-html:block_6"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date_iso": "2026-10-30",
+            "evidence_refs": [
+              "pm-usp-2026-nsp-html:block_31"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date_iso": "2026-11-30",
+            "evidence_refs": [
+              "pm-usp-2026-announcement-html:block_5",
+              "pm-usp-2026-announcement-html:block_6"
+            ]
+          }
+        ],
+        "candidate_deadlines": [
+          {
+            "actor": "student",
+            "action": "submit",
+            "date_iso": "2026-09-30",
+            "evidence_refs": [
+              "pm-usp-2026-nsp-html:block_31"
+            ]
+          },
+          {
+            "actor": "student",
+            "action": "submit",
+            "date_iso": "2026-10-31",
+            "evidence_refs": [
+              "pm-usp-2026-announcement-html:block_5",
+              "pm-usp-2026-announcement-html:block_6"
+            ]
+          }
+        ],
+        "duration_facts": [],
+        "correction_allows_new_registration": null,
+        "unresolved_items": [
+          "Conflicting student submission deadlines: 2026-09-30 vs 2026-10-31"
+        ]
+      },
+      "supplied_evidence_block_count": 3,
+      "unavailable_source_ids": [],
+      "usage": {
+        "queue_time": 0.333645972,
+        "prompt_tokens": 1517,
+        "prompt_time": 0.080328642,
+        "completion_tokens": 695,
+        "completion_time": 1.4788297240000001,
+        "total_tokens": 2212,
+        "total_time": 1.5591583660000001,
+        "completion_tokens_details": {
+          "reasoning_tokens": 191
+        }
+      },
+      "elapsed_ms": 2123
+    },
+    {
+      "case_id": "pragati-2026-deadline-roles",
+      "passed": true,
+      "checks": {
+        "deadline_resolution": true,
+        "selected_deadline": true,
+        "other_deadlines": true,
+        "candidate_deadlines": true,
+        "duration_facts": true,
+        "correction_scope": true,
+        "evidence_ids_exist": true,
+        "dates_occur_in_cited_blocks": true,
+        "durations_occur_in_cited_blocks": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "selected_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date_iso": "2026-10-31",
+          "evidence_refs": [
+            "pragati-2026-nsp-html:block_8"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date_iso": "2026-11-15",
+            "evidence_refs": [
+              "pragati-2026-nsp-html:block_8"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date_iso": "2026-11-15",
+            "evidence_refs": [
+              "pragati-2026-nsp-html:block_8"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date_iso": "2026-11-30",
+            "evidence_refs": [
+              "pragati-2026-nsp-html:block_8"
+            ]
+          }
+        ],
+        "candidate_deadlines": [],
+        "duration_facts": [],
+        "correction_allows_new_registration": false,
+        "unresolved_items": []
+      },
+      "supplied_evidence_block_count": 1,
+      "unavailable_source_ids": [],
+      "usage": {
+        "queue_time": 0.233864877,
+        "prompt_tokens": 1263,
+        "prompt_time": 0.057002049,
+        "completion_tokens": 400,
+        "completion_time": 0.834655912,
+        "total_tokens": 1663,
+        "total_time": 0.891657961,
+        "completion_tokens_details": {
+          "reasoning_tokens": 107
+        }
+      },
+      "elapsed_ms": 1363
+    },
+    {
+      "case_id": "top-class-st-2026-deadline-roles",
+      "passed": true,
+      "checks": {
+        "deadline_resolution": true,
+        "selected_deadline": true,
+        "other_deadlines": true,
+        "candidate_deadlines": true,
+        "duration_facts": true,
+        "correction_scope": true,
+        "evidence_ids_exist": true,
+        "dates_occur_in_cited_blocks": true,
+        "durations_occur_in_cited_blocks": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "selected_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date_iso": "2026-10-31",
+          "evidence_refs": [
+            "top-class-st-2026-nsp-html:block_32"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date_iso": "2026-11-15",
+            "evidence_refs": [
+              "top-class-st-2026-nsp-html:block_32"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date_iso": "2026-11-15",
+            "evidence_refs": [
+              "top-class-st-2026-nsp-html:block_32"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date_iso": "2026-11-30",
+            "evidence_refs": [
+              "top-class-st-2026-nsp-html:block_32"
+            ]
+          }
+        ],
+        "candidate_deadlines": [],
+        "duration_facts": [],
+        "correction_allows_new_registration": false,
+        "unresolved_items": []
+      },
+      "supplied_evidence_block_count": 2,
+      "unavailable_source_ids": [],
+      "usage": {
+        "queue_time": 0.354219336,
+        "prompt_tokens": 1350,
+        "prompt_time": 0.082435448,
+        "completion_tokens": 408,
+        "completion_time": 0.862476587,
+        "total_tokens": 1758,
+        "total_time": 0.944912035,
+        "completion_tokens_details": {
+          "reasoning_tokens": 115
+        }
+      },
+      "elapsed_ms": 1486
+    }
+  ]
+}

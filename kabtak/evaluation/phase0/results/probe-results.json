@@ -1,0 +1,718 @@
+{
+  "schema_version": 1,
+  "manifest_reference_time": "2026-10-02T00:00:00+05:30",
+  "probed_at": "2026-10-02T16:14:29.108930+00:00",
+  "parser_version": "phase0-1",
+  "summary": {
+    "source_count": 12,
+    "parsed": 10,
+    "failed": 2,
+    "partial": 1,
+    "programmes_with_parsed_source": [
+      "aicte-pragati",
+      "national-overseas-scholarship",
+      "nmmss",
+      "pm-usp-csss",
+      "top-class-st"
+    ]
+  },
+  "sources": [
+    {
+      "id": "nmmss-2026-extension-html",
+      "programme_id": "nmmss",
+      "cycle": "2026-27",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48",
+      "format": "html",
+      "expected_topics": [
+        "application_deadline",
+        "institute_verification",
+        "district_verification",
+        "amendment"
+      ],
+      "status_code": 200,
+      "final_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48",
+      "content_type": "text/html; charset=utf-8",
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "10ac2f84ad3029d23f43bc0189ab2dc76f88fc8122a0561256c0c74c530522b9",
+      "bytes": 95230,
+      "block_count": 15,
+      "table_block_count": 3,
+      "deadline_candidate_count": 5,
+      "candidate_samples": [
+        {
+          "block_id": "block_1",
+          "kind": "heading",
+          "location": "section NMMSS Scholarship Application Deadline Extended to October 31, 2026",
+          "excerpt": "NMMSS Scholarship Application Deadline Extended to October 31, 2026"
+        },
+        {
+          "block_id": "block_3",
+          "kind": "p",
+          "location": "section Eligible students will receive scholarship of ₹12,000 per annum",
+          "excerpt": "The Union Ministry of Education has extended the last date for submission of applications under the National Means-cum-Merit Scholarship Scheme (NMMSS) for the academic year 2026-27 to October 31, 2026 . The extension will provide eligible students additional time to complete their applications on the National Scholar…"
+        },
+        {
+          "block_id": "block_5",
+          "kind": "table",
+          "location": "section Eligible students will receive scholarship of ₹12,000 per annum, table 1",
+          "excerpt": "Process | Last Date Submission of Application | October 31, 2026 Institute Nodal Officer (L1) Verification | November 15, 2026 District Nodal Officer (L2) Verification | November 30, 2026"
+        },
+        {
+          "block_id": "block_14",
+          "kind": "table",
+          "location": "section Eligible students will receive scholarship of ₹12,000 per annum, table 2",
+          "excerpt": "Ministry of Education NMMSS Scholarship Application Deadline Extended to October 31, 2026 Eligible students will receive scholarship of ₹12,000 per annum Posted On: 01 OCT 2026 4:36PM by PIB Delhi The Union Ministry of Education has extended the last date for submission of applications under the National Means-cum-Mer…"
+        },
+        {
+          "block_id": "block_15",
+          "kind": "table",
+          "location": "section Eligible students will receive scholarship of ₹12,000 per annum, table 3",
+          "excerpt": "Process | Last Date Submission of Application | October 31, 2026 Institute Nodal Officer (L1) Verification | November 15, 2026 District Nodal Officer (L2) Verification | November 30, 2026"
+        }
+      ],
+      "elapsed_ms": 552
+    },
+    {
+      "id": "nmmss-2025-extension-html",
+      "programme_id": "nmmss",
+      "cycle": "2025-26",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2167076&lang=2&reg=48",
+      "format": "html",
+      "expected_topics": [
+        "application_deadline",
+        "institute_verification",
+        "district_verification",
+        "amendment"
+      ],
+      "status_code": 200,
+      "final_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2167076&lang=2&reg=48",
+      "content_type": "text/html; charset=utf-8",
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "9752ec6ce8992fa8d5117e573b5cbf33b822536908c55a481fc131963b92fc9f",
+      "bytes": 89526,
+      "block_count": 11,
+      "table_block_count": 1,
+      "deadline_candidate_count": 5,
+      "candidate_samples": [
+        {
+          "block_id": "block_1",
+          "kind": "heading",
+          "location": "section Last date to submit applications under National Means cum Merit Scholarship Scheme for Year 2025-26 extended up to 30th ",
+          "excerpt": "Last date to submit applications under National Means cum Merit Scholarship Scheme for Year 2025-26 extended up to 30th September, 2025 on National Scholarship Portal"
+        },
+        {
+          "block_id": "block_2",
+          "kind": "p",
+          "location": "section Last date to submit applications under National Means cum Merit Scholarship Scheme for Year 2025-26 extended up to 30th ",
+          "excerpt": "The last date for submission of applications by the selected meritorious students on the National Scholarship Portal (NSP) for National Means cum Merit Scholarship Scheme (NMMSS) for the year 2025-26 has been extended to 30th September, 2025."
+        },
+        {
+          "block_id": "block_3",
+          "kind": "p",
+          "location": "section Last date to submit applications under National Means cum Merit Scholarship Scheme for Year 2025-26 extended up to 30th ",
+          "excerpt": "The NSP portal is open for submission of applications by students with effect from 2 nd June 2025. In this project year 2025-26, the selected students are first to do a one-time registration (OTR) on the NSP, after which they have to apply for the scholarship scheme that they have selected. The FAQ details for registr…"
+        },
+        {
+          "block_id": "block_8",
+          "kind": "p",
+          "location": "section Last date to submit applications under National Means cum Merit Scholarship Scheme for Year 2025-26 extended up to 30th ",
+          "excerpt": "On the NSP portal, there are two levels of verification of the scholarship application of selected students, Level-1 (L1) verification is at the Institute Nodal Officer (INO) and Level-2 (L2) is with the District Nodal Officer (DNO). The last date for INO level (L1) verification is 15.10.2025 and for DNO level (L2) ve…"
+        },
+        {
+          "block_id": "block_11",
+          "kind": "table",
+          "location": "section Last date to submit applications under National Means cum Merit Scholarship Scheme for Year 2025-26 extended up to 30th , table 1",
+          "excerpt": "Ministry of Education Last date to submit applications under National Means cum Merit Scholarship Scheme for Year 2025-26 extended up to 30th September, 2025 on National Scholarship Portal Posted On: 16 SEP 2025 12:49PM by PIB Delhi The last date for submission of applications by the selected meritorious students on t…"
+        }
+      ],
+      "elapsed_ms": 120
+    },
+    {
+      "id": "pm-usp-2026-nsp-html",
+      "programme_id": "pm-usp-csss",
+      "cycle": "2026-27",
+      "url": "https://scholarships.gov.in/All-Scholarships",
+      "format": "html",
+      "expected_topics": [
+        "application_type",
+        "application_deadline",
+        "institute_verification",
+        "administrative_verification"
+      ],
+      "status_code": 200,
+      "final_url": "https://scholarships.gov.in/All-Scholarships",
+      "content_type": "text/html;charset=UTF-8",
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "f8833349d2cc9ddd9919f413299bea529f549f0b54f7cd7b9b37ba6582668741",
+      "bytes": 205507,
+      "block_count": 34,
+      "table_block_count": 0,
+      "deadline_candidate_count": 32,
+      "candidate_samples": [
+        {
+          "block_id": "block_3",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO…"
+        },
+        {
+          "block_id": "block_4",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO…"
+        },
+        {
+          "block_id": "block_5",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Central Armed Police Forces And Assam Rifles (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Central Armed Police Forces And Assam Rifles (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11…"
+        },
+        {
+          "block_id": "block_6",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Swanath Scholarship Scheme ( Technical Degree) (Welfare Based Scheme)",
+          "excerpt": "AICTE - Swanath Scholarship Scheme ( Technical Degree) (Welfare Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_7",
+          "kind": "scheme_card",
+          "location": "scheme PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme)",
+          "excerpt": "PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme) Scheme Open from (for Renewal): 01-06-2026 Student Application Open till (for Renewal): 31-10-2026 Defective Application Verification Open till (for Renewal):15-11-2026 Institute Verification Open till (for Renewal):15-11-2026 DNO/SNO/…"
+        },
+        {
+          "block_id": "block_8",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Degree) (Merit Based Scheme)",
+          "excerpt": "AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Degree) (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_9",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Diploma) (Merit Based Scheme)",
+          "excerpt": "AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Diploma) (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_10",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Saksham Scholarship Scheme For Specially Abled Student ( Technical Diploma) (Welfare Based Scheme)",
+          "excerpt": "AICTE - Saksham Scholarship Scheme For Specially Abled Student ( Technical Diploma) (Welfare Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-1…"
+        }
+      ],
+      "elapsed_ms": 839
+    },
+    {
+      "id": "pm-usp-2025-faq-pdf",
+      "programme_id": "pm-usp-csss",
+      "cycle": "2025-26",
+      "url": "https://scholarships.gov.in/public/schemeGuidelines/FAQ_DOHE_CSSS.pdf",
+      "format": "pdf",
+      "expected_topics": [
+        "eligibility",
+        "application_type",
+        "required_documents"
+      ],
+      "status_code": 200,
+      "final_url": "https://scholarships.gov.in/public/schemeGuidelines/FAQ_DOHE_CSSS.pdf",
+      "content_type": "application/pdf;charset=ISO-8859-1",
+      "page_count": 8,
+      "pages_processed": 8,
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "6f45193573e170b603e05d76ac671f8c0a2d299b4a46e8dc841cfab7761ac4eb",
+      "bytes": 329156,
+      "block_count": 9,
+      "table_block_count": 1,
+      "deadline_candidate_count": 8,
+      "candidate_samples": [
+        {
+          "block_id": "block_1",
+          "kind": "page_text",
+          "location": "page 1",
+          "excerpt": "Government of India Ministry of Education Department of Higher Education (Scholarship Division) PRADHAN MANTRI UCHCHATAR SHIKSHA PROTSAHAN (PM-USP) CENTRAL SECTOR SCHEME OF SCHOLARSHIP FOR COLLEGE AND UNIVERSITY STUDENTS (CSSS) FREQUENTLY ASKED QUESTIONS (FAQs) 2025-26 ABOUT THE SCHEME The “Pradhan Mantri Uchchatar Sh…"
+        },
+        {
+          "block_id": "block_2",
+          "kind": "page_text",
+          "location": "page 2",
+          "excerpt": "year 2022-23, subject to the condition that guidelines of Ministry of Finance and NITI Aayog regarding SC/ST fund allocation of the schemes are adhered to. 3. What is the rate of scholarship under the Scheme? The rate of scholarship is Rs. 12,000/- per annum at Graduation level for first three years of College and Uni…"
+        },
+        {
+          "block_id": "block_3",
+          "kind": "page_text",
+          "location": "page 3",
+          "excerpt": "Aadhaar seeding consent form and provide an acknowledgement. c. The branch will then link the Aadhaar number to the customer’s account and also in NPCI mapper. 9. How to check the Aadhaar Seeding Status? The Aadhaar Seeding status can be checked on Bharat Aadhaar Seeding Enabler (BASE) platform on NPCI. To use BASE, a…"
+        },
+        {
+          "block_id": "block_4",
+          "kind": "page_text",
+          "location": "page 4",
+          "excerpt": "13. What should I do if I forget my OTR number? If you forget your OTR number, you can retrieve it by selecting the \"Forgot OTR Number\" option. To recover your OTR number, you will need to provide the Aadhaar number used during your e-KYC process. 14. How can I apply for scholarship under PM-USP CSSS? Login with your…"
+        },
+        {
+          "block_id": "block_5",
+          "kind": "page_text",
+          "location": "page 5",
+          "excerpt": "16. When to apply for scholarship on the National Scholarship Portal? The application process is live on National Scholarship Portal (NSP) from 2 June, 2025 (www.scholarships.gov.in). 17. What precautions are to be exercised while selecting the institution from the drop-down menu? While selecting the course, where he/…"
+        },
+        {
+          "block_id": "block_7",
+          "kind": "page_text",
+          "location": "page 6",
+          "excerpt": "19. What are the documents that are required to be uploaded for applying and verification? The following documents need to be uploaded on the Portal at the time of application: a. FRESH: 12th Mark Sheet, Family Income Certificate, Category/ caste Certification for reserved category students, Disability Certificate (if…"
+        },
+        {
+          "block_id": "block_8",
+          "kind": "page_text",
+          "location": "page 7",
+          "excerpt": "26. Where to lodge complaints/queries/grievances regarding scholarship application? The grievances need to be register on the Grievance Registration Tab available in their Login. All the technical complaints regarding working of the portal/ processing of online application/ verification status, etc. may be addressed t…"
+        },
+        {
+          "block_id": "block_9",
+          "kind": "page_text",
+          "location": "page 8",
+          "excerpt": "35. What to do if the course under which the student is enrolled is not available after selecting the Institute? This situation arises when the Institute in which the student is studying has not updated his/her profile. Hence, the student has to ask their Institute Nodal Officer to update their profile and validate al…"
+        }
+      ],
+      "elapsed_ms": 799
+    },
+    {
+      "id": "pm-usp-2026-announcement-html",
+      "programme_id": "pm-usp-csss",
+      "cycle": "2026-27",
+      "url": "https://scholarships.gov.in/ViewMoreAnnouncement",
+      "format": "html",
+      "expected_topics": [
+        "application_type",
+        "application_deadline",
+        "amendment"
+      ],
+      "status_code": 200,
+      "final_url": "https://scholarships.gov.in/ViewMoreAnnouncement",
+      "content_type": "text/html;charset=UTF-8",
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "12ab8fee5e81de9d756e10edab6518f8cab3f909dd6433af8f7f9635cf50fe65",
+      "bytes": 105527,
+      "block_count": 28,
+      "table_block_count": 0,
+      "deadline_candidate_count": 12,
+      "candidate_samples": [
+        {
+          "block_id": "block_3",
+          "kind": "li",
+          "location": "section Announcements",
+          "excerpt": "All disabled students must first login in the UDID portal and provide consent to share their UDID details and then submit application in NSP. Otherwise, they will not be able to submit their application."
+        },
+        {
+          "block_id": "block_4",
+          "kind": "p",
+          "location": "section Announcements",
+          "excerpt": "All disabled students must first login in the UDID portal and provide consent to share their UDID details and then submit application in NSP. Otherwise, they will not be able to submit their application."
+        },
+        {
+          "block_id": "block_5",
+          "kind": "li",
+          "location": "section Announcements",
+          "excerpt": "Renewal applications for the \"PM-USP – Central Sector Scheme Of Scholarship For College And University Students (CSSS) (Merit Based Scheme)\" and \"PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme)\" is currently open in NSP. Closing dates for student application is 31-10-2026 and closin…"
+        },
+        {
+          "block_id": "block_6",
+          "kind": "p",
+          "location": "section Announcements",
+          "excerpt": "Renewal applications for the \"PM-USP – Central Sector Scheme Of Scholarship For College And University Students (CSSS) (Merit Based Scheme)\" and \"PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme)\" is currently open in NSP. Closing dates for student application is 31-10-2026 and closin…"
+        },
+        {
+          "block_id": "block_9",
+          "kind": "li",
+          "location": "section Announcements",
+          "excerpt": "Students may apply for one merit-based scholarship scheme and one or more welfare-based scholarship schemes from AY 2026–27, as per scheme eligibility criteria."
+        },
+        {
+          "block_id": "block_10",
+          "kind": "p",
+          "location": "section Announcements",
+          "excerpt": "Students may apply for one merit-based scholarship scheme and one or more welfare-based scholarship schemes from AY 2026–27, as per scheme eligibility criteria."
+        },
+        {
+          "block_id": "block_13",
+          "kind": "li",
+          "location": "section Announcements",
+          "excerpt": "NSP services are now available at Common Service Centres (CSCs). Students can avail the scholarship related services by visiting the nearby CSCs. The total charges for the entire activity per candidate (including generation of Reference number, biometric -authentication, generation of One-Time Registration (OTR) numbe…"
+        },
+        {
+          "block_id": "block_14",
+          "kind": "p",
+          "location": "section Announcements",
+          "excerpt": "NSP services are now available at Common Service Centres (CSCs). Students can avail the scholarship related services by visiting the nearby CSCs. The total charges for the entire activity per candidate (including generation of Reference number, biometric -authentication, generation of One-Time Registration (OTR) numbe…"
+        }
+      ],
+      "elapsed_ms": 124
+    },
+    {
+      "id": "pragati-2026-nsp-html",
+      "programme_id": "aicte-pragati",
+      "cycle": "2026-27",
+      "url": "https://scholarships.gov.in/All-Scholarships",
+      "format": "html",
+      "expected_topics": [
+        "application_deadline",
+        "defective_application",
+        "institute_verification",
+        "administrative_verification"
+      ],
+      "status_code": 200,
+      "final_url": "https://scholarships.gov.in/All-Scholarships",
+      "content_type": "text/html;charset=UTF-8",
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "294d1123beeab2fa2339a5c80374707a839f26bac6af13b2aadcc0b15b3af751",
+      "bytes": 204803,
+      "block_count": 34,
+      "table_block_count": 0,
+      "deadline_candidate_count": 32,
+      "candidate_samples": [
+        {
+          "block_id": "block_3",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO…"
+        },
+        {
+          "block_id": "block_4",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO…"
+        },
+        {
+          "block_id": "block_5",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Central Armed Police Forces And Assam Rifles (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Central Armed Police Forces And Assam Rifles (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11…"
+        },
+        {
+          "block_id": "block_6",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Swanath Scholarship Scheme ( Technical Degree) (Welfare Based Scheme)",
+          "excerpt": "AICTE - Swanath Scholarship Scheme ( Technical Degree) (Welfare Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_7",
+          "kind": "scheme_card",
+          "location": "scheme PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme)",
+          "excerpt": "PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme) Scheme Open from (for Renewal): 01-06-2026 Student Application Open till (for Renewal): 31-10-2026 Defective Application Verification Open till (for Renewal):15-11-2026 Institute Verification Open till (for Renewal):15-11-2026 DNO/SNO/…"
+        },
+        {
+          "block_id": "block_8",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Degree) (Merit Based Scheme)",
+          "excerpt": "AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Degree) (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_9",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Diploma) (Merit Based Scheme)",
+          "excerpt": "AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Diploma) (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_10",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Saksham Scholarship Scheme For Specially Abled Student ( Technical Diploma) (Welfare Based Scheme)",
+          "excerpt": "AICTE - Saksham Scholarship Scheme For Specially Abled Student ( Technical Diploma) (Welfare Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-1…"
+        }
+      ],
+      "elapsed_ms": 498
+    },
+    {
+      "id": "pragati-current-guidelines-pdf",
+      "programme_id": "aicte-pragati",
+      "cycle": "current_portal_document",
+      "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2010_G.pdf",
+      "format": "pdf",
+      "expected_topics": [
+        "eligibility",
+        "required_documents"
+      ],
+      "status_code": 200,
+      "final_url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2010_G.pdf",
+      "content_type": "application/pdf;charset=ISO-8859-1",
+      "page_count": 5,
+      "pages_processed": 5,
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "1e493333bc25f9adf9192624a0f92104845f5c5e3b3a00e1ec52af5302a4b10f",
+      "bytes": 569125,
+      "block_count": 7,
+      "table_block_count": 2,
+      "deadline_candidate_count": 1,
+      "candidate_samples": [
+        {
+          "block_id": "block_3",
+          "kind": "page_text",
+          "location": "page 3",
+          "excerpt": "lateral entry as lump sum amount towards payment of college fee, purchase of computer, stationeries, books, equipments, softwares etc. No other additional grant will be payable in lieu of hostel charges and medical charges etc. 2) No documentary proof need to be attached for the above while availing benefits. 5.0 MODE…"
+        }
+      ],
+      "elapsed_ms": 519
+    },
+    {
+      "id": "nos-2026-portal-html",
+      "programme_id": "national-overseas-scholarship",
+      "cycle": "2026-27",
+      "url": "https://nosmsje.gov.in/public/",
+      "format": "html",
+      "expected_topics": [
+        "application_deadline",
+        "correction_window",
+        "portal_status"
+      ],
+      "outcome": "failed",
+      "error_type": "ConnectTimeout",
+      "error": "timed out",
+      "elapsed_ms": 20008
+    },
+    {
+      "id": "nos-2026-guidelines-pdf",
+      "programme_id": "national-overseas-scholarship",
+      "cycle": "2026-27",
+      "url": "https://socialjustice.gov.in/writereaddata/UploadFile/68641776927848.pdf",
+      "format": "pdf",
+      "expected_topics": [
+        "eligibility",
+        "application_process",
+        "correction_window"
+      ],
+      "status_code": 200,
+      "final_url": "https://socialjustice.gov.in/writereaddata/UploadFile/68641776927848.pdf",
+      "content_type": "application/pdf",
+      "page_count": 18,
+      "pages_processed": 18,
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "2ed954355c9196418742faafec02f022caa4d0927aaf6b1eb1c79773912a1a79",
+      "bytes": 568513,
+      "block_count": 21,
+      "table_block_count": 3,
+      "deadline_candidate_count": 11,
+      "candidate_samples": [
+        {
+          "block_id": "block_3",
+          "kind": "page_text",
+          "location": "page 2",
+          "excerpt": "e. If for any specific year, successful candidates are not available to the extent prescribed for each of the above listed categories, the awards for that year will become open for candidates belonging to other categories mentioned above as per merit criteria under the scheme. f. 30% of the awards for each year shall…"
+        },
+        {
+          "block_id": "block_4",
+          "kind": "page_text",
+          "location": "page 3",
+          "excerpt": "completed Bachelor's of Engineering after completing Diploma (Lateral Entry to 2nd year), percentage of marks obtained in Bachelor's degree will be taken into account. For any University, percentage would be calculated on the basis of the marks obtained by the applicant in various semesters/ terms. Marksheet for all s…"
+        },
+        {
+          "block_id": "block_5",
+          "kind": "page_text",
+          "location": "page 4",
+          "excerpt": "Note: In case of married women, income of the in-laws and her spouse and children below the age of 18 years will be considered. 7. Maximum Number of children in a family for the award An awardee cannot be considered for the award for a second time as the award can be given only once. Not more than two children of the…"
+        },
+        {
+          "block_id": "block_6",
+          "kind": "page_text",
+          "location": "page 5",
+          "excerpt": "to issuance of the final award letter. Failing this, the provisional award letter issued to the candidate will stand cancelled. The portal for second round will be opened in September/October 2026 for a period of 40 days for inviting of applications online and 4 days will be given for correction and for that gross ann…"
+        },
+        {
+          "block_id": "block_7",
+          "kind": "page_text",
+          "location": "page 6",
+          "excerpt": "decided on the basis of the marks/grades secured by the candidate in the qualifying examination for the higher studies for which the scholarship has been applied for. d. The online applications of the eligible candidates shall be placed before the Selection-cum-Screening Committee for making their recommendations for…"
+        },
+        {
+          "block_id": "block_8",
+          "kind": "page_text",
+          "location": "page 7",
+          "excerpt": "The final decision as to which Topic can be covered under such category will rest with Selection-cum-Screening Committee of NOS. iv. Employed candidates are required to provide a “No Objection Certificate” (NOC) from the Employer to this Ministry. v. In case the awardee was a Government Servant before going abroad, on…"
+        },
+        {
+          "block_id": "block_10",
+          "kind": "page_text",
+          "location": "page 9",
+          "excerpt": "Government of India. xv. No scholarship will be disbursed/ paid to the candidates who complete their education abroad without completing the required procedure/ formalities under NOS scheme. xvi. This Ministry, if necessary, in consultation with other Departments/Agencies, will take decision on such issues concerning…"
+        },
+        {
+          "block_id": "block_17",
+          "kind": "page_text",
+          "location": "page 14",
+          "excerpt": "interest which will be 12% per annum and in case an awardee fails to repay the amount within six months from the date on which a demand for such refund is made, penal interest at the rate which is 2.5% higher than the above normal rate of interest on the outstanding amount would be charged. If the awardee fails to rep…"
+        }
+      ],
+      "elapsed_ms": 4701
+    },
+    {
+      "id": "azim-premji-2026-html",
+      "programme_id": "azim-premji-scholarship",
+      "cycle": "2026-27",
+      "url": "https://azimpremjifoundation.org/what-we-do/education/azim-premji-scholarship/applications/",
+      "format": "html",
+      "expected_topics": [
+        "fresh_deadline",
+        "renewal_deadline",
+        "eligibility",
+        "required_documents",
+        "scope_conflict"
+      ],
+      "outcome": "failed",
+      "error_type": "HTTPStatusError",
+      "error": "Client error '403 Forbidden' for url 'https://azimpremjifoundation.org/what-we-do/education/azim-premji-scholarship/applications/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403",
+      "elapsed_ms": 216
+    },
+    {
+      "id": "top-class-st-2026-nsp-html",
+      "programme_id": "top-class-st",
+      "cycle": "2026-27",
+      "url": "https://scholarships.gov.in/All-Scholarships",
+      "format": "html",
+      "expected_topics": [
+        "application_deadline",
+        "defective_application",
+        "institute_verification",
+        "administrative_verification"
+      ],
+      "status_code": 200,
+      "final_url": "https://scholarships.gov.in/All-Scholarships",
+      "content_type": "text/html;charset=UTF-8",
+      "coverage": "complete",
+      "outcome": "parsed",
+      "sha256": "294d1123beeab2fa2339a5c80374707a839f26bac6af13b2aadcc0b15b3af751",
+      "bytes": 204803,
+      "block_count": 34,
+      "table_block_count": 0,
+      "deadline_candidate_count": 32,
+      "candidate_samples": [
+        {
+          "block_id": "block_3",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO…"
+        },
+        {
+          "block_id": "block_4",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Wards Of States/UTs Police Personnel Martyred During Terror/Naxal Attacks (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO…"
+        },
+        {
+          "block_id": "block_5",
+          "kind": "scheme_card",
+          "location": "scheme Prime Minister'S Scholarship Scheme For Central Armed Police Forces And Assam Rifles (Merit Based Scheme)",
+          "excerpt": "Prime Minister'S Scholarship Scheme For Central Armed Police Forces And Assam Rifles (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11…"
+        },
+        {
+          "block_id": "block_6",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Swanath Scholarship Scheme ( Technical Degree) (Welfare Based Scheme)",
+          "excerpt": "AICTE - Swanath Scholarship Scheme ( Technical Degree) (Welfare Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_7",
+          "kind": "scheme_card",
+          "location": "scheme PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme)",
+          "excerpt": "PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme) Scheme Open from (for Renewal): 01-06-2026 Student Application Open till (for Renewal): 31-10-2026 Defective Application Verification Open till (for Renewal):15-11-2026 Institute Verification Open till (for Renewal):15-11-2026 DNO/SNO/…"
+        },
+        {
+          "block_id": "block_8",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Degree) (Merit Based Scheme)",
+          "excerpt": "AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Degree) (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_9",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Diploma) (Merit Based Scheme)",
+          "excerpt": "AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Diploma) (Merit Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-11-2026"
+        },
+        {
+          "block_id": "block_10",
+          "kind": "scheme_card",
+          "location": "scheme AICTE - Saksham Scholarship Scheme For Specially Abled Student ( Technical Diploma) (Welfare Based Scheme)",
+          "excerpt": "AICTE - Saksham Scholarship Scheme For Specially Abled Student ( Technical Diploma) (Welfare Based Scheme) Scheme Open from : 01-06-2026 Student Application Open till : 31-10-2026 Defective Application Verification Open till:15-11-2026 Institute Verification Open till:15-11-2026 DNO/SNO/MNO Verification Open till:30-1…"
+        }
+      ],
+      "elapsed_ms": 812
+    },
+    {
+      "id": "top-class-st-guidelines-pdf",
+      "programme_id": "top-class-st",
+      "cycle": "current_portal_document",
+      "url": "https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipguideline.pdf",
+      "format": "pdf",
+      "expected_topics": [
+        "eligibility",
+        "application_process"
+      ],
+      "status_code": 200,
+      "final_url": "https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipguideline.pdf",
+      "content_type": "application/pdf;charset=ISO-8859-1",
+      "page_count": 31,
+      "pages_processed": 20,
+      "coverage": "partial_page_limit",
+      "outcome": "parsed",
+      "sha256": "038496d08d76dafd333cb553449229b3c69e9a09aed45a36258c7cba0fb58856",
+      "bytes": 945507,
+      "block_count": 34,
+      "table_block_count": 14,
+      "deadline_candidate_count": 8,
+      "candidate_samples": [
+        {
+          "block_id": "block_2",
+          "kind": "page_text",
+          "location": "page 2",
+          "excerpt": "5.4 Tenure of Fellowship 13 5.5 Leave benefit for fellowship (as applicable to UGC 14 research scholars) 6 Cancellation of Award 15 7 Grievance Module 15 8 Applicability of Guidelines 15 9 Change in the provisions of the scheme 15 PART-B: National Scholarship Sl. No. Particulars Page No. 1 Objective 17 2 Salient Featu…"
+        },
+        {
+          "block_id": "block_3",
+          "kind": "table",
+          "location": "page 2, table 1",
+          "excerpt": "5.4 | Tenure of Fellowship | 13 5.5 | Leave benefit for fellowship (as applicable to UGC research scholars) | 14 6 | Cancellation of Award | 15 7 | Grievance Module | 15 8 | Applicability of Guidelines | 15 9 | Change in the provisions of the scheme | 15 PART-B: National Scholarship | | Sl. No. | Particulars | Page No…"
+        },
+        {
+          "block_id": "block_7",
+          "kind": "page_text",
+          "location": "page 5",
+          "excerpt": "ii. In case any other member of the family, other than father and mother is an earning member, his or her income shall not be included in computing total family income. iii. In case only one parent is alive, the income of that parent shall be taken into account for considering total parental income. If other sibling o…"
+        },
+        {
+          "block_id": "block_8",
+          "kind": "page_text",
+          "location": "page 6",
+          "excerpt": "2.5 Value of Scholarship: The selected student will be eligible for financial assistance as stipulated in the following table, subject to fulfilment of conditions laid down in scheme: Sr. No. Component Details Remarks 1. Tuition Fees Full Admission fee, tuition There will be a ceiling of and Admission fee and other no…"
+        },
+        {
+          "block_id": "block_10",
+          "kind": "page_text",
+          "location": "page 7",
+          "excerpt": "go through the “Guidelines for Registration on National Scholarship Portal” before initiating registration process. 3.3 Documents Required: Following documents are required to be uploaded on the portal while filling the application online on NSP: S. Graduate level Fresh Renewal Remarks No. /Post Graduate Candidate Can…"
+        },
+        {
+          "block_id": "block_11",
+          "kind": "table",
+          "location": "page 7, table 1",
+          "excerpt": "S. No. | Graduate level /Post Graduate level courses | Fresh Candidate | Renewal Candidate | Remarks 1 | ST Certificate/ PVTG Certificate | Yes | No | Caste Certificate is required to be signed and stamped by competent authority. 2 | Income Certificate | Yes | No | For fresh candidate: Income Certificate for the F.Y p…"
+        },
+        {
+          "block_id": "block_12",
+          "kind": "page_text",
+          "location": "page 8",
+          "excerpt": "officials may go through the “Institute Operational Manual” available on NSP Portal. ii. Nodal Officer from the Institutes will verify the physical documents of the applicant uploaded by him/her on the portal and ensure that the credentials uploaded in the portal are correct. It would be the responsibility of the Inst…"
+        },
+        {
+          "block_id": "block_13",
+          "kind": "page_text",
+          "location": "page 9",
+          "excerpt": "numbers, they are required to apply for Aadhaar Card, within a month of their registration/admission in the courses under the Scholarship. 4.1 Payment process: Payment of the Scholarship amount to ST students would be made in the following manner: Component I: The Scholarship amount payable for Computer & accessories,…"
+        }
+      ],
+      "elapsed_ms": 1519
+    }
+  ]
+}

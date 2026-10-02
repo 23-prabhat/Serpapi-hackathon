@@ -1,0 +1,35 @@
+schema_version: 1
+id: national-overseas-scholarship
+name: National Overseas Scholarship for SC and Other Eligible Categories
+provider: Ministry of Social Justice and Empowerment
+onboarding_status: phase0_selected
+supported_cycles:
+  - "2026-27"
+application_types:
+  - fresh
+locale:
+  country: IN
+  comparison_timezone: Asia/Kolkata
+sources:
+  - id: nos-portal
+    host: nosmsje.gov.in
+    path_prefixes:
+      - /public/
+      - /downloads
+    role: issuer_portal
+    may_establish:
+      - deadline
+      - correction_window
+      - eligibility
+      - portal_status_at_observation
+  - id: nos-ministry-documents
+    host: socialjustice.gov.in
+    path_prefixes:
+      - /writereaddata/UploadFile/
+    role: issuer_document
+    may_establish:
+      - eligibility
+      - application_process
+review_notes:
+  - The four-day correction window permits edits only and is not a new-registration extension.
+  - The 2026-27 first round is historical as of the Phase 0 reference date.

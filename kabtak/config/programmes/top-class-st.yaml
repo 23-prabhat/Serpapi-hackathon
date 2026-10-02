@@ -1,0 +1,28 @@
+schema_version: 1
+id: top-class-st
+name: National Fellowship and Scholarship for Higher Education of ST Students
+provider: Ministry of Tribal Affairs
+onboarding_status: phase0_selected
+supported_cycles:
+  - "2026-27"
+application_types:
+  - fresh
+locale:
+  country: IN
+  comparison_timezone: Asia/Kolkata
+sources:
+  - id: top-class-st-nsp
+    host: scholarships.gov.in
+    path_prefixes:
+      - /All-Scholarships
+      - /public/schemeGuidelines/tribalfellowshipguideline.pdf
+      - /public/schemeGuidelines/tribalfellowshipfaq.pdf
+    role: application_portal
+    may_establish:
+      - deadline
+      - verification_deadline
+      - eligibility
+      - portal_status_at_observation
+review_notes:
+  - NSP calls this the former Top Class Education for Scheduled Tribe Students scheme.
+  - Student, defective-application, institute, and administrative dates must stay separate.

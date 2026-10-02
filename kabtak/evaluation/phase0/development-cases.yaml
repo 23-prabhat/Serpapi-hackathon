@@ -1,0 +1,98 @@
+schema_version: 1
+reference_time: "2026-10-02T00:00:00+05:30"
+cases:
+  - id: nmmss-2026-actor-separation
+    programme_id: nmmss
+    academic_year: "2026-27"
+    application_type: unknown
+    source_ids: [nmmss-2026-extension-html]
+    expected:
+      deadline_resolution: supported
+      selected_deadline:
+        actor: student
+        action: submit
+        date: "2026-10-31"
+      other_deadlines:
+        - {actor: institution, action: verify, date: "2026-11-15"}
+        - {actor: administrator, action: verify, date: "2026-11-30"}
+      amendment: explicit_extension
+    evidence_locator: Revised schedule table in the PIB release dated 2026-10-01.
+
+  - id: nmmss-2025-historical-extension
+    programme_id: nmmss
+    academic_year: "2025-26"
+    application_type: unknown
+    source_ids: [nmmss-2025-extension-html]
+    expected:
+      deadline_resolution: supported
+      selected_deadline:
+        actor: student
+        action: submit
+        date: "2025-09-30"
+      other_deadlines:
+        - {actor: institution, action: verify, date: "2025-10-15"}
+        - {actor: administrator, action: verify, date: "2025-10-31"}
+      timing: date_passed
+    evidence_locator: Opening paragraphs and the L1/L2 verification paragraph in the official PDF.
+
+  - id: nos-2026-correction-is-not-submission
+    programme_id: national-overseas-scholarship
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [nos-2026-portal-html, nos-2026-guidelines-pdf]
+    expected:
+      deadline_resolution: insufficient
+      selected_deadline: null
+      coverage: partial
+      recognized_actions:
+        - {actor: student, action: submit, duration_days: 40}
+        - {actor: student, action: correct, duration_days: 4}
+      correction_allows_new_registration: false
+      limitation: The portal with exact first-round dates timed out during direct retrieval.
+    evidence_locator: Page 4-5 of the guidelines separates application periods from correction periods.
+
+  - id: pm-usp-2026-renewal-conflict
+    programme_id: pm-usp-csss
+    academic_year: "2026-27"
+    application_type: renewal
+    source_ids: [pm-usp-2026-nsp-html, pm-usp-2026-announcement-html]
+    expected:
+      deadline_resolution: conflicting
+      selected_deadline: null
+      candidate_dates: ["2026-09-30", "2026-10-31"]
+      reason: No captured dated amendment currently establishes which NSP rendering supersedes the other.
+    evidence_locator: NSP announcement and scheme catalogue render different renewal student deadlines.
+
+  - id: pragati-2026-deadline-roles
+    programme_id: aicte-pragati
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [pragati-2026-nsp-html]
+    expected:
+      deadline_resolution: supported
+      selected_deadline:
+        actor: student
+        action: submit
+        date: "2026-10-31"
+      other_deadlines:
+        - {actor: student, action: correct, date: "2026-11-15"}
+        - {actor: institution, action: verify, date: "2026-11-15"}
+        - {actor: administrator, action: verify, date: "2026-11-30"}
+    evidence_locator: AICTE Pragati entry in the 2026-27 NSP scheme catalogue.
+
+  - id: top-class-st-2026-deadline-roles
+    programme_id: top-class-st
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [top-class-st-2026-nsp-html, top-class-st-guidelines-pdf]
+    expected:
+      deadline_resolution: supported
+      selected_deadline:
+        actor: student
+        action: submit
+        date: "2026-10-31"
+      other_deadlines:
+        - {actor: student, action: correct, date: "2026-11-15"}
+        - {actor: institution, action: verify, date: "2026-11-15"}
+        - {actor: administrator, action: verify, date: "2026-11-30"}
+    evidence_locator: Ministry of Tribal Affairs scheme card in the 2026-27 NSP catalogue.

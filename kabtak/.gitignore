@@ -13,6 +13,11 @@ node_modules/
 
 # testing
 coverage/
+.coverage.*
+coverage.xml
+playwright-report/
+test-results/
+blob-report/
 
 # next.js
 .next/
@@ -20,12 +25,24 @@ out/
 
 # production
 build/
+dist/
+*.egg-info/
 
 # misc
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 *.pem
+*.key
+*.p12
+*.pfx
 
 # debug
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -33,6 +50,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+!**/.env.example
 
 # vercel
 .vercel
@@ -40,3 +59,26 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+.hypothesis/
+.venv/
+htmlcov/
+.coverage
+
+# backend runtime data
+data/*
+!data/.gitkeep
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-*

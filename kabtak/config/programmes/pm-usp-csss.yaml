@@ -1,0 +1,37 @@
+schema_version: 1
+id: pm-usp-csss
+name: PM-USP Central Sector Scheme of Scholarship for College and University Students
+provider: Ministry of Education, Department of Higher Education
+onboarding_status: phase0_selected
+supported_cycles:
+  - "2025-26"
+  - "2026-27"
+application_types:
+  - fresh
+  - renewal
+locale:
+  country: IN
+  comparison_timezone: Asia/Kolkata
+sources:
+  - id: pm-usp-moe-documents
+    host: education.gov.in
+    path_prefixes:
+      - /sites/upload_files/mhrd/files/upload_document/
+    role: issuer_document
+    may_establish:
+      - eligibility
+      - required_documents
+      - application_type
+  - id: pm-usp-nsp
+    host: scholarships.gov.in
+    path_prefixes:
+      - /All-Scholarships
+      - /ViewMoreAnnouncement
+    role: application_portal
+    may_establish:
+      - deadline
+      - verification_deadline
+      - portal_status_at_observation
+review_notes:
+  - Current NSP pages disagree on whether the renewal student deadline is September 30 or October 31, 2026.
+  - Until an explicit dated extension is found, this must resolve as a conflict rather than choosing the later date.
