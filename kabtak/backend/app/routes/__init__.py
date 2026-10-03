@@ -1,10 +1,11 @@
 """HTTP route registration."""
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.auth import require_internal_token
 from app.routes import checks, examples, health, programmes, runs
 
-api_router = APIRouter()
+api_router = APIRouter(dependencies=[Depends(require_internal_token)])
 api_router.include_router(health.router)
 api_router.include_router(programmes.router, prefix="/programmes", tags=["programmes"])
 api_router.include_router(checks.router, prefix="/checks", tags=["checks"])

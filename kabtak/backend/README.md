@@ -1,8 +1,7 @@
 # Kabtak backend
 
 This directory contains the shared Python codebase for the FastAPI process and
-the separate worker process. It intentionally starts with a thin health path;
-the remaining modules define the boundaries described in the system design.
+the separate database-backed worker described in the system design.
 
 ## Setup
 
@@ -26,8 +25,30 @@ Start the worker in a second terminal:
 uv run python -m app.worker
 ```
 
-The worker currently exposes its entry point and configuration boundary; queue
-claiming and processing are the next persistence implementation step.
+The worker claims one queued run at a time, sends a heartbeat, retrieves reviewed
+sources, performs structured extraction, and commits the report. Keep the API and
+worker running in separate terminals. A third terminal runs the frontend from
+`../frontend`:
+
+Search discovery is bounded by `MAX_SEARCH_ATTEMPTS`. A provider soft error or a
+result set containing only unreviewed domains advances to the next query. If every
+query is exhausted, the worker may use a cycle-specific official URL from the
+reviewed programme registry; the stored search record identifies this as
+`registry_fallback`.
+
+```bash
+pnpm dev
+```
+
+The browser is available at `http://127.0.0.1:3000`. `INTERNAL_API_TOKEN` must
+match in `backend/.env` and `frontend/.env.local`.
+
+When an API schema changes, refresh the generated frontend contract:
+
+```bash
+uv run python scripts/export_openapi.py
+cd ../frontend && pnpm generate:api
+```
 
 ## Checks
 
@@ -37,5 +58,5 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
-Live credentials are optional for the scaffold. Keep secrets in `.env`; only
-`.env.example` is committed.
+The live Phase 1 path requires `SERPAPI_API_KEY` and a Groq `LLM_API_KEY`. Keep
+secrets in `.env`; only `.env.example` is committed.

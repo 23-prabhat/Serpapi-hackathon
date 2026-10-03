@@ -1,8 +1,11 @@
 """Check request and response contracts."""
 
+from datetime import datetime
 from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+
+from app.schemas.runs import RunRead
 
 
 class ApplicationType(StrEnum):
@@ -28,7 +31,7 @@ class CheckCreate(BaseModel):
     academic_year: str = Field(pattern=r"^\d{4}-\d{2}$")
     application_type: ApplicationType
     notice_url: HttpUrl | None = None
-    applicant_group: str | None = None
+    applicant_group: str | None = Field(default=None, max_length=200)
     profile: ApplicantProfile | None = None
     save: bool = False
 
@@ -38,3 +41,14 @@ class CheckAccepted(BaseModel):
     run_id: str
     status: str = "queued"
     poll_after_ms: int = 2_000
+
+
+class CheckRead(BaseModel):
+    id: str
+    programme_id: str
+    academic_year: str
+    application_type: ApplicationType
+    notice_url: str | None
+    saved_at: datetime | None
+    created_at: datetime
+    runs: list[RunRead]

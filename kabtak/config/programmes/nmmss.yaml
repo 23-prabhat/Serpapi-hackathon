@@ -12,6 +12,11 @@ application_types:
 locale:
   country: IN
   comparison_timezone: Asia/Kolkata
+reviewed_discovery_urls:
+  "2025-26":
+    - https://www.pib.gov.in/PressReleasePage.aspx?PRID=2167076&lang=2&reg=48
+  "2026-27":
+    - https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48
 sources:
   - id: nmmss-pib-current
     host: pib.gov.in

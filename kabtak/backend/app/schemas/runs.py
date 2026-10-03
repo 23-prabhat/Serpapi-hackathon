@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -32,3 +33,5 @@ class RunRead(BaseModel):
     created_at: datetime
     started_at: datetime | None = None
     finished_at: datetime | None = None
+    heartbeat_at: datetime | None = None
+    error: dict[str, Any] | None = None

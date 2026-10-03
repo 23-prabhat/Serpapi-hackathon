@@ -1,0 +1,1250 @@
+{
+  "components": {
+    "schemas": {
+      "ApplicantProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_family_income_inr": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Family Income Inr"
+          },
+          "course": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Course"
+          },
+          "domicile_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Domicile State"
+          },
+          "study_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Level"
+          },
+          "study_year": {
+            "anyOf": [
+              {
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Study Year"
+          }
+        },
+        "title": "ApplicantProfile",
+        "type": "object"
+      },
+      "ApplicationType": {
+        "enum": [
+          "fresh",
+          "renewal",
+          "unknown"
+        ],
+        "title": "ApplicationType",
+        "type": "string"
+      },
+      "CheckAccepted": {
+        "properties": {
+          "check_id": {
+            "title": "Check Id",
+            "type": "string"
+          },
+          "poll_after_ms": {
+            "default": 2000,
+            "title": "Poll After Ms",
+            "type": "integer"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "default": "queued",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "check_id",
+          "run_id"
+        ],
+        "title": "CheckAccepted",
+        "type": "object"
+      },
+      "CheckCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "academic_year": {
+            "pattern": "^\\d{4}-\\d{2}$",
+            "title": "Academic Year",
+            "type": "string"
+          },
+          "applicant_group": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicant Group"
+          },
+          "application_type": {
+            "$ref": "#/components/schemas/ApplicationType"
+          },
+          "notice_url": {
+            "anyOf": [
+              {
+                "format": "uri",
+                "maxLength": 2083,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice Url"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicantProfile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "programme_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Programme Id",
+            "type": "string"
+          },
+          "save": {
+            "default": false,
+            "title": "Save",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "programme_id",
+          "academic_year",
+          "application_type"
+        ],
+        "title": "CheckCreate",
+        "type": "object"
+      },
+      "CheckRead": {
+        "properties": {
+          "academic_year": {
+            "title": "Academic Year",
+            "type": "string"
+          },
+          "application_type": {
+            "$ref": "#/components/schemas/ApplicationType"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "notice_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notice Url"
+          },
+          "programme_id": {
+            "title": "Programme Id",
+            "type": "string"
+          },
+          "runs": {
+            "items": {
+              "$ref": "#/components/schemas/RunRead"
+            },
+            "title": "Runs",
+            "type": "array"
+          },
+          "saved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Saved At"
+          }
+        },
+        "required": [
+          "id",
+          "programme_id",
+          "academic_year",
+          "application_type",
+          "notice_url",
+          "saved_at",
+          "created_at",
+          "runs"
+        ],
+        "title": "CheckRead",
+        "type": "object"
+      },
+      "Coverage": {
+        "enum": [
+          "complete_for_attempted_scope",
+          "partial"
+        ],
+        "title": "Coverage",
+        "type": "string"
+      },
+      "DeadlineAction": {
+        "enum": [
+          "submit",
+          "correct",
+          "verify",
+          "other",
+          "unknown"
+        ],
+        "title": "DeadlineAction",
+        "type": "string"
+      },
+      "DeadlineActor": {
+        "enum": [
+          "student",
+          "institution",
+          "administrator",
+          "unknown"
+        ],
+        "title": "DeadlineActor",
+        "type": "string"
+      },
+      "DeadlineRead": {
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/DeadlineAction"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/DeadlineActor"
+          },
+          "comparison_timezone": {
+            "title": "Comparison Timezone",
+            "type": "string"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone"
+          },
+          "timing": {
+            "$ref": "#/components/schemas/DeadlineTiming"
+          }
+        },
+        "required": [
+          "actor",
+          "action",
+          "date",
+          "comparison_timezone",
+          "timing",
+          "evidence_refs"
+        ],
+        "title": "DeadlineRead",
+        "type": "object"
+      },
+      "DeadlineResolution": {
+        "enum": [
+          "supported",
+          "conflicting",
+          "insufficient"
+        ],
+        "title": "DeadlineResolution",
+        "type": "string"
+      },
+      "DeadlineTiming": {
+        "enum": [
+          "date_ahead",
+          "due_today_time_unknown",
+          "date_passed",
+          "unknown"
+        ],
+        "title": "DeadlineTiming",
+        "type": "string"
+      },
+      "EvidenceRead": {
+        "properties": {
+          "block_id": {
+            "title": "Block Id",
+            "type": "string"
+          },
+          "location": {
+            "title": "Location",
+            "type": "string"
+          },
+          "publisher_role": {
+            "title": "Publisher Role",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version_id",
+          "block_id",
+          "location",
+          "text",
+          "source_url",
+          "publisher_role"
+        ],
+        "title": "EvidenceRead",
+        "type": "object"
+      },
+      "EvidenceReference": {
+        "additionalProperties": false,
+        "properties": {
+          "block_id": {
+            "title": "Block Id",
+            "type": "string"
+          },
+          "version_id": {
+            "title": "Version Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version_id",
+          "block_id"
+        ],
+        "title": "EvidenceReference",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "properties": {
+          "database_ready": {
+            "title": "Database Ready",
+            "type": "boolean"
+          },
+          "live_extraction_enabled": {
+            "title": "Live Extraction Enabled",
+            "type": "boolean"
+          },
+          "live_search_enabled": {
+            "title": "Live Search Enabled",
+            "type": "boolean"
+          },
+          "replay_enabled": {
+            "title": "Replay Enabled",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "degraded"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "worker_heartbeat_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worker Heartbeat At"
+          },
+          "worker_ready": {
+            "title": "Worker Ready",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "status",
+          "database_ready",
+          "worker_ready",
+          "worker_heartbeat_at",
+          "live_search_enabled",
+          "live_extraction_enabled",
+          "replay_enabled"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "ProgrammeRead": {
+        "properties": {
+          "application_types": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Application Types",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "support_status": {
+            "title": "Support Status",
+            "type": "string"
+          },
+          "supported_cycles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Supported Cycles",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "provider",
+          "supported_cycles",
+          "application_types",
+          "support_status"
+        ],
+        "title": "ProgrammeRead",
+        "type": "object"
+      },
+      "ReportProvenance": {
+        "properties": {
+          "input_mode": {
+            "title": "Input Mode",
+            "type": "string"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "prompt_hash": {
+            "title": "Prompt Hash",
+            "type": "string"
+          },
+          "rules_version": {
+            "title": "Rules Version",
+            "type": "string"
+          },
+          "schema_version": {
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rules_version",
+          "schema_version",
+          "input_mode",
+          "model_id",
+          "prompt_hash"
+        ],
+        "title": "ReportProvenance",
+        "type": "object"
+      },
+      "ReportRead": {
+        "additionalProperties": false,
+        "properties": {
+          "conditions": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Conditions",
+            "type": "array"
+          },
+          "conflicts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "coverage": {
+            "$ref": "#/components/schemas/Coverage"
+          },
+          "deadline_resolution": {
+            "$ref": "#/components/schemas/DeadlineResolution"
+          },
+          "eligibility": {
+            "title": "Eligibility",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "other_deadlines": {
+            "items": {
+              "$ref": "#/components/schemas/DeadlineRead"
+            },
+            "title": "Other Deadlines",
+            "type": "array"
+          },
+          "portal_status": {
+            "title": "Portal Status",
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/ReportProvenance"
+          },
+          "reference_time": {
+            "format": "date-time",
+            "title": "Reference Time",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "scope": {
+            "$ref": "#/components/schemas/ScopeRead"
+          },
+          "student_deadline": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DeadlineRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "run_id",
+          "mode",
+          "reference_time",
+          "coverage",
+          "scope",
+          "deadline_resolution",
+          "student_deadline",
+          "portal_status",
+          "eligibility",
+          "provenance"
+        ],
+        "title": "ReportRead",
+        "type": "object"
+      },
+      "RunRead": {
+        "properties": {
+          "check_id": {
+            "title": "Check Id",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "heartbeat_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heartbeat At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "stage": {
+            "$ref": "#/components/schemas/RunStage"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RunStatus"
+          }
+        },
+        "required": [
+          "id",
+          "check_id",
+          "status",
+          "stage",
+          "created_at"
+        ],
+        "title": "RunRead",
+        "type": "object"
+      },
+      "RunStage": {
+        "enum": [
+          "queued",
+          "searching",
+          "fetching",
+          "extracting",
+          "checking",
+          "finalizing",
+          "finished"
+        ],
+        "title": "RunStage",
+        "type": "string"
+      },
+      "RunStatus": {
+        "enum": [
+          "queued",
+          "running",
+          "completed",
+          "failed",
+          "interrupted"
+        ],
+        "title": "RunStatus",
+        "type": "string"
+      },
+      "ScopeRead": {
+        "properties": {
+          "academic_year": {
+            "title": "Academic Year",
+            "type": "string"
+          },
+          "application_type": {
+            "title": "Application Type",
+            "type": "string"
+          },
+          "programme_id": {
+            "title": "Programme Id",
+            "type": "string"
+          },
+          "programme_name": {
+            "title": "Programme Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "programme_id",
+          "programme_name",
+          "academic_year",
+          "application_type"
+        ],
+        "title": "ScopeRead",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Deadline and evidence checking API.",
+    "title": "Kabtak API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/v1/checks": {
+      "post": {
+        "operationId": "create_check_v1_checks_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Check",
+        "tags": [
+          "checks"
+        ]
+      }
+    },
+    "/v1/checks/{check_id}": {
+      "get": {
+        "operationId": "read_check_v1_checks__check_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "check_id",
+            "required": true,
+            "schema": {
+              "title": "Check Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Check",
+        "tags": [
+          "checks"
+        ]
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "health_v1_health_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/v1/programmes": {
+      "get": {
+        "operationId": "list_programmes_v1_programmes_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProgrammeRead"
+                  },
+                  "title": "Response List Programmes V1 Programmes Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Programmes",
+        "tags": [
+          "programmes"
+        ]
+      }
+    },
+    "/v1/runs/{run_id}": {
+      "get": {
+        "operationId": "read_run_v1_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Run",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/v1/runs/{run_id}/evidence/{version_id}/{block_id}": {
+      "get": {
+        "operationId": "read_evidence_v1_runs__run_id__evidence__version_id___block_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version_id",
+            "required": true,
+            "schema": {
+              "title": "Version Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "block_id",
+            "required": true,
+            "schema": {
+              "title": "Block Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Evidence",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/v1/runs/{run_id}/report": {
+      "get": {
+        "operationId": "read_report_v1_runs__run_id__report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Report",
+        "tags": [
+          "runs"
+        ]
+      }
+    }
+  }
+}
