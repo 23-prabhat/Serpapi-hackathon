@@ -44,6 +44,13 @@ def test_search_continues_after_unreviewed_results_and_soft_error(
         httpx.Response(
             200,
             json={
+                "search_metadata": {"id": "four", "status": "Success"},
+                "organic_results": [],
+            },
+        ),
+        httpx.Response(
+            200,
+            json={
                 "search_metadata": {"id": "two", "status": "Success"},
                 "error": "Google hasn't returned any results for this query.",
             },
@@ -77,10 +84,58 @@ def test_search_continues_after_unreviewed_results_and_soft_error(
         "search-regression",
     )
 
-    assert outcome.metadata["attempt_count"] == 3
+    assert outcome.metadata["attempt_count"] == 4
     assert outcome.metadata["discovery_mode"] == "search"
     assert outcome.urls == ["https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657"]
     assert all(item["as_sitesearch"] == "pib.gov.in" for item in client.parameters)
+
+
+def test_search_retains_original_and_amendment_results_across_queries(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    original = "https://www.pib.gov.in/PressReleasePage.aspx?PRID=original"
+    amendment = "https://www.pib.gov.in/PressReleasePage.aspx?PRID=amendment"
+    responses = [
+        httpx.Response(
+            200,
+            json={
+                "organic_results": [
+                    {
+                        "title": "NMMSS 2026-27 application deadline",
+                        "link": original,
+                        "snippet": "Submission of applications closes October 15, 2026.",
+                    }
+                ]
+            },
+        ),
+        httpx.Response(
+            200,
+            json={
+                "organic_results": [
+                    {
+                        "title": "NMMSS 2026-27 application deadline extended",
+                        "link": amendment,
+                        "snippet": "Applications extended to October 31, 2026.",
+                    }
+                ]
+            },
+        ),
+    ]
+    monkeypatch.setattr(search.httpx, "Client", fake_client(responses))
+    settings = Settings(
+        serpapi_api_key="test-key",
+        data_dir=tmp_path,
+        max_search_attempts=2,
+    )
+
+    outcome = search.search_nmmss(
+        settings,
+        load_registry()["nmmss"],
+        "2026-27",
+        "multi-source-search",
+    )
+
+    assert outcome.urls == [original, amendment]
 
 
 def test_search_uses_reviewed_cycle_fallback_after_bounded_attempts(

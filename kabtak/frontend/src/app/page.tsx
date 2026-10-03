@@ -1,16 +1,12 @@
-import { CheckExperience } from "@/components/check-experience";
+import Link from "next/link";
 
-export default function Home() {
+import { CheckForm } from "@/components/check-form";
+
+export default async function Home(props: PageProps<"/">) {
+  const searchParams = await props.searchParams;
+  const programme = typeof searchParams.programme === "string" ? searchParams.programme : undefined;
   return (
-    <main className="site-shell">
-      <header className="masthead">
-        <a className="wordmark" href="#top" aria-label="Kabtak home">
-          KABTAK<span>.</span>
-        </a>
-        <p className="masthead-note">Deadline checks with receipts</p>
-        <span className="phase-badge">PHASE 02</span>
-      </header>
-
+    <main>
       <section className="hero" id="top">
         <div>
           <p className="eyebrow">Scholarship deadline checker</p>
@@ -22,16 +18,14 @@ export default function Home() {
         </div>
         <p className="hero-copy">
           Kabtak searches reviewed public sources, separates student deadlines
-          from institution deadlines, and links every answer back to evidence.
+          from institution deadlines, and links every conclusion back to evidence.
+          <span className="hero-links">
+            <Link href="/discover">Browse the catalogue</Link>
+            <Link href="/examples">Try an offline example</Link>
+          </span>
         </p>
       </section>
-
-      <CheckExperience />
-
-      <footer className="footer">
-        <span>KABTAK / LOCAL-FIRST</span>
-        <span>VERIFY IMPORTANT DATES WITH THE SOURCE</span>
-      </footer>
+      <CheckForm initialProgrammeId={programme} />
     </main>
   );
 }

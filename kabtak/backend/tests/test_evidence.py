@@ -35,7 +35,8 @@ def populated_session(tmp_path) -> tuple[Session, str, str]:
     original_path = tmp_path / "source.html"
     blocks_path = tmp_path / "source.blocks.json"
     original_path.write_bytes(content)
-    block_text = "Student deadline: 31 October 2026"
+    block_text = "Student deadline: 31 October 2026. Income must not exceed INR 3,50,000."
+    revised_text = "The student deadline is revised to 15 November 2026."
     blocks_path.write_text(
         json.dumps(
             [
@@ -46,7 +47,15 @@ def populated_session(tmp_path) -> tuple[Session, str, str]:
                     "text": block_text,
                     "text_sha256": hashlib.sha256(block_text.encode()).hexdigest(),
                     "metadata": {},
-                }
+                },
+                {
+                    "block_id": "block_2",
+                    "kind": "p",
+                    "location": "section Amendment",
+                    "text": revised_text,
+                    "text_sha256": hashlib.sha256(revised_text.encode()).hexdigest(),
+                    "metadata": {},
+                },
             ]
         ),
         encoding="utf-8",
@@ -140,8 +149,49 @@ def test_report_evidence_is_bound_to_the_run_and_exact_source_version(tmp_path) 
         assert index[(version_id, "block_1")]["text"].startswith("Student deadline")
 
         with pytest.raises(InvalidExtractionError, match="outside"):
-            validate_report_evidence(session, run_id, report(version_id, block_id="block_2"))
+            validate_report_evidence(session, run_id, report(version_id, block_id="block_99"))
         with pytest.raises(InvalidExtractionError, match="does not occur"):
             validate_report_evidence(session, run_id, report(version_id, date="2026-11-15"))
+    finally:
+        session.close()
+
+
+def test_report_condition_evidence_is_bound_to_the_run(tmp_path) -> None:
+    session, run_id, version_id = populated_session(tmp_path)
+    value = report(version_id)
+    value["conditions"] = [
+        {
+            "source_text": "Income must not exceed INR 3,50,000.",
+            "evidence_refs": [{"version_id": version_id, "block_id": "block_1"}],
+            "children": [],
+        }
+    ]
+    try:
+        validate_report_evidence(session, run_id, value)
+        value["conditions"][0]["source_text"] = "A fabricated condition"
+        with pytest.raises(InvalidExtractionError, match="condition text"):
+            validate_report_evidence(session, run_id, value)
+    finally:
+        session.close()
+
+
+def test_amendment_dates_require_their_own_evidence_references(tmp_path) -> None:
+    session, run_id, version_id = populated_session(tmp_path)
+    value = report(version_id)
+    value["amendments"] = [
+        {
+            "previous_date": "2026-10-31",
+            "revised_date": "2026-11-15",
+            "previous_evidence_refs": [{"version_id": version_id, "block_id": "block_1"}],
+            "revised_evidence_refs": [{"version_id": version_id, "block_id": "block_2"}],
+        }
+    ]
+    try:
+        validate_report_evidence(session, run_id, value)
+        value["amendments"][0]["revised_evidence_refs"] = [
+            {"version_id": version_id, "block_id": "block_1"}
+        ]
+        with pytest.raises(InvalidExtractionError, match="revised amendment date"):
+            validate_report_evidence(session, run_id, value)
     finally:
         session.close()

@@ -44,7 +44,9 @@ class Check(Base):
     notice_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     saved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    expires_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), index=True, nullable=True
+    )
 
     programme: Mapped[Programme] = relationship(back_populates="checks")
     runs: Mapped[list[Run]] = relationship(

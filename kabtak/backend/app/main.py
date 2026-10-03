@@ -1,5 +1,7 @@
 """FastAPI application entry point."""
 
+import asyncio
+import contextlib
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -10,7 +12,17 @@ from sqlalchemy.exc import OperationalError
 from app.db.session import SessionLocal
 from app.errors import APIError, api_error_handler
 from app.routes import api_router
+from app.services.maintenance import maintenance_sweep
 from app.services.registry import seed_programmes
+
+
+async def _maintenance_loop() -> None:
+    while True:
+        try:
+            await asyncio.to_thread(maintenance_sweep)
+        except Exception:  # noqa: BLE001 - maintenance retries on the next interval.
+            logging.getLogger(__name__).exception("maintenance_sweep_failed")
+        await asyncio.sleep(15)
 
 
 @asynccontextmanager
@@ -22,7 +34,13 @@ async def lifespan(_application: FastAPI) -> AsyncIterator[None]:
         logging.getLogger(__name__).warning(
             "Database is not migrated; run 'uv run alembic upgrade head'."
         )
-    yield
+    maintenance = asyncio.create_task(_maintenance_loop())
+    try:
+        yield
+    finally:
+        maintenance.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await maintenance
 
 
 def create_app() -> FastAPI:

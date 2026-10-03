@@ -245,6 +245,7 @@ export function CheckExperience() {
             <p className="answer-label">Student submission deadline</p>
             <h3>{deadline ? formatDeadline(deadline) : "Not established"}</h3>
             {deadline && <p className="deadline-meta">{pretty(deadline.timing)} · {deadline.comparison_timezone}</p>}
+            <p className="deadline-meta">{report.summary}</p>
             <div className="answer-facts">
               <div><span>Portal</span><strong>{pretty(report.portal_status)}</strong></div>
               <div><span>Eligibility</span><strong>{pretty(report.eligibility)}</strong></div>

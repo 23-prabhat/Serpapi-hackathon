@@ -43,12 +43,23 @@ class CheckAccepted(BaseModel):
     poll_after_ms: int = 2_000
 
 
+class CheckUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    save: bool
+
+
 class CheckRead(BaseModel):
     id: str
     programme_id: str
+    programme_name: str
     academic_year: str
     application_type: ApplicationType
+    applicant_group: str | None
+    profile: ApplicantProfile | None
     notice_url: str | None
     saved_at: datetime | None
     created_at: datetime
+    expires_at: datetime | None
+    latest_completed_run_id: str | None
     runs: list[RunRead]

@@ -78,19 +78,87 @@ def validate_report_evidence(
     if report_json.get("student_deadline"):
         deadlines.append(report_json["student_deadline"])
     deadlines.extend(report_json.get("other_deadlines", []))
+    for conflict in report_json.get("conflicts", []):
+        deadlines.extend(conflict.get("candidates", []))
     for deadline in deadlines:
-        references = deadline.get("evidence_refs", [])
-        if not references:
-            raise InvalidExtractionError("A reported deadline has no evidence references")
-        cited_blocks: list[dict[str, Any]] = []
-        for reference in references:
-            key = (reference.get("version_id"), reference.get("block_id"))
-            block = block_index.get(key)
-            if block is None:
-                raise InvalidExtractionError(
-                    "Report cited a block outside the document versions used by this run"
-                )
-            cited_blocks.append(block)
+        cited_blocks = _resolve_references(deadline.get("evidence_refs", []), block_index)
         if not any(date_occurs_in_text(deadline["date"], block["text"]) for block in cited_blocks):
             raise InvalidExtractionError("Reported date does not occur in its cited evidence")
+
+    for amendment in report_json.get("amendments", []):
+        previous_blocks = _resolve_references(
+            amendment.get("previous_evidence_refs", []), block_index
+        )
+        revised_blocks = _resolve_references(
+            amendment.get("revised_evidence_refs", []), block_index
+        )
+        if not any(
+            date_occurs_in_text(amendment["previous_date"], block["text"])
+            for block in previous_blocks
+        ):
+            raise InvalidExtractionError(
+                "Reported previous amendment date does not occur in its cited evidence"
+            )
+        if not any(
+            date_occurs_in_text(amendment["revised_date"], block["text"])
+            for block in revised_blocks
+        ):
+            raise InvalidExtractionError(
+                "Reported revised amendment date does not occur in its cited evidence"
+            )
+
+    for condition in report_json.get("conditions", []):
+        _validate_condition(condition, block_index)
+    for requirement in report_json.get("required_documents", []):
+        _validate_sourced_text(requirement, block_index, "Required-document")
+    for link in report_json.get("application_links", []):
+        cited_blocks = _validate_sourced_text(link, block_index, "Application-link")
+        if not any(str(link.get("url", "")) in block["text"] for block in cited_blocks):
+            raise InvalidExtractionError("Application link does not occur in cited evidence")
     return block_index
+
+
+def _resolve_references(
+    references: list[dict[str, Any]],
+    block_index: dict[tuple[str, str], dict[str, Any]],
+) -> list[dict[str, Any]]:
+    if not references:
+        raise InvalidExtractionError("A reported conclusion has no evidence references")
+    cited_blocks: list[dict[str, Any]] = []
+    for reference in references:
+        key = (reference.get("version_id"), reference.get("block_id"))
+        block = block_index.get(key)
+        if block is None:
+            raise InvalidExtractionError(
+                "Report cited a block outside the document versions used by this run"
+            )
+        cited_blocks.append(block)
+    return cited_blocks
+
+
+def _validate_condition(
+    condition: dict[str, Any],
+    block_index: dict[tuple[str, str], dict[str, Any]],
+) -> None:
+    cited_blocks = _resolve_references(condition.get("evidence_refs", []), block_index)
+    source_text = " ".join(str(condition.get("source_text", "")).casefold().split())
+    if not source_text or not any(
+        source_text in " ".join(block["text"].casefold().split()) for block in cited_blocks
+    ):
+        raise InvalidExtractionError("Reported condition text does not occur in cited evidence")
+    for child in condition.get("children", []):
+        _validate_condition(child, block_index)
+
+
+def _validate_sourced_text(
+    item: dict[str, Any],
+    block_index: dict[tuple[str, str], dict[str, Any]],
+    label: str,
+) -> list[dict[str, Any]]:
+    cited_blocks = _resolve_references(item.get("evidence_refs", []), block_index)
+    source_text = " ".join(str(item.get("source_text", "")).casefold().split())
+    if not source_text or not any(
+        source_text in " ".join(block["text"].casefold().split()) for block in cited_blocks
+    ):
+        raise InvalidExtractionError(f"{label} text does not occur in cited evidence")
+    return cited_blocks

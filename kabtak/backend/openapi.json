@@ -65,6 +65,33 @@
         "title": "ApplicantProfile",
         "type": "object"
       },
+      "ApplicationLinkRead": {
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "source_text": {
+            "title": "Source Text",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "source_text",
+          "evidence_refs"
+        ],
+        "title": "ApplicationLinkRead",
+        "type": "object"
+      },
       "ApplicationType": {
         "enum": [
           "fresh",
@@ -175,6 +202,17 @@
             "title": "Academic Year",
             "type": "string"
           },
+          "applicant_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicant Group"
+          },
           "application_type": {
             "$ref": "#/components/schemas/ApplicationType"
           },
@@ -183,9 +221,32 @@
             "title": "Created At",
             "type": "string"
           },
+          "expires_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At"
+          },
           "id": {
             "title": "Id",
             "type": "string"
+          },
+          "latest_completed_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Completed Run Id"
           },
           "notice_url": {
             "anyOf": [
@@ -198,8 +259,22 @@
             ],
             "title": "Notice Url"
           },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicantProfile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "programme_id": {
             "title": "Programme Id",
+            "type": "string"
+          },
+          "programme_name": {
+            "title": "Programme Name",
             "type": "string"
           },
           "runs": {
@@ -225,14 +300,33 @@
         "required": [
           "id",
           "programme_id",
+          "programme_name",
           "academic_year",
           "application_type",
+          "applicant_group",
+          "profile",
           "notice_url",
           "saved_at",
           "created_at",
+          "expires_at",
+          "latest_completed_run_id",
           "runs"
         ],
         "title": "CheckRead",
+        "type": "object"
+      },
+      "CheckUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "save": {
+            "title": "Save",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "save"
+        ],
+        "title": "CheckUpdate",
         "type": "object"
       },
       "Coverage": {
@@ -339,9 +433,21 @@
           "date_ahead",
           "due_today_time_unknown",
           "date_passed",
+          "before_cutoff",
+          "after_cutoff",
           "unknown"
         ],
         "title": "DeadlineTiming",
+        "type": "string"
+      },
+      "EligibilityResolution": {
+        "enum": [
+          "meets_checked_conditions",
+          "condition_not_met",
+          "more_information_needed",
+          "not_assessed"
+        ],
+        "title": "EligibilityResolution",
         "type": "string"
       },
       "EvidenceRead": {
@@ -437,6 +543,117 @@
         "title": "EvidenceReference",
         "type": "object"
       },
+      "ExampleRead": {
+        "properties": {
+          "academic_year": {
+            "title": "Academic Year",
+            "type": "string"
+          },
+          "application_type": {
+            "title": "Application Type",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "expected_student_deadline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Student Deadline"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "programme_name": {
+            "title": "Programme Name",
+            "type": "string"
+          },
+          "reference_time": {
+            "format": "date-time",
+            "title": "Reference Time",
+            "type": "string"
+          },
+          "source_url": {
+            "title": "Source Url",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "programme_name",
+          "academic_year",
+          "application_type",
+          "reference_time",
+          "expected_student_deadline",
+          "source_url"
+        ],
+        "title": "ExampleRead",
+        "type": "object"
+      },
+      "FactChangeRead": {
+        "properties": {
+          "after": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After"
+          },
+          "after_evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "title": "After Evidence",
+            "type": "array"
+          },
+          "before": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Before"
+          },
+          "before_evidence": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "title": "Before Evidence",
+            "type": "array"
+          },
+          "fact_key": {
+            "title": "Fact Key",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "fact_key"
+        ],
+        "title": "FactChangeRead",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -518,6 +735,18 @@
             "title": "Id",
             "type": "string"
           },
+          "last_checked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Checked At"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -585,6 +814,21 @@
       "ReportRead": {
         "additionalProperties": false,
         "properties": {
+          "amendments": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Amendments",
+            "type": "array"
+          },
+          "application_links": {
+            "items": {
+              "$ref": "#/components/schemas/ApplicationLinkRead"
+            },
+            "title": "Application Links",
+            "type": "array"
+          },
           "conditions": {
             "items": {
               "additionalProperties": true,
@@ -608,8 +852,7 @@
             "$ref": "#/components/schemas/DeadlineResolution"
           },
           "eligibility": {
-            "title": "Eligibility",
-            "type": "string"
+            "$ref": "#/components/schemas/EligibilityResolution"
           },
           "limitations": {
             "items": {
@@ -641,6 +884,13 @@
             "title": "Reference Time",
             "type": "string"
           },
+          "required_documents": {
+            "items": {
+              "$ref": "#/components/schemas/RequiredDocumentRead"
+            },
+            "title": "Required Documents",
+            "type": "array"
+          },
           "run_id": {
             "title": "Run Id",
             "type": "string"
@@ -657,6 +907,10 @@
                 "type": "null"
               }
             ]
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
           }
         },
         "required": [
@@ -667,11 +921,96 @@
           "scope",
           "deadline_resolution",
           "student_deadline",
+          "summary",
           "portal_status",
           "eligibility",
           "provenance"
         ],
         "title": "ReportRead",
+        "type": "object"
+      },
+      "RequiredDocumentRead": {
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "minItems": 1,
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "source_text": {
+            "title": "Source Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_text",
+          "evidence_refs"
+        ],
+        "title": "RequiredDocumentRead",
+        "type": "object"
+      },
+      "RunComparisonRead": {
+        "properties": {
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/FactChangeRead"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "classification": {
+            "title": "Classification",
+            "type": "string"
+          },
+          "outcome_changed": {
+            "title": "Outcome Changed",
+            "type": "boolean"
+          },
+          "previous_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Run Id"
+          },
+          "profile_changed": {
+            "title": "Profile Changed",
+            "type": "boolean"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "software_versions_changed": {
+            "title": "Software Versions Changed",
+            "type": "boolean"
+          },
+          "source_versions_changed": {
+            "title": "Source Versions Changed",
+            "type": "boolean"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "previous_run_id",
+          "classification",
+          "summary",
+          "outcome_changed",
+          "source_versions_changed",
+          "profile_changed",
+          "software_versions_changed"
+        ],
+        "title": "RunComparisonRead",
         "type": "object"
       },
       "RunRead": {
@@ -725,6 +1064,31 @@
             "title": "Id",
             "type": "string"
           },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "reference_time": {
+            "format": "date-time",
+            "title": "Reference Time",
+            "type": "string"
+          },
+          "report_available": {
+            "default": false,
+            "title": "Report Available",
+            "type": "boolean"
+          },
+          "retry_of_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retry Of Run Id"
+          },
           "stage": {
             "$ref": "#/components/schemas/RunStage"
           },
@@ -747,8 +1111,10 @@
         "required": [
           "id",
           "check_id",
+          "kind",
           "status",
           "stage",
+          "reference_time",
           "created_at"
         ],
         "title": "RunRead",
@@ -783,6 +1149,17 @@
           "academic_year": {
             "title": "Academic Year",
             "type": "string"
+          },
+          "applicant_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicant Group"
           },
           "application_type": {
             "title": "Application Type",
@@ -856,6 +1233,73 @@
   "openapi": "3.1.0",
   "paths": {
     "/v1/checks": {
+      "get": {
+        "operationId": "list_checks_v1_checks_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "saved",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Saved"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CheckRead"
+                  },
+                  "title": "Response List Checks V1 Checks Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Checks",
+        "tags": [
+          "checks"
+        ]
+      },
       "post": {
         "operationId": "create_check_v1_checks_post",
         "parameters": [
@@ -931,6 +1375,55 @@
       }
     },
     "/v1/checks/{check_id}": {
+      "delete": {
+        "operationId": "delete_check_v1_checks__check_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "check_id",
+            "required": true,
+            "schema": {
+              "title": "Check Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Check",
+        "tags": [
+          "checks"
+        ]
+      },
       "get": {
         "operationId": "read_check_v1_checks__check_id__get",
         "parameters": [
@@ -985,6 +1478,273 @@
         "summary": "Read Check",
         "tags": [
           "checks"
+        ]
+      },
+      "patch": {
+        "operationId": "update_check_v1_checks__check_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "check_id",
+            "required": true,
+            "schema": {
+              "title": "Check Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Check",
+        "tags": [
+          "checks"
+        ]
+      }
+    },
+    "/v1/checks/{check_id}/refresh": {
+      "post": {
+        "operationId": "refresh_check_v1_checks__check_id__refresh_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "check_id",
+            "required": true,
+            "schema": {
+              "title": "Check Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Refresh Check",
+        "tags": [
+          "checks"
+        ]
+      }
+    },
+    "/v1/examples": {
+      "get": {
+        "operationId": "list_examples_v1_examples_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ExampleRead"
+                  },
+                  "title": "Response List Examples V1 Examples Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Examples",
+        "tags": [
+          "examples"
+        ]
+      }
+    },
+    "/v1/examples/{example_id}/replay": {
+      "post": {
+        "operationId": "replay_example_v1_examples__example_id__replay_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "example_id",
+            "required": true,
+            "schema": {
+              "title": "Example Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Replay Example",
+        "tags": [
+          "examples"
         ]
       }
     },
@@ -1148,6 +1908,64 @@
         ]
       }
     },
+    "/v1/runs/{run_id}/changes": {
+      "get": {
+        "operationId": "compare_run_v1_runs__run_id__changes_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunComparisonRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compare Run",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
     "/v1/runs/{run_id}/evidence/{version_id}/{block_id}": {
       "get": {
         "operationId": "read_evidence_v1_runs__run_id__evidence__version_id___block_id__get",
@@ -1277,6 +2095,80 @@
           }
         },
         "summary": "Read Report",
+        "tags": [
+          "runs"
+        ]
+      }
+    },
+    "/v1/runs/{run_id}/retry": {
+      "post": {
+        "operationId": "retry_run_v1_runs__run_id__retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Run",
         "tags": [
           "runs"
         ]

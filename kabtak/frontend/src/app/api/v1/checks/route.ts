@@ -1,5 +1,10 @@
 import { assertSameOrigin, backendRequest } from "@/lib/backend";
 
+export async function GET(request: Request) {
+  const query = new URL(request.url).search;
+  return backendRequest(`/v1/checks${query}`);
+}
+
 export async function POST(request: Request) {
   const originError = assertSameOrigin(request);
   if (originError) return originError;

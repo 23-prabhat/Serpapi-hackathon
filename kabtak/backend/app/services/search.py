@@ -82,9 +82,12 @@ def search_nmmss(
 
     year = academic_year.split("-")[0]
     queries = [
-        f'"NMMSS Scholarship Application Deadline Extended" {year}',
         f'NMMSS "{academic_year}" deadline',
-        f'"National Means-cum-Merit Scholarship Scheme" "{academic_year}" extension',
+        (
+            f'"National Means-cum-Merit Scholarship Scheme" "{academic_year}" '
+            "extension amendment revised"
+        ),
+        f'"NMMSS Scholarship Application Deadline Extended" {year}',
         f"NMMSS scholarship deadline {year}",
     ][: settings.max_search_attempts]
     requested_at = datetime.now(UTC)
@@ -179,8 +182,6 @@ def search_nmmss(
                 reviewed_result_count=reviewed_count,
             )
             attempts.append(attempt)
-            if candidates:
-                break
 
     ordered_urls: list[str] = []
     for _score, url in sorted(candidates, key=lambda item: item[0], reverse=True):

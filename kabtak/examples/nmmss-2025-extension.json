@@ -1,0 +1,153 @@
+{
+  "id": "nmmss-2025-extension",
+  "title": "NMMSS 2025 extension — historical replay",
+  "description": "A frozen example showing how the student submission deadline stays separate from institute and district verification dates.",
+  "programme_id": "nmmss",
+  "programme_name": "National Means-cum-Merit Scholarship Scheme",
+  "academic_year": "2025-26",
+  "application_type": "fresh",
+  "reference_time": "2026-10-02T00:00:00+05:30",
+  "source_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2167076&lang=2&reg=48",
+  "publisher_role": "issuer_release",
+  "source_text": "NMMSS 2025-26 fresh and renewal applications | Revised deadline\nStudent submission | 30 September 2025\nInstitute verification | 15 October 2025\nDistrict verification | 31 October 2025",
+  "blocks": [
+    {
+      "block_id": "block_1",
+      "kind": "table",
+      "location": "historical replay, revised schedule",
+      "text": "NMMSS 2025-26 fresh and renewal applications | Revised deadline\nStudent submission | 30 September 2025\nInstitute verification | 15 October 2025\nDistrict verification | 31 October 2025",
+      "metadata": {
+        "headers": ["Action", "Deadline"],
+        "rows": [
+          ["Student submission", "30 September 2025"],
+          ["Institute verification", "15 October 2025"],
+          ["District verification", "31 October 2025"]
+        ]
+      }
+    }
+  ],
+  "extraction": {
+    "records": [
+      {
+        "academic_year": "2025-26",
+        "application_types": ["fresh", "renewal"],
+        "applicant_group": null,
+        "applies_to_all_groups": true,
+        "scope_evidence_block_ids": ["block_1"],
+        "notice_type": "amendment",
+        "deadlines": [
+          {
+            "actor": "student",
+            "action": "submit",
+            "date_raw": "30 September 2025",
+            "date_iso": "2025-09-30",
+            "time": null,
+            "timezone": null,
+            "application_types": ["fresh", "renewal"],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "explicitly_revises_deadline": true,
+            "supersedes_date_iso": null,
+            "evidence_block_ids": ["block_1"]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date_raw": "15 October 2025",
+            "date_iso": "2025-10-15",
+            "time": null,
+            "timezone": null,
+            "application_types": ["fresh", "renewal"],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "explicitly_revises_deadline": false,
+            "supersedes_date_iso": null,
+            "evidence_block_ids": ["block_1"]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date_raw": "31 October 2025",
+            "date_iso": "2025-10-31",
+            "time": null,
+            "timezone": null,
+            "application_types": ["fresh", "renewal"],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "explicitly_revises_deadline": false,
+            "supersedes_date_iso": null,
+            "evidence_block_ids": ["block_1"]
+          }
+        ],
+        "conditions": [],
+        "required_documents": [],
+        "application_links": [],
+        "unresolved_items": []
+      }
+    ],
+    "document_unresolved_items": []
+  },
+  "report": {
+    "mode": "replay",
+    "coverage": "complete_for_attempted_scope",
+    "scope": {
+      "programme_id": "nmmss",
+      "programme_name": "National Means-cum-Merit Scholarship Scheme",
+      "academic_year": "2025-26",
+      "application_type": "fresh",
+      "applicant_group": null
+    },
+    "deadline_resolution": "supported",
+    "student_deadline": {
+      "actor": "student",
+      "action": "submit",
+      "date": "2025-09-30",
+      "time": null,
+      "timezone": null,
+      "comparison_timezone": "Asia/Kolkata",
+      "timing": "date_passed",
+      "evidence_refs": [{"version_id": "__VERSION__", "block_id": "block_1"}]
+    },
+    "summary": "The historical student submission date was 2025-09-30. The later dates applied to verification, not a new student application.",
+    "portal_status": "not_checked",
+    "eligibility": "not_assessed",
+    "conditions": [],
+    "other_deadlines": [
+      {
+        "actor": "institution",
+        "action": "verify",
+        "date": "2025-10-15",
+        "time": null,
+        "timezone": null,
+        "comparison_timezone": "Asia/Kolkata",
+        "timing": "date_passed",
+        "evidence_refs": [{"version_id": "__VERSION__", "block_id": "block_1"}]
+      },
+      {
+        "actor": "administrator",
+        "action": "verify",
+        "date": "2025-10-31",
+        "time": null,
+        "timezone": null,
+        "comparison_timezone": "Asia/Kolkata",
+        "timing": "date_passed",
+        "evidence_refs": [{"version_id": "__VERSION__", "block_id": "block_1"}]
+      }
+    ],
+    "conflicts": [],
+    "amendments": [],
+    "required_documents": [],
+    "application_links": [],
+    "limitations": [
+      "Historical replay; this is not an open opportunity.",
+      "Replay uses packaged evidence and does not repeat live search or AI extraction."
+    ],
+    "provenance": {
+      "rules_version": "phase3-2",
+      "schema_version": "4",
+      "input_mode": "packaged_fixture",
+      "model_id": "packaged-fixture",
+      "prompt_hash": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  }
+}

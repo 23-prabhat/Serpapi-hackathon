@@ -11,7 +11,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** List Checks */
+        get: operations["list_checks_v1_checks_get"];
         put?: never;
         /** Create Check */
         post: operations["create_check_v1_checks_post"];
@@ -32,6 +33,59 @@ export interface paths {
         get: operations["read_check_v1_checks__check_id__get"];
         put?: never;
         post?: never;
+        /** Delete Check */
+        delete: operations["delete_check_v1_checks__check_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Check */
+        patch: operations["update_check_v1_checks__check_id__patch"];
+        trace?: never;
+    };
+    "/v1/checks/{check_id}/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh Check */
+        post: operations["refresh_check_v1_checks__check_id__refresh_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/examples": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Examples */
+        get: operations["list_examples_v1_examples_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/examples/{example_id}/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replay Example */
+        post: operations["replay_example_v1_examples__example_id__replay_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -89,6 +143,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/runs/{run_id}/changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Compare Run */
+        get: operations["compare_run_v1_runs__run_id__changes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/runs/{run_id}/evidence/{version_id}/{block_id}": {
         parameters: {
             query?: never;
@@ -123,6 +194,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/runs/{run_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Run */
+        post: operations["retry_run_v1_runs__run_id__retry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -139,6 +227,15 @@ export interface components {
             study_level?: string | null;
             /** Study Year */
             study_year?: number | null;
+        };
+        /** ApplicationLinkRead */
+        ApplicationLinkRead: {
+            /** Evidence Refs */
+            evidence_refs: components["schemas"]["EvidenceReference"][];
+            /** Source Text */
+            source_text: string;
+            /** Url */
+            url: string;
         };
         /**
          * ApplicationType
@@ -184,22 +281,36 @@ export interface components {
         CheckRead: {
             /** Academic Year */
             academic_year: string;
+            /** Applicant Group */
+            applicant_group: string | null;
             application_type: components["schemas"]["ApplicationType"];
             /**
              * Created At
              * Format: date-time
              */
             created_at: string;
+            /** Expires At */
+            expires_at: string | null;
             /** Id */
             id: string;
+            /** Latest Completed Run Id */
+            latest_completed_run_id: string | null;
             /** Notice Url */
             notice_url: string | null;
+            profile: components["schemas"]["ApplicantProfile"] | null;
             /** Programme Id */
             programme_id: string;
+            /** Programme Name */
+            programme_name: string;
             /** Runs */
             runs: components["schemas"]["RunRead"][];
             /** Saved At */
             saved_at: string | null;
+        };
+        /** CheckUpdate */
+        CheckUpdate: {
+            /** Save */
+            save: boolean;
         };
         /**
          * Coverage
@@ -241,7 +352,12 @@ export interface components {
          * DeadlineTiming
          * @enum {string}
          */
-        DeadlineTiming: "date_ahead" | "due_today_time_unknown" | "date_passed" | "unknown";
+        DeadlineTiming: "date_ahead" | "due_today_time_unknown" | "date_passed" | "before_cutoff" | "after_cutoff" | "unknown";
+        /**
+         * EligibilityResolution
+         * @enum {string}
+         */
+        EligibilityResolution: "meets_checked_conditions" | "condition_not_met" | "more_information_needed" | "not_assessed";
         /** EvidenceRead */
         EvidenceRead: {
             /** Block Id */
@@ -283,6 +399,45 @@ export interface components {
             /** Version Id */
             version_id: string;
         };
+        /** ExampleRead */
+        ExampleRead: {
+            /** Academic Year */
+            academic_year: string;
+            /** Application Type */
+            application_type: string;
+            /** Description */
+            description: string;
+            /** Expected Student Deadline */
+            expected_student_deadline: string | null;
+            /** Id */
+            id: string;
+            /** Programme Name */
+            programme_name: string;
+            /**
+             * Reference Time
+             * Format: date-time
+             */
+            reference_time: string;
+            /** Source Url */
+            source_url: string;
+            /** Title */
+            title: string;
+        };
+        /** FactChangeRead */
+        FactChangeRead: {
+            /** After */
+            after?: unknown | null;
+            /** After Evidence */
+            after_evidence?: components["schemas"]["EvidenceReference"][];
+            /** Before */
+            before?: unknown | null;
+            /** Before Evidence */
+            before_evidence?: components["schemas"]["EvidenceReference"][];
+            /** Fact Key */
+            fact_key: string;
+            /** Kind */
+            kind: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -314,6 +469,8 @@ export interface components {
             application_types: string[];
             /** Id */
             id: string;
+            /** Last Checked At */
+            last_checked_at?: string | null;
             /** Name */
             name: string;
             /** Provider */
@@ -338,6 +495,12 @@ export interface components {
         };
         /** ReportRead */
         ReportRead: {
+            /** Amendments */
+            amendments?: {
+                [key: string]: unknown;
+            }[];
+            /** Application Links */
+            application_links?: components["schemas"]["ApplicationLinkRead"][];
             /** Conditions */
             conditions?: {
                 [key: string]: unknown;
@@ -348,8 +511,7 @@ export interface components {
             }[];
             coverage: components["schemas"]["Coverage"];
             deadline_resolution: components["schemas"]["DeadlineResolution"];
-            /** Eligibility */
-            eligibility: string;
+            eligibility: components["schemas"]["EligibilityResolution"];
             /** Limitations */
             limitations?: string[];
             /** Mode */
@@ -364,10 +526,42 @@ export interface components {
              * Format: date-time
              */
             reference_time: string;
+            /** Required Documents */
+            required_documents?: components["schemas"]["RequiredDocumentRead"][];
             /** Run Id */
             run_id: string;
             scope: components["schemas"]["ScopeRead"];
             student_deadline: components["schemas"]["DeadlineRead"] | null;
+            /** Summary */
+            summary: string;
+        };
+        /** RequiredDocumentRead */
+        RequiredDocumentRead: {
+            /** Evidence Refs */
+            evidence_refs: components["schemas"]["EvidenceReference"][];
+            /** Source Text */
+            source_text: string;
+        };
+        /** RunComparisonRead */
+        RunComparisonRead: {
+            /** Changes */
+            changes?: components["schemas"]["FactChangeRead"][];
+            /** Classification */
+            classification: string;
+            /** Outcome Changed */
+            outcome_changed: boolean;
+            /** Previous Run Id */
+            previous_run_id: string | null;
+            /** Profile Changed */
+            profile_changed: boolean;
+            /** Run Id */
+            run_id: string;
+            /** Software Versions Changed */
+            software_versions_changed: boolean;
+            /** Source Versions Changed */
+            source_versions_changed: boolean;
+            /** Summary */
+            summary: string;
         };
         /** RunRead */
         RunRead: {
@@ -388,6 +582,20 @@ export interface components {
             heartbeat_at?: string | null;
             /** Id */
             id: string;
+            /** Kind */
+            kind: string;
+            /**
+             * Reference Time
+             * Format: date-time
+             */
+            reference_time: string;
+            /**
+             * Report Available
+             * @default false
+             */
+            report_available: boolean;
+            /** Retry Of Run Id */
+            retry_of_run_id?: string | null;
             stage: components["schemas"]["RunStage"];
             /** Started At */
             started_at?: string | null;
@@ -407,6 +615,8 @@ export interface components {
         ScopeRead: {
             /** Academic Year */
             academic_year: string;
+            /** Applicant Group */
+            applicant_group?: string | null;
             /** Application Type */
             application_type: string;
             /** Programme Id */
@@ -436,6 +646,39 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    list_checks_v1_checks_get: {
+        parameters: {
+            query?: {
+                saved?: boolean | null;
+            };
+            header?: {
+                "x-internal-token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_check_v1_checks_post: {
         parameters: {
             query?: never;
@@ -492,6 +735,173 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CheckRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_check_v1_checks__check_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-internal-token"?: string | null;
+            };
+            path: {
+                check_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_check_v1_checks__check_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-internal-token"?: string | null;
+            };
+            path: {
+                check_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_check_v1_checks__check_id__refresh_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+                "x-internal-token"?: string | null;
+            };
+            path: {
+                check_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckAccepted"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_examples_v1_examples_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-internal-token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExampleRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    replay_example_v1_examples__example_id__replay_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+                "x-internal-token"?: string | null;
+            };
+            path: {
+                example_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckAccepted"];
                 };
             };
             /** @description Validation Error */
@@ -600,6 +1010,39 @@ export interface operations {
             };
         };
     };
+    compare_run_v1_runs__run_id__changes_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                "x-internal-token"?: string | null;
+            };
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunComparisonRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     read_evidence_v1_runs__run_id__evidence__version_id___block_id__get: {
         parameters: {
             query?: never;
@@ -655,6 +1098,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReportRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_run_v1_runs__run_id__retry_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+                "x-internal-token"?: string | null;
+            };
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckAccepted"];
                 };
             };
             /** @description Validation Error */

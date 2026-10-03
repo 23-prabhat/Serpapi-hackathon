@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -25,7 +26,7 @@ from app.schemas.reports import ReportRead
 from app.services.evidence import validate_report_evidence
 from app.services.extraction import (
     SCHEMA_VERSION,
-    ExtractedFacts,
+    ExtractedDocument,
     extract_facts,
     prompt_hash,
     validate_evidence,
@@ -39,13 +40,22 @@ from app.services.failures import (
 )
 from app.services.parsing import PARSER_VERSION, Block, parse_source_bounded, persist_source_files
 from app.services.registry import load_registry
-from app.services.reporting import build_report
-from app.services.retrieval import SourceRequestBudget, retrieve_source
+from app.services.reporting import REPORT_SCHEMA_VERSION, build_report
+from app.services.retrieval import RetrievedSource, SourceRequestBudget, retrieve_source
+from app.services.rules.types import SourcedRecord
 from app.services.search import search_nmmss
 
 
 def _utcnow() -> datetime:
     return datetime.now(UTC)
+
+
+@dataclass(frozen=True)
+class PreparedDocument:
+    retrieved: RetrievedSource
+    blocks: list[Block]
+    parse_status: str
+    version_id: str
 
 
 def _require_owned_run(run_id: str, owner_token: str) -> Run:
@@ -176,11 +186,8 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
     candidate_urls.extend(programme.get("reviewed_discovery_urls", {}).get(academic_year, []))
     candidate_urls = list(dict.fromkeys(candidate_urls))
 
-    retrieved = None
-    blocks = []
-    parse_status = ""
-    original_path = ""
-    blocks_path = ""
+    prepared_documents: list[PreparedDocument] = []
+    seen_versions: set[str] = set()
     last_failure: ProcessingError | None = None
     request_budget = SourceRequestBudget(settings.max_source_requests)
     for url in candidate_urls[: settings.max_source_documents]:
@@ -207,12 +214,65 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
                 parsed_format,
                 parsed_blocks,
             )
-            retrieved = candidate
-            blocks = parsed_blocks
-            parse_status = parsed_status
-            original_path = candidate_original_path
-            blocks_path = candidate_blocks_path
-            break
+            with SessionLocal.begin() as session:
+                document = session.scalar(
+                    select(Document).where(Document.canonical_url == candidate.resolved_url)
+                )
+                if document is None:
+                    document = Document(
+                        id=str(uuid4()),
+                        canonical_url=candidate.resolved_url,
+                        source_policy_id=candidate.source_policy["id"],
+                        publisher_role=candidate.source_policy["role"],
+                    )
+                    session.add(document)
+                    session.flush()
+                version = session.scalar(
+                    select(DocumentVersion).where(
+                        DocumentVersion.document_id == document.id,
+                        DocumentVersion.sha256 == candidate.sha256,
+                        DocumentVersion.parser_version == PARSER_VERSION,
+                    )
+                )
+                version_reused = version is not None
+                if version is None:
+                    version = DocumentVersion(
+                        id=str(uuid4()),
+                        document_id=document.id,
+                        sha256=candidate.sha256,
+                        original_path=candidate_original_path,
+                        parsed_blocks_path=candidate_blocks_path,
+                        parser_version=PARSER_VERSION,
+                        first_seen_at=candidate.retrieved_at,
+                        parse_status=parsed_status,
+                    )
+                    session.add(version)
+                    session.flush()
+                association = RunDocument(
+                    id=str(uuid4()),
+                    run_id=run_id,
+                    requested_url=candidate.requested_url,
+                    resolved_url=candidate.resolved_url,
+                    document_version_id=version.id,
+                    extraction_id=None,
+                    checked_at=candidate.retrieved_at,
+                    cache_provenance="version_reused" if version_reused else "new_version",
+                    fetch_status="success",
+                    error_code=None,
+                )
+                session.add(association)
+                session.flush()
+                version_id = version.id
+            if version_id not in seen_versions:
+                seen_versions.add(version_id)
+                prepared_documents.append(
+                    PreparedDocument(
+                        retrieved=candidate,
+                        blocks=parsed_blocks,
+                        parse_status=parsed_status,
+                        version_id=version_id,
+                    )
+                )
         except ProcessingError as exc:
             last_failure = exc
             _record_document_failure(
@@ -230,125 +290,118 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
             last_failure = ParsingFailedError(type(exc).__name__)
             _record_document_failure(run_id, url, last_failure)
     usage["source_requests"] = request_budget.used
-    if retrieved is None:
+    if not prepared_documents:
         raise last_failure or SourceUnavailableError("All reviewed sources failed")
 
-    with SessionLocal.begin() as session:
-        document = session.scalar(
-            select(Document).where(Document.canonical_url == retrieved.resolved_url)
-        )
-        if document is None:
-            document = Document(
-                id=str(uuid4()),
-                canonical_url=retrieved.resolved_url,
-                source_policy_id=retrieved.source_policy["id"],
-                publisher_role=retrieved.source_policy["role"],
-            )
-            session.add(document)
-            session.flush()
-        version = session.scalar(
-            select(DocumentVersion).where(
-                DocumentVersion.document_id == document.id,
-                DocumentVersion.sha256 == retrieved.sha256,
-                DocumentVersion.parser_version == PARSER_VERSION,
-            )
-        )
-        version_reused = version is not None
-        if version is None:
-            version = DocumentVersion(
-                id=str(uuid4()),
-                document_id=document.id,
-                sha256=retrieved.sha256,
-                original_path=original_path,
-                parsed_blocks_path=blocks_path,
-                parser_version=PARSER_VERSION,
-                first_seen_at=retrieved.retrieved_at,
-                parse_status=parse_status,
-            )
-            session.add(version)
-            session.flush()
-        association = RunDocument(
-            id=str(uuid4()),
-            run_id=run_id,
-            requested_url=retrieved.requested_url,
-            resolved_url=retrieved.resolved_url,
-            document_version_id=version.id,
-            extraction_id=None,
-            checked_at=retrieved.retrieved_at,
-            cache_provenance="version_reused" if version_reused else "new_version",
-            fetch_status="success",
-            error_code=None,
-        )
-        session.add(association)
-        session.flush()
-        version_id = version.id
-        association_id = association.id
-
     _set_stage(run_id, owner_token, "extracting")
-    try:
-        with SessionLocal() as session:
-            cached = session.scalar(
-                select(Extraction).where(
-                    Extraction.document_version_id == version_id,
-                    Extraction.model_id == settings.llm_model,
-                    Extraction.prompt_hash == prompt_hash(),
-                    Extraction.schema_version == SCHEMA_VERSION,
-                )
-            )
-            if cached is not None:
-                facts = ExtractedFacts.model_validate(cached.facts_json)
-                validate_evidence(facts, blocks)
-                extraction_id = cached.id
-                usage["model"] = {"cache_hit": True}
-            else:
-                facts, model_usage = extract_facts(
-                    settings,
-                    programme["name"],
-                    academic_year,
-                    application_type,
-                    blocks,
-                )
-                usage["model"] = {"cache_hit": False, **model_usage}
-                extraction_id = str(uuid4())
-        if cached is None:
-            with SessionLocal.begin() as write_session:
-                write_session.add(
-                    Extraction(
-                        id=extraction_id,
-                        document_version_id=version_id,
-                        model_id=settings.llm_model or "unknown",
-                        prompt_hash=prompt_hash(),
-                        schema_version=SCHEMA_VERSION,
-                        facts_json=facts.model_dump(mode="json"),
-                        validation_json={
-                            "status": "valid",
-                            "validated_at": _utcnow().isoformat(),
-                            "evidence_ids": "valid",
-                            "dates": "supported",
-                            "block_count": len(blocks),
-                        },
-                        created_at=_utcnow(),
+    sourced_records: list[SourcedRecord] = []
+    model_usage: list[dict[str, Any]] = []
+    last_extraction_failure: ProcessingError | None = None
+    for prepared in prepared_documents:
+        _require_owned_run(run_id, owner_token)
+        try:
+            with SessionLocal() as session:
+                cached = session.scalar(
+                    select(Extraction).where(
+                        Extraction.document_version_id == prepared.version_id,
+                        Extraction.model_id == settings.llm_model,
+                        Extraction.prompt_hash == prompt_hash(),
+                        Extraction.schema_version == SCHEMA_VERSION,
                     )
                 )
-        with SessionLocal.begin() as write_session:
-            run_document = write_session.get(RunDocument, association_id)
-            if run_document is None:
-                raise RuntimeError("Run document association disappeared")
-            run_document.extraction_id = extraction_id
-    except ProcessingError as exc:
-        with SessionLocal.begin() as session:
-            run_document = session.get(RunDocument, association_id)
-            if run_document is not None:
-                run_document.error_code = exc.code
-                run_document.fetch_status = "extraction_failed"
-        raise
-    except Exception as exc:
-        with SessionLocal.begin() as session:
-            run_document = session.get(RunDocument, association_id)
-            if run_document is not None:
-                run_document.error_code = "INVALID_EXTRACTION"
-                run_document.fetch_status = "extraction_failed"
-        raise InvalidExtractionError(type(exc).__name__) from None
+                if cached is not None:
+                    extracted = ExtractedDocument.model_validate(cached.facts_json)
+                    for record in extracted.records:
+                        validate_evidence(record, prepared.blocks)
+                    extraction_id = cached.id
+                    model_usage.append({"version_id": prepared.version_id, "cache_hit": True})
+                else:
+                    extracted, document_usage = extract_facts(
+                        settings,
+                        programme["name"],
+                        academic_year,
+                        application_type,
+                        prepared.blocks,
+                    )
+                    model_usage.append(
+                        {
+                            "version_id": prepared.version_id,
+                            "cache_hit": False,
+                            **document_usage,
+                        }
+                    )
+                    extraction_id = str(uuid4())
+            if cached is None:
+                with SessionLocal.begin() as write_session:
+                    write_session.add(
+                        Extraction(
+                            id=extraction_id,
+                            document_version_id=prepared.version_id,
+                            model_id=settings.llm_model or "unknown",
+                            prompt_hash=prompt_hash(),
+                            schema_version=SCHEMA_VERSION,
+                            facts_json=extracted.model_dump(mode="json"),
+                            validation_json={
+                                "status": "valid",
+                                "validated_at": _utcnow().isoformat(),
+                                "evidence_ids": "valid",
+                                "dates": "supported_in_actor_action_context",
+                                "block_count": len(prepared.blocks),
+                            },
+                            created_at=_utcnow(),
+                        )
+                    )
+            with SessionLocal.begin() as write_session:
+                result = write_session.execute(
+                    update(RunDocument)
+                    .where(
+                        RunDocument.run_id == run_id,
+                        RunDocument.document_version_id == prepared.version_id,
+                    )
+                    .values(extraction_id=extraction_id)
+                )
+                if result.rowcount < 1:
+                    raise RuntimeError("Run document association disappeared")
+            for record in extracted.records:
+                sourced_records.append(
+                    SourcedRecord(
+                        record=record,
+                        version_id=prepared.version_id,
+                        source_capabilities=frozenset(
+                            prepared.retrieved.source_policy.get("may_establish", [])
+                        ),
+                        parse_status=prepared.parse_status,
+                        document_unresolved_items=tuple(extracted.document_unresolved_items),
+                    )
+                )
+        except ProcessingError as exc:
+            last_extraction_failure = exc
+            with SessionLocal.begin() as session:
+                session.execute(
+                    update(RunDocument)
+                    .where(
+                        RunDocument.run_id == run_id,
+                        RunDocument.document_version_id == prepared.version_id,
+                    )
+                    .values(error_code=exc.code, fetch_status="extraction_failed")
+                )
+        except Exception as exc:  # noqa: BLE001 - one bad document can yield partial coverage.
+            last_extraction_failure = InvalidExtractionError(type(exc).__name__)
+            with SessionLocal.begin() as session:
+                session.execute(
+                    update(RunDocument)
+                    .where(
+                        RunDocument.run_id == run_id,
+                        RunDocument.document_version_id == prepared.version_id,
+                    )
+                    .values(
+                        error_code="INVALID_EXTRACTION",
+                        fetch_status="extraction_failed",
+                    )
+                )
+    usage["model"] = model_usage
+    if not sourced_records:
+        raise last_extraction_failure or InvalidExtractionError("No valid extraction remained")
 
     _set_stage(run_id, owner_token, "checking")
     report_json = build_report(
@@ -357,10 +410,11 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
         programme=programme,
         academic_year=academic_year,
         application_type=application_type,
-        version_id=version_id,
-        facts=facts,
+        sources=sourced_records,
+        applicant_group=scope.get("applicant_group"),
+        profile=check.profile_json,
+        incomplete_source_attempts=bool(last_failure or last_extraction_failure),
         model_id=settings.llm_model or "unknown",
-        parse_status=parse_status,
     )
     ReportRead.model_validate(report_json)
 
@@ -380,7 +434,7 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
             Report(
                 id=str(uuid4()),
                 run_id=run_id,
-                report_schema_version="1",
+                report_schema_version=REPORT_SCHEMA_VERSION,
                 decisions_json=report_json,
                 created_at=_utcnow(),
             )
@@ -393,8 +447,8 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
         owned_run.version_manifest_json = {
             "registry": str(programme["schema_version"]),
             "parser": PARSER_VERSION,
-            "rules": "phase1-1",
-            "schema": "1",
+            "rules": "phase3-2",
+            "schema": REPORT_SCHEMA_VERSION,
             "model": settings.llm_model,
             "prompt": prompt_hash(),
         }

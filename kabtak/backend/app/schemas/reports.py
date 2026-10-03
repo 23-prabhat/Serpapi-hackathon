@@ -23,7 +23,16 @@ class DeadlineTiming(StrEnum):
     DATE_AHEAD = "date_ahead"
     DUE_TODAY_TIME_UNKNOWN = "due_today_time_unknown"
     DATE_PASSED = "date_passed"
+    BEFORE_CUTOFF = "before_cutoff"
+    AFTER_CUTOFF = "after_cutoff"
     UNKNOWN = "unknown"
+
+
+class EligibilityResolution(StrEnum):
+    MEETS_CHECKED_CONDITIONS = "meets_checked_conditions"
+    CONDITION_NOT_MET = "condition_not_met"
+    MORE_INFORMATION_NEEDED = "more_information_needed"
+    NOT_ASSESSED = "not_assessed"
 
 
 class ScopeRead(BaseModel):
@@ -31,6 +40,7 @@ class ScopeRead(BaseModel):
     programme_name: str
     academic_year: str
     application_type: str
+    applicant_group: str | None = None
 
 
 class DeadlineRead(BaseModel):
@@ -52,6 +62,17 @@ class ReportProvenance(BaseModel):
     prompt_hash: str
 
 
+class RequiredDocumentRead(BaseModel):
+    source_text: str
+    evidence_refs: list[EvidenceReference] = Field(min_length=1)
+
+
+class ApplicationLinkRead(BaseModel):
+    url: str
+    source_text: str
+    evidence_refs: list[EvidenceReference] = Field(min_length=1)
+
+
 class ReportRead(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -62,11 +83,15 @@ class ReportRead(BaseModel):
     scope: ScopeRead
     deadline_resolution: DeadlineResolution
     student_deadline: DeadlineRead | None
+    summary: str
     portal_status: str
-    eligibility: str
+    eligibility: EligibilityResolution
     conditions: list[dict[str, object]] = Field(default_factory=list)
     other_deadlines: list[DeadlineRead] = Field(default_factory=list)
     conflicts: list[dict[str, object]] = Field(default_factory=list)
+    amendments: list[dict[str, object]] = Field(default_factory=list)
+    required_documents: list[RequiredDocumentRead] = Field(default_factory=list)
+    application_links: list[ApplicationLinkRead] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
     provenance: ReportProvenance
 
