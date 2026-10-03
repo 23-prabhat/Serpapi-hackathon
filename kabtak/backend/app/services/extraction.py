@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import hashlib
+from datetime import date
 from typing import Any, Literal
 
 import httpx
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from app.config import Settings
+from app.services.failures import (
+    ExtractionUnavailableError,
+    InvalidExtractionError,
+    UnsupportedSourceError,
+)
 from app.services.parsing import Block
 
 PROMPT_VERSION = "phase1-nmmss-deadlines-v1"
@@ -24,6 +30,15 @@ class CandidateDeadline(BaseModel):
     date_raw: str
     date_iso: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     evidence_block_ids: list[str] = Field(min_length=1)
+
+    @field_validator("date_iso")
+    @classmethod
+    def valid_calendar_date(cls, value: str) -> str:
+        try:
+            date.fromisoformat(value)
+        except ValueError:
+            raise ValueError("date_iso must be a real calendar date") from None
+        return value
 
 
 class ExtractedFacts(BaseModel):
@@ -60,7 +75,7 @@ def extract_facts(
         raise RuntimeError("Groq extraction settings are incomplete")
     rendered = "\n\n".join(f"[{block.block_id}] {block.location}\n{block.text}" for block in blocks)
     if len(rendered) > 30_000:
-        raise RuntimeError("Parsed source exceeds the model input limit")
+        raise UnsupportedSourceError("Parsed source exceeds the 30,000 character model limit")
     user_prompt = (
         f"Programme: {programme_name}\nAcademic year: {academic_year}\n"
         f"Application type: {application_type}\n\nSource blocks:\n{rendered}"
@@ -84,18 +99,29 @@ def extract_facts(
         "temperature": 0,
         "max_completion_tokens": 1_500,
     }
-    with httpx.Client(timeout=40) as client:
-        response = client.post(
-            GROQ_CHAT_URL,
-            headers={
-                "Authorization": f"Bearer {settings.llm_api_key}",
-                "Content-Type": "application/json",
-            },
-            json=request_body,
-        )
-        response.raise_for_status()
+    try:
+        with httpx.Client(timeout=40) as client:
+            response = client.post(
+                GROQ_CHAT_URL,
+                headers={
+                    "Authorization": f"Bearer {settings.llm_api_key}",
+                    "Content-Type": "application/json",
+                },
+                json=request_body,
+            )
+        if not response.is_success:
+            raise ExtractionUnavailableError(
+                f"Groq extraction returned HTTP {response.status_code}"
+            )
         payload = response.json()
-    facts = ExtractedFacts.model_validate_json(payload["choices"][0]["message"]["content"])
+    except ExtractionUnavailableError:
+        raise
+    except (httpx.HTTPError, ValueError):
+        raise ExtractionUnavailableError("Groq extraction request failed") from None
+    try:
+        facts = ExtractedFacts.model_validate_json(payload["choices"][0]["message"]["content"])
+    except (KeyError, IndexError, TypeError, ValidationError):
+        raise InvalidExtractionError("Model output did not match the extraction schema") from None
     validate_evidence(facts, blocks)
     return facts, payload.get("usage", {})
 
@@ -104,12 +130,12 @@ def validate_evidence(facts: ExtractedFacts, blocks: list[Block]) -> None:
     block_index = {block.block_id: block for block in blocks}
     for deadline in facts.deadlines:
         if any(block_id not in block_index for block_id in deadline.evidence_block_ids):
-            raise RuntimeError("Model cited an unknown evidence block")
+            raise InvalidExtractionError("Model cited an unknown evidence block")
         if not any(
             date_occurs_in_text(deadline.date_iso, block_index[block_id].text)
             for block_id in deadline.evidence_block_ids
         ):
-            raise RuntimeError("Model date does not occur in its cited evidence")
+            raise InvalidExtractionError("Model date does not occur in its cited evidence")
 
 
 def date_occurs_in_text(date_iso: str, text: str) -> bool:

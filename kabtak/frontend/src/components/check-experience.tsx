@@ -45,6 +45,21 @@ function formatDeadline(deadline: Deadline) {
   return deadline.time ? `${day}, ${deadline.time}` : day;
 }
 
+function formatRetrievedAt(value: string) {
+  return new Date(value).toLocaleString("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "medium",
+    timeZone: "Asia/Kolkata",
+  });
+}
+
+function evidenceTableHeaders(item: Evidence) {
+  const headers = item.metadata?.headers;
+  return Array.isArray(headers) && headers.every((header) => typeof header === "string")
+    ? headers
+    : [];
+}
+
 export function CheckExperience() {
   const [screen, setScreen] = useState<Screen>("form");
   const [programmes, setProgrammes] = useState<Programme[]>([]);
@@ -87,6 +102,10 @@ export function CheckExperience() {
     const result = await readJson<Report>(response);
     setReport(result);
     setScreen("report");
+    const firstReference = result.student_deadline?.evidence_refs[0];
+    if (firstReference) {
+      await loadEvidence(runId, firstReference);
+    }
   }
 
   async function pollRun(runId: string, delay = 0) {
@@ -143,13 +162,12 @@ export function CheckExperience() {
     }
   }
 
-  async function showEvidence(reference: EvidenceReference) {
-    if (!report) return;
+  async function loadEvidence(runId: string, reference: EvidenceReference) {
     setLoadingEvidence(true);
     setError("");
     try {
       const response = await fetch(
-        `/api/v1/runs/${report.run_id}/evidence/${encodeURIComponent(reference.version_id)}/${encodeURIComponent(reference.block_id)}`,
+        `/api/v1/runs/${runId}/evidence/${encodeURIComponent(reference.version_id)}/${encodeURIComponent(reference.block_id)}`,
       );
       setEvidence(await readJson<Evidence>(response));
     } catch (reason) {
@@ -157,6 +175,11 @@ export function CheckExperience() {
     } finally {
       setLoadingEvidence(false);
     }
+  }
+
+  async function showEvidence(reference: EvidenceReference) {
+    if (!report) return;
+    await loadEvidence(report.run_id, reference);
   }
 
   function reset() {
@@ -202,6 +225,7 @@ export function CheckExperience() {
 
   if (screen === "report" && report) {
     const deadline = report.student_deadline;
+    const tableHeaders = evidence ? evidenceTableHeaders(evidence) : [];
     return (
       <section className="workspace report-layout">
         <div className="section-number">03 / REPORT</div>
@@ -213,7 +237,7 @@ export function CheckExperience() {
           <button className="secondary-button" onClick={reset} type="button">New check ↗</button>
         </div>
 
-        <div className="report-grid">
+        <div className="conclusion-evidence-grid">
           <article className="answer-card brutal-card">
             <span className={`resolution resolution-${report.deadline_resolution}`}>
               {pretty(report.deadline_resolution)}
@@ -228,6 +252,42 @@ export function CheckExperience() {
             </div>
           </article>
 
+          <aside className="evidence-inspector brutal-card" aria-live="polite">
+            <p className="eyebrow">Cited passage</p>
+            {loadingEvidence && <p className="evidence-loading">Loading preserved passage…</p>}
+            {!loadingEvidence && !evidence && (
+              <p className="empty-evidence">No source passage is attached to this conclusion.</p>
+            )}
+            {!loadingEvidence && evidence && (
+              <>
+                <div className="evidence-heading">
+                  <strong>{pretty(evidence.publisher_role)}</strong>
+                  <span>{evidence.location}</span>
+                </div>
+                <blockquote>{evidence.text}</blockquote>
+                {tableHeaders.length > 0 && (
+                  <p className="table-headers">
+                    <span>Preserved table headers</span>
+                    {tableHeaders.join(" · ")}
+                  </p>
+                )}
+                <dl className="evidence-provenance">
+                  <div><dt>Retrieved</dt><dd>{formatRetrievedAt(evidence.retrieved_at)}</dd></div>
+                  <div><dt>Parse</dt><dd>{pretty(evidence.parse_status)} · {evidence.parser_version}</dd></div>
+                  <div><dt>Block</dt><dd>{evidence.block_id} · {evidence.kind}</dd></div>
+                  <div><dt>Source version</dt><dd><code>{evidence.version_id}</code></dd></div>
+                  <div><dt>Content SHA-256</dt><dd><code>{evidence.content_sha256}</code></dd></div>
+                  <div><dt>Block SHA-256</dt><dd><code>{evidence.block_sha256}</code></dd></div>
+                </dl>
+                <a href={evidence.source_url} target="_blank" rel="noreferrer">
+                  Open original source ↗
+                </a>
+              </>
+            )}
+          </aside>
+        </div>
+
+        <div className="report-detail-grid">
           <aside className="scope-card brutal-card">
             <p className="eyebrow">Checked scope</p>
             <dl>
@@ -237,26 +297,31 @@ export function CheckExperience() {
               <div><dt>As of</dt><dd>{new Date(report.reference_time).toLocaleString("en-IN")}</dd></div>
             </dl>
           </aside>
-        </div>
-
-        <div className="evidence-section">
-          <div className="section-title-row">
-            <div><p className="eyebrow">Receipts</p><h3>Evidence trail</h3></div>
-            <span>{deadline?.evidence_refs.length ?? 0} source block(s)</span>
+          <div className="evidence-section">
+            <div className="section-title-row">
+              <div><p className="eyebrow">Receipts</p><h3>Evidence trail</h3></div>
+              <span>{deadline?.evidence_refs.length ?? 0} source block(s)</span>
+            </div>
+            {deadline?.evidence_refs.map((reference, index) => {
+              const active =
+                evidence?.version_id === reference.version_id &&
+                evidence.block_id === reference.block_id;
+              return (
+                <button
+                  aria-pressed={active}
+                  className={`evidence-row${active ? " active" : ""}`}
+                  key={`${reference.version_id}-${reference.block_id}`}
+                  onClick={() => showEvidence(reference)}
+                  type="button"
+                >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <span>{active ? "Showing preserved passage" : "Show preserved passage"}</span>
+                  <span>{active ? "OPEN" : "VIEW ↗"}</span>
+                </button>
+              );
+            })}
+            {!deadline && <p className="empty-note">No supported student deadline evidence was found.</p>}
           </div>
-          {deadline?.evidence_refs.map((reference, index) => (
-            <button
-              className="evidence-row"
-              key={`${reference.version_id}-${reference.block_id}`}
-              onClick={() => showEvidence(reference)}
-              type="button"
-            >
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <span>Open the preserved passage</span>
-              <span>VIEW ↗</span>
-            </button>
-          ))}
-          {!deadline && <p className="empty-note">No supported student deadline evidence was found.</p>}
         </div>
 
         {report.other_deadlines && report.other_deadlines.length > 0 && (
@@ -279,19 +344,6 @@ export function CheckExperience() {
         )}
 
         {error && <ErrorBox message={error} />}
-        {(evidence || loadingEvidence) && (
-          <div className="evidence-drawer" role="dialog" aria-label="Source evidence">
-            <button onClick={() => setEvidence(null)} type="button" aria-label="Close evidence">×</button>
-            {loadingEvidence && <p>Loading preserved passage…</p>}
-            {evidence && (
-              <>
-                <p className="eyebrow">{evidence.publisher_role} · {evidence.location}</p>
-                <blockquote>{evidence.text}</blockquote>
-                <a href={evidence.source_url} target="_blank" rel="noreferrer">Open original source ↗</a>
-              </>
-            )}
-          </div>
-        )}
       </section>
     );
   }

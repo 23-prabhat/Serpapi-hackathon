@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import tempfile
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -25,6 +26,36 @@ class SearchOutcome:
     result_created_at: datetime | None
     response_path: str
     metadata: dict[str, Any]
+
+
+def _normalized_search_text(value: str) -> str:
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", value.lower()).split())
+
+
+def _is_deadline_result(
+    programme: dict[str, Any], academic_year: str, title: str, snippet: str
+) -> bool:
+    searchable = _normalized_search_text(f"{title} {snippet}")
+    programme_markers = {
+        programme["id"].lower(),
+        programme["id"].lower().replace("-", " "),
+        _normalized_search_text(programme["name"]),
+    }
+    deadline_markers = (
+        "deadline",
+        "last date",
+        "open till",
+        "submission of application",
+        "submission of applications",
+        "application deadline",
+        "applications extended",
+        "application extended",
+    )
+    normalized_cycle = _normalized_search_text(academic_year)
+    has_programme = any(marker and marker in searchable for marker in programme_markers)
+    has_cycle = normalized_cycle in searchable
+    has_deadline_intent = any(marker in searchable for marker in deadline_markers)
+    return has_programme and has_cycle and has_deadline_intent
 
 
 def _atomic_json(path: Path, value: object) -> None:
@@ -129,6 +160,8 @@ def search_nmmss(
                     continue
                 title = str(item.get("title", ""))
                 snippet = str(item.get("snippet", ""))
+                if not _is_deadline_result(programme, academic_year, title, snippet):
+                    continue
                 searchable = f"{title} {snippet} {url}".lower()
                 score = 0
                 if any(token.lower() in searchable for token in year_tokens):

@@ -8,7 +8,7 @@ export default function Home() {
           KABTAK<span>.</span>
         </a>
         <p className="masthead-note">Deadline checks with receipts</p>
-        <span className="phase-badge">PHASE 01</span>
+        <span className="phase-badge">PHASE 02</span>
       </header>
 
       <section className="hero" id="top">

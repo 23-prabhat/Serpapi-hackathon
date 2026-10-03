@@ -246,10 +246,29 @@ export interface components {
         EvidenceRead: {
             /** Block Id */
             block_id: string;
+            /** Block Sha256 */
+            block_sha256: string;
+            /** Content Sha256 */
+            content_sha256: string;
+            /** Kind */
+            kind: string;
             /** Location */
             location: string;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            };
+            /** Parse Status */
+            parse_status: string;
+            /** Parser Version */
+            parser_version: string;
             /** Publisher Role */
             publisher_role: string;
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
             /** Source Url */
             source_url: string;
             /** Text */

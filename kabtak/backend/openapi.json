@@ -350,12 +350,42 @@
             "title": "Block Id",
             "type": "string"
           },
+          "block_sha256": {
+            "title": "Block Sha256",
+            "type": "string"
+          },
+          "content_sha256": {
+            "title": "Content Sha256",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
           "location": {
             "title": "Location",
             "type": "string"
           },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "parse_status": {
+            "title": "Parse Status",
+            "type": "string"
+          },
+          "parser_version": {
+            "title": "Parser Version",
+            "type": "string"
+          },
           "publisher_role": {
             "title": "Publisher Role",
+            "type": "string"
+          },
+          "retrieved_at": {
+            "format": "date-time",
+            "title": "Retrieved At",
             "type": "string"
           },
           "source_url": {
@@ -374,8 +404,14 @@
         "required": [
           "version_id",
           "block_id",
+          "kind",
           "location",
           "text",
+          "content_sha256",
+          "block_sha256",
+          "retrieved_at",
+          "parse_status",
+          "parser_version",
           "source_url",
           "publisher_role"
         ],

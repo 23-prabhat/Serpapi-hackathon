@@ -1,7 +1,6 @@
 """Run status, report, and evidence routes."""
 
-import json
-from pathlib import Path
+import hashlib
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -13,6 +12,8 @@ from app.db.session import get_session
 from app.errors import APIError
 from app.schemas.reports import EvidenceRead, ReportRead
 from app.schemas.runs import RunRead
+from app.services.evidence import load_version_blocks
+from app.services.failures import InvalidExtractionError
 
 router = APIRouter()
 
@@ -77,15 +78,31 @@ async def read_evidence(
     if document is None:
         raise APIError(404, "EVIDENCE_NOT_FOUND", "The source document is unavailable.")
 
-    blocks = json.loads(Path(version.parsed_blocks_path).read_text(encoding="utf-8"))
+    try:
+        blocks = load_version_blocks(version)
+    except InvalidExtractionError:
+        raise APIError(
+            503,
+            "EVIDENCE_INTEGRITY_FAILED",
+            "The preserved evidence failed its integrity check.",
+            retryable=False,
+            run_id=run_id,
+        ) from None
     block = next((item for item in blocks if item["block_id"] == block_id), None)
     if block is None:
         raise APIError(404, "EVIDENCE_NOT_FOUND", "The source block is unavailable.")
     return EvidenceRead(
         version_id=version.id,
         block_id=block_id,
+        kind=block["kind"],
         location=block["location"],
         text=block["text"],
+        metadata=block.get("metadata", {}),
+        content_sha256=version.sha256,
+        block_sha256=block.get("text_sha256") or hashlib.sha256(block["text"].encode()).hexdigest(),
+        retrieved_at=association.checked_at,
+        parse_status=version.parse_status,
+        parser_version=version.parser_version,
         source_url=document.canonical_url,
         publisher_role=document.publisher_role,
     )

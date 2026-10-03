@@ -32,6 +32,8 @@ class Settings(BaseSettings):
 
     active_run_timeout_seconds: int = Field(default=180, ge=1)
     source_request_timeout_seconds: int = Field(default=15, ge=1)
+    source_parse_timeout_seconds: int = Field(default=10, ge=1)
+    max_pdf_pages: int = Field(default=20, ge=1)
     max_waiting_runs: int = Field(default=3, ge=0)
     max_search_attempts: int = Field(default=4, ge=1)
     max_source_documents: int = Field(default=6, ge=1)

@@ -1,4 +1,4 @@
-"""Persisted Phase 1 entities shared by the API and worker."""
+"""Persisted entities shared by the API and worker."""
 
 from __future__ import annotations
 
@@ -197,6 +197,10 @@ class RunDocument(Base):
     error_code: Mapped[str | None] = mapped_column(String(80), nullable=True)
 
     run: Mapped[Run] = relationship(back_populates="run_documents")
+    document_version: Mapped[DocumentVersion | None] = relationship(
+        foreign_keys=[document_version_id]
+    )
+    extraction: Mapped[Extraction | None] = relationship(foreign_keys=[extraction_id])
 
 
 class Report(Base):

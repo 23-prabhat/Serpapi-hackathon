@@ -22,6 +22,8 @@ sources:
     host: pib.gov.in
     path_prefixes:
       - /PressReleasePage.aspx
+    formats:
+      - html
     role: issuer_release
     may_establish:
       - deadline
@@ -32,6 +34,8 @@ sources:
     host: dsel.education.gov.in
     path_prefixes:
       - /sites/default/files/update/
+    formats:
+      - pdf
     role: issuer_document
     may_establish:
       - deadline
@@ -42,6 +46,8 @@ sources:
     path_prefixes:
       - /All-Scholarships
       - /ViewMoreAnnouncement
+    formats:
+      - html
     role: application_portal
     may_establish:
       - deadline

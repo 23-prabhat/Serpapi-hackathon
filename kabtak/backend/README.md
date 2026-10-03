@@ -26,15 +26,17 @@ uv run python -m app.worker
 ```
 
 The worker claims one queued run at a time, sends a heartbeat, retrieves reviewed
-sources, performs structured extraction, and commits the report. Keep the API and
-worker running in separate terminals. A third terminal runs the frontend from
-`../frontend`:
+sources, performs structured extraction, validates every report reference against
+the preserved source version, and then commits the report. Keep the API and worker
+running in separate terminals. A third terminal runs the frontend from `../frontend`:
 
-Search discovery is bounded by `MAX_SEARCH_ATTEMPTS`. A provider soft error or a
-result set containing only unreviewed domains advances to the next query. If every
-query is exhausted, the worker may use a cycle-specific official URL from the
+Search discovery is bounded by `MAX_SEARCH_ATTEMPTS`. A provider soft error, a
+result set containing only unreviewed domains, or an allowlisted page without the
+requested programme, cycle, and deadline intent advances to the next query. If
+every query is exhausted, the worker uses a cycle-specific official URL from the
 reviewed programme registry; the stored search record identifies this as
-`registry_fallback`.
+`registry_fallback`. The worker checks the parsed blocks again and continues past
+documents that do not establish the requested deadline scope.
 
 ```bash
 pnpm dev
@@ -42,6 +44,23 @@ pnpm dev
 
 The browser is available at `http://127.0.0.1:3000`. `INTERNAL_API_TOKEN` must
 match in `backend/.env` and `frontend/.env.local`.
+
+## Source and evidence guarantees
+
+- Only hosts, path prefixes, and HTML/PDF formats listed in
+  `../config/programmes/*.yaml` are fetched. Redirects are checked again.
+- Each run has one shared source-request budget. Responses are streamed with a
+  10 MB limit; PDFs are limited to 20 pages and parsing runs in a subprocess with
+  a 10-second timeout by default.
+- Original bytes and parser-versioned evidence blocks are written once under
+  `DATA_DIR/sources`. Both the document and every evidence block have SHA-256
+  hashes.
+- Extractions are cached only for the same document version, model, prompt, and
+  schema. Block IDs and dates are validated before a report is committed.
+- Source, PDF, parser, and extraction failures are persisted as explicit safe
+  states; they cannot become a confident answer.
+- `GET /v1/runs/{run_id}/evidence/{version_id}/{block_id}` verifies the stored
+  hashes before returning a passage and its provenance.
 
 When an API schema changes, refresh the generated frontend contract:
 
@@ -58,5 +77,5 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
-The live Phase 1 path requires `SERPAPI_API_KEY` and a Groq `LLM_API_KEY`. Keep
+The live path requires `SERPAPI_API_KEY` and a Groq `LLM_API_KEY`. Keep
 secrets in `.env`; only `.env.example` is committed.

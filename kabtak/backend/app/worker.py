@@ -20,6 +20,7 @@ from sqlalchemy import select, text, update
 from app.config import Settings, get_settings
 from app.db.models import Run, WorkerState
 from app.db.session import SessionLocal
+from app.services.failures import ProcessingError
 from app.services.pipeline import process_run
 from app.services.registry import seed_programmes
 
@@ -103,11 +104,18 @@ def claim_next_run(worker_id: str) -> tuple[str, str] | None:
 
 
 def mark_failed(run_id: str, owner_token: str, exc: Exception) -> None:
-    safe_code = {
-        "HTTPStatusError": "EXTERNAL_SERVICE_ERROR",
-        "ConnectTimeout": "SOURCE_TIMEOUT",
-        "ReadTimeout": "SOURCE_TIMEOUT",
-    }.get(type(exc).__name__, "RUN_FAILED")
+    if isinstance(exc, ProcessingError):
+        safe_code = exc.code
+        public_message = exc.public_message
+        retryable = exc.retryable
+    else:
+        safe_code = {
+            "HTTPStatusError": "EXTERNAL_SERVICE_ERROR",
+            "ConnectTimeout": "SOURCE_TIMEOUT",
+            "ReadTimeout": "SOURCE_TIMEOUT",
+        }.get(type(exc).__name__, "RUN_FAILED")
+        public_message = "The live check could not be completed. Review the worker log and retry."
+        retryable = True
     with SessionLocal.begin() as session:
         run = session.scalar(
             select(Run).where(
@@ -124,8 +132,8 @@ def mark_failed(run_id: str, owner_token: str, exc: Exception) -> None:
         run.heartbeat_at = utcnow()
         run.error_json = {
             "code": safe_code,
-            "message": "The live check could not be completed. Review the worker log and retry.",
-            "retryable": True,
+            "message": public_message,
+            "retryable": retryable,
         }
     LOGGER.exception("run_failed run_id=%s error_type=%s", run_id, type(exc).__name__)
 

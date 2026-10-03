@@ -74,7 +74,14 @@ class ReportRead(BaseModel):
 class EvidenceRead(BaseModel):
     version_id: str
     block_id: str
+    kind: str
     location: str
     text: str
+    metadata: dict[str, object] = Field(default_factory=dict)
+    content_sha256: str
+    block_sha256: str
+    retrieved_at: datetime
+    parse_status: str
+    parser_version: str
     source_url: str
     publisher_role: str

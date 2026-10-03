@@ -121,3 +121,43 @@ def test_search_uses_reviewed_cycle_fallback_after_bounded_attempts(
     assert outcome.urls == [
         "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48"
     ]
+
+
+def test_search_rejects_allowlisted_but_irrelevant_programme_result(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    response = httpx.Response(
+        200,
+        json={
+            "search_metadata": {"id": "workshop", "status": "Success"},
+            "organic_results": [
+                {
+                    "title": (
+                        "Ministry of Education organises one-day workshop on "
+                        "National Means-cum-Merit Scholarship Scheme"
+                    ),
+                    "link": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2238858",
+                    "snippet": "Workshop held in Delhi on 10 March 2026.",
+                }
+            ],
+        },
+    )
+    monkeypatch.setattr(search.httpx, "Client", fake_client([response]))
+    settings = Settings(
+        serpapi_api_key="test-key",
+        data_dir=tmp_path,
+        max_search_attempts=1,
+    )
+
+    outcome = search.search_nmmss(
+        settings,
+        load_registry()["nmmss"],
+        "2026-27",
+        "irrelevant-reviewed-result",
+    )
+
+    assert outcome.metadata["discovery_mode"] == "registry_fallback"
+    assert outcome.metadata["reviewed_result_count"] == 0
+    assert outcome.urls == [
+        "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48"
+    ]
