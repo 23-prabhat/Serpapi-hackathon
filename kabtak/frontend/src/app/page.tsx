@@ -11,14 +11,14 @@ export default async function Home(props: PageProps<"/">) {
         <div>
           <p className="eyebrow">Scholarship deadline checker</p>
           <h1>
-            Know the date.
+            Which date
             <br />
-            <span>See the proof.</span>
+            is <span>yours?</span>
           </h1>
         </div>
         <p className="hero-copy">
-          Kabtak searches reviewed public sources, separates student deadlines
-          from institution deadlines, and links every conclusion back to evidence.
+          Scholarship notices often list several dates. Kabtak finds the one meant
+          for you, keeps institution deadlines separate, and shows the proof.
           <span className="hero-links">
             <Link href="/discover">Browse the catalogue</Link>
             <Link href="/examples">Try an offline example</Link>

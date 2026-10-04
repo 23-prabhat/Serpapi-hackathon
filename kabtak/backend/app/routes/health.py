@@ -31,12 +31,14 @@ async def health(
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> HealthResponse:
     database_ready = True
+    worker = None
     try:
         session.execute(text("SELECT 1"))
+        worker = session.get(WorkerState, 1)
     except Exception:  # noqa: BLE001 - health must return a safe degraded response.
+        session.rollback()
         database_ready = False
 
-    worker = session.get(WorkerState, 1) if database_ready else None
     heartbeat = worker.heartbeat_at if worker else None
     if heartbeat and heartbeat.tzinfo is None:
         heartbeat = heartbeat.replace(tzinfo=UTC)

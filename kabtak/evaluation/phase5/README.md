@@ -23,4 +23,5 @@ uv run pytest ../evaluation/phase5/tests
 
 The online command checkpoints completed calls. The offline command reproduces
 the deterministic system result from committed extraction outputs and reads the
-committed baseline result without credentials or network calls.
+committed baseline result without credentials, network calls, or changes to the
+tracked result artifacts.

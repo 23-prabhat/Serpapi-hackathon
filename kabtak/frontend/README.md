@@ -7,13 +7,15 @@ or provider credentials.
 ## Setup
 
 ```bash
-cp .env.example .env.local
+cp ../.env.example ../.env
 pnpm install
 pnpm generate:api
 pnpm dev
 ```
 
-Set `INTERNAL_API_TOKEN` to the same random value used by `../backend/.env`.
+The shared template separates common, frontend-only, and backend-only values.
+Next.js loads `../.env` on the server; secrets are not prefixed with
+`NEXT_PUBLIC_` and are therefore not exposed to browser code.
 Start the FastAPI process and worker using the backend README, then open
 `http://127.0.0.1:3000`.
 

@@ -1,7 +1,9 @@
-# Kabtak
+# Kabtak application
 
 Kabtak is a Next.js frontend with a Python/FastAPI backend and a separate
-database-backed worker. The backend structure follows the architecture in
+database-backed worker. Start with the [repository README](../README.md) for the
+product, architecture, scope, evaluation, SerpApi integration, and limitations.
+The backend structure follows the architecture in
 [`../docs/system-design.md`](../docs/system-design.md).
 
 ## Applications
@@ -12,5 +14,7 @@ database-backed worker. The backend structure follows the architecture in
 - `examples/` — offline historical replay fixtures
 - `evaluation/` — evaluation manifests, runner, and results
 - `data/` — ignored local SQLite databases, snapshots, caches, and logs
+- `.env.example` — one annotated environment template shared by every process
 
-See the README in each application directory for its setup commands.
+Copy `.env.example` to `.env`, then see the repository README and `run.md` for
+setup, startup, verification, and the credential-free example.

@@ -6,12 +6,18 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+KABTAK_ROOT = Path(__file__).resolve().parents[2]
+LEGACY_BACKEND_ENV = KABTAK_ROOT / "backend" / ".env"
+SHARED_ENV = KABTAK_ROOT / ".env"
+
 
 class Settings(BaseSettings):
     """Validated application settings with safe local defaults."""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        # Keep the service-local file as a migration fallback. The shared file is
+        # listed last so it is the authoritative source when both exist.
+        env_file=(LEGACY_BACKEND_ENV, SHARED_ENV),
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=False,

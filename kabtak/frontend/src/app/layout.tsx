@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Mono, DM_Sans, Yatra_One } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const dmSans = DM_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmMono = DM_Mono({
+  variable: "--font-mono",
+  weight: ["400", "500"],
+  subsets: ["latin"],
+});
+
+const yatraOne = Yatra_One({
+  variable: "--font-display",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -23,20 +30,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${dmMono.variable} ${yatraOne.variable} h-full antialiased`}
     >
       <body>
         <div className="site-shell">
           <header className="masthead">
             <Link className="wordmark" href="/" aria-label="Kabtak home">
-              KABTAK<span>.</span>
+              <span className="wordmark-ticket" aria-hidden="true" />
+              <span>Kabtak</span>
             </Link>
             <nav className="primary-nav" aria-label="Primary navigation">
               <Link href="/discover">Discover</Link>
               <Link href="/examples">Examples</Link>
               <Link href="/saved">Saved</Link>
             </nav>
-            <span className="phase-badge">PHASE 04</span>
+            <span className="phase-badge">Evidence first</span>
           </header>
           {children}
           <footer className="footer">

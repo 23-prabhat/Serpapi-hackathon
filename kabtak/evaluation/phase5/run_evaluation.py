@@ -393,6 +393,8 @@ def evaluate_system(
     sources: dict[str, dict[str, Any]],
     extractions: dict[str, Any],
     model_id: str,
+    *,
+    persist: bool = True,
 ) -> dict[str, Any]:
     results: list[dict[str, Any]] = []
     for case in cases:
@@ -441,9 +443,10 @@ def evaluate_system(
         },
         "cases": results,
     }
-    SYSTEM_RESULTS_PATH.write_text(
-        json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+    if persist:
+        SYSTEM_RESULTS_PATH.write_text(
+            json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
     return result
 
 
@@ -630,7 +633,13 @@ def main() -> None:
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     if args.mode in {"all", "system"}:
         extractions = run_system_extractions(settings, sources, offline=args.offline)
-        system = evaluate_system(cases, sources, extractions, settings.llm_model)
+        system = evaluate_system(
+            cases,
+            sources,
+            extractions,
+            settings.llm_model,
+            persist=not args.offline,
+        )
         print(json.dumps({"system": system["summary"]}, indent=2))
     if args.mode in {"all", "baseline"}:
         baseline = evaluate_baseline(settings, cases, sources, offline=args.offline)

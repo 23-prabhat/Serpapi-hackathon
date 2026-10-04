@@ -8,10 +8,13 @@ the separate database-backed worker described in the system design.
 Python 3.12 and [uv](https://docs.astral.sh/uv/) are expected.
 
 ```bash
-cp .env.example .env
+cp ../.env.example ../.env
 uv sync --dev
 uv run alembic upgrade head
 ```
+
+The shared `../.env` template labels variables used by both services, the
+frontend server only, and the backend/worker only.
 
 Start the API on loopback:
 
@@ -42,8 +45,8 @@ documents that do not establish the requested deadline scope.
 pnpm dev
 ```
 
-The browser is available at `http://127.0.0.1:3000`. `INTERNAL_API_TOKEN` must
-match in `backend/.env` and `frontend/.env.local`.
+The browser is available at `http://127.0.0.1:3000`. FastAPI and Next.js both
+load `kabtak/.env`, so `INTERNAL_API_TOKEN` has one source of truth.
 
 ## Source and evidence guarantees
 
@@ -78,4 +81,4 @@ uv run ruff format --check .
 ```
 
 The live path requires `SERPAPI_API_KEY` and a Groq `LLM_API_KEY`. Keep
-secrets in `.env`; only `.env.example` is committed.
+secrets in `kabtak/.env`; only `kabtak/.env.example` is committed.

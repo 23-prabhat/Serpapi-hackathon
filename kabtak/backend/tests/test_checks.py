@@ -31,8 +31,16 @@ async def test_create_check_is_persisted_and_idempotent(tmp_path) -> None:
         with test_session() as session:
             yield session
 
+    settings = Settings(
+        _env_file=None,
+        internal_api_token="idempotency-token",
+        serpapi_api_key="test",
+        llm_provider="groq",
+        llm_model="test-model",
+        llm_api_key="test",
+    )
     app.dependency_overrides[get_session] = override_session
-    settings = get_settings()
+    app.dependency_overrides[get_settings] = lambda: settings
     request = {
         "programme_id": "nmmss",
         "academic_year": "2026-27",

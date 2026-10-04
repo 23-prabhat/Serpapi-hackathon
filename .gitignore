@@ -1,0 +1,48 @@
+# Repository-root safety rules. Application-specific rules also live in
+# kabtak/.gitignore.
+
+# Local environments and credentials
+.env*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local databases and runtime output
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.log
+
+# Editor and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Tool caches and reports at repository root
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+coverage/
+htmlcov/
+playwright-report/
+test-results/
+blob-report/
+dist/
+*.egg-info/
+docs/*
+plan.md
