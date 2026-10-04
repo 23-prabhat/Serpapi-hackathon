@@ -262,6 +262,7 @@ def test_extraction_retries_when_structured_output_fails_evidence_validation(
     class FakeResponse:
         is_success = True
         status_code = 200
+        headers: dict[str, str] = {}
 
         def __init__(self, content: str) -> None:
             self.content = content
@@ -287,6 +288,7 @@ def test_extraction_retries_when_structured_output_fails_evidence_validation(
             return FakeResponse(next(responses))
 
     monkeypatch.setattr(extraction.httpx, "Client", FakeClient)
+    monkeypatch.setattr(extraction, "sleep", lambda _seconds: None)
     settings = Settings(
         _env_file=None,
         llm_provider="groq",
@@ -308,3 +310,8 @@ def test_extraction_retries_when_structured_output_fails_evidence_validation(
     assert usage["total_tokens"] == 20
     assert len(requests) == 2
     assert "Validation failed" in requests[1]["messages"][-1]["content"]
+    assert [message["role"] for message in requests[1]["messages"]] == [
+        "system",
+        "user",
+        "user",
+    ]

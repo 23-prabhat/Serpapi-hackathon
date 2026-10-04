@@ -21,7 +21,7 @@ from app.services.failures import (
 )
 from app.services.parsing import Block
 
-PROMPT_VERSION = "phase5-multi-source-records-v3"
+PROMPT_VERSION = "phase5-multi-source-records-v4"
 SCHEMA_VERSION = "4"
 GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -194,6 +194,10 @@ Keep student submission, student correction, institution verification, and
 administrator verification separate. A later verification date is not a student
 submission extension. For NMMSS, Institute Nodal Officer/L1 is institution +
 verify and District Nodal Officer/L2 is administrator + verify.
+Create a CandidateDeadline only when the source states an exact calendar date.
+For approximate windows such as "April/May" or "September/October", create no
+deadline object and describe the missing exact date in unresolved_items. Never
+return null for date_raw or date_iso.
 For NSP scheme cards, "Defective Application Verification" is student + correct,
 "Institute Verification" is institution + verify, and "DNO/SNO/MNO Verification"
 is administrator + verify. Return every listed schedule field; do not omit or label
@@ -211,6 +215,9 @@ Extract eligibility as data-only rules using the closed operators. Also extract
 published required-document statements and official application links when they
 occur in the supplied source blocks; copy their source text and cite those blocks.
 Use unsupported for exceptions or conditions that cannot be represented safely.
+Never use eq, in, lt, lte, gt, or gte with a null value. When a condition has
+no safely representable value, use unsupported with null field, null value, and
+null unit while preserving its source text and evidence block IDs.
 Use lte for phrases such as "must not exceed", "at most", or "up to"; use lt
 only when the boundary itself is excluded. Apply the analogous distinction to
 gte and gt.
@@ -233,15 +240,24 @@ def extract_facts(
     academic_year: str,
     application_type: str,
     blocks: list[Block],
+    *,
+    deadline_only: bool = False,
 ) -> tuple[ExtractedDocument, dict[str, Any]]:
     if not settings.llm_api_key or not settings.llm_model:
         raise RuntimeError("Groq extraction settings are incomplete")
     rendered = "\n\n".join(f"[{block.block_id}] {block.location}\n{block.text}" for block in blocks)
     if len(rendered) > 30_000:
         raise UnsupportedSourceError("Parsed source exceeds the 30,000 character model limit")
+    focus_instruction = (
+        "\nExtraction focus: deadline only. Return empty conditions, required_documents, "
+        "and application_links arrays. Extract only scope, exact deadlines, and unresolved "
+        "deadline windows from the supplied blocks."
+        if deadline_only
+        else ""
+    )
     user_prompt = (
         f"Programme: {programme_name}\nAcademic year: {academic_year}\n"
-        f"Application type: {application_type}\n\nSource blocks:\n{rendered}"
+        f"Application type: {application_type}{focus_instruction}\n\nSource blocks:\n{rendered}"
     )
     schema = ExtractedDocument.model_json_schema()
     messages = [
@@ -283,9 +299,29 @@ def extract_facts(
                 )
             if not response.is_success:
                 try:
-                    provider_message = str(response.json().get("error", {}).get("message", ""))
+                    provider_error = response.json().get("error", {})
+                    provider_message = str(provider_error.get("message", ""))
                 except (TypeError, ValueError):
+                    provider_error = {}
                     provider_message = ""
+                if response.status_code == 400 and provider_error.get("failed_generation"):
+                    last_error = InvalidExtractionError(
+                        "Provider output did not match the strict extraction schema"
+                    )
+                    if attempt < max_attempts:
+                        sleep(_rate_limit_delay(response.headers, provider_message))
+                        messages.append(
+                            {
+                                "role": "user",
+                                "content": (
+                                    "Your prior generated JSON did not match the strict schema. "
+                                    "Do not create a deadline when its exact date is absent, and "
+                                    "never put null in a required string field. Return valid JSON "
+                                    "for the complete schema."
+                                ),
+                            }
+                        )
+                    continue
                 last_error = ExtractionUnavailableError(
                     f"Groq extraction returned HTTP {response.status_code}"
                 )
@@ -316,18 +352,20 @@ def extract_facts(
         except (httpx.HTTPError, ValueError):
             last_error = ExtractionUnavailableError("Groq extraction request failed")
         if attempt < max_attempts and isinstance(content, str):
-            messages.extend(
-                [
-                    {"role": "assistant", "content": content},
-                    {
-                        "role": "user",
-                        "content": (
-                            f"Correct the structured extraction. Validation failed: {last_error}. "
-                            "Use only the supplied source blocks and return the complete "
-                            "JSON again."
-                        ),
-                    },
-                ]
+            # A full invalid answer can add thousands of tokens and make a
+            # correction request exceed Groq's free-tier TPM cap. The source
+            # and schema are already present, so only send the concise local
+            # validation error after the provider's token window resets.
+            sleep(_rate_limit_delay(response.headers))
+            messages.append(
+                {
+                    "role": "user",
+                    "content": (
+                        f"Correct the structured extraction. Validation failed: {last_error}. "
+                        "Use only the supplied source blocks and return the complete "
+                        "JSON again. Never put null in a field whose schema requires a value."
+                    ),
+                }
             )
     raise last_error or ExtractionUnavailableError("Groq extraction request failed")
 

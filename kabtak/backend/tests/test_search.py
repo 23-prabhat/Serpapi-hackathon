@@ -87,7 +87,8 @@ def test_search_continues_after_unreviewed_results_and_soft_error(
     assert outcome.metadata["attempt_count"] == 4
     assert outcome.metadata["discovery_mode"] == "search"
     assert outcome.urls == ["https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657"]
-    assert all(item["as_sitesearch"] == "pib.gov.in" for item in client.parameters)
+    assert all("site:pib.gov.in" in str(item["q"]) for item in client.parameters)
+    assert all("api_key" in item for item in client.parameters)
 
 
 def test_search_retains_original_and_amendment_results_across_queries(
@@ -216,3 +217,41 @@ def test_search_rejects_allowlisted_but_irrelevant_programme_result(
     assert outcome.urls == [
         "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48"
     ]
+
+
+@pytest.mark.parametrize(
+    "programme_id",
+    [
+        "nmmss",
+        "pm-usp-csss",
+        "aicte-pragati",
+        "national-overseas-scholarship",
+        "top-class-st",
+    ],
+)
+def test_each_live_programme_has_a_policy_checked_cycle_fallback(
+    programme_id: str, monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    monkeypatch.setattr(
+        search.httpx,
+        "Client",
+        fake_client([httpx.Response(200, json={"organic_results": []})]),
+    )
+    programme = load_registry()[programme_id]
+    settings = Settings(
+        _env_file=None,
+        serpapi_api_key="test-key",
+        data_dir=tmp_path,
+        max_search_attempts=1,
+    )
+
+    outcome = search.search_programme(
+        settings,
+        programme,
+        programme["supported_cycles"][-1],
+        f"fallback-{programme_id}",
+    )
+
+    assert outcome.metadata["discovery_mode"] == "registry_fallback"
+    assert outcome.urls
+    assert all(search.match_source_policy(programme, url) for url in outcome.urls)

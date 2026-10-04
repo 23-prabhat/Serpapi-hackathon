@@ -39,8 +39,10 @@ export function CheckForm({ initialProgrammeId }: { initialProgrammeId?: string 
       .then(([items, nextHealth]) => {
         setProgrammes(items);
         setHealth(nextHealth);
-        const requested = items.find((item) => item.id === initialProgrammeId);
-        const selected = requested ?? items.find((item) => item.support_status === "phase1_supported");
+        const requested = items.find(
+          (item) => item.id === initialProgrammeId && item.support_status === "live_supported",
+        );
+        const selected = requested ?? items.find((item) => item.support_status === "live_supported");
         if (selected) {
           setProgrammeId(selected.id);
           setAcademicYear(selected.supported_cycles.at(-1) ?? "2026-27");
@@ -135,14 +137,12 @@ export function CheckForm({ initialProgrammeId }: { initialProgrammeId?: string 
             onChange={(event) => selectProgramme(event.target.value)}
             required
           >
-            {programmes.map((item) => (
+            {programmes.filter((item) => item.support_status === "live_supported").map((item) => (
               <option
                 value={item.id}
                 key={item.id}
-                disabled={item.support_status !== "phase1_supported"}
               >
                 {item.name}
-                {item.support_status !== "phase1_supported" ? " — catalogue only" : ""}
               </option>
             ))}
           </select>

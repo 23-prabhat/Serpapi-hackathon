@@ -1,4 +1,4 @@
-"""Bounded SerpApi search adapter for the first NMMSS live path."""
+"""Bounded SerpApi search adapter for reviewed live programmes."""
 
 from __future__ import annotations
 
@@ -40,16 +40,24 @@ def _is_deadline_result(
         programme["id"].lower(),
         programme["id"].lower().replace("-", " "),
         _normalized_search_text(programme["name"]),
+        *(
+            _normalized_search_text(marker)
+            for marker in programme.get("search_terms", [])
+            if isinstance(marker, str)
+        ),
     }
     deadline_markers = (
         "deadline",
         "last date",
+        "closing date",
         "open till",
+        "closed on",
         "submission of application",
         "submission of applications",
         "application deadline",
         "applications extended",
         "application extended",
+        "inviting of applications",
     )
     normalized_cycle = _normalized_search_text(academic_year)
     has_programme = any(marker and marker in searchable for marker in programme_markers)
@@ -71,7 +79,7 @@ def _atomic_json(path: Path, value: object) -> None:
         raise
 
 
-def search_nmmss(
+def search_programme(
     settings: Settings,
     programme: dict[str, Any],
     academic_year: str,
@@ -81,14 +89,15 @@ def search_nmmss(
         raise RuntimeError("SERPAPI_API_KEY is not configured")
 
     year = academic_year.split("-")[0]
+    search_terms = programme.get("search_terms") or [programme["name"]]
+    primary_term = str(search_terms[0])
+    reviewed_hosts = sorted({source["host"] for source in programme["sources"]})
+    site_scope = " OR ".join(f"site:{host}" for host in reviewed_hosts)
     queries = [
-        f'NMMSS "{academic_year}" deadline',
-        (
-            f'"National Means-cum-Merit Scholarship Scheme" "{academic_year}" '
-            "extension amendment revised"
-        ),
-        f'"NMMSS Scholarship Application Deadline Extended" {year}',
-        f"NMMSS scholarship deadline {year}",
+        f'"{primary_term}" "{academic_year}" deadline ({site_scope})',
+        f'"{primary_term}" "{academic_year}" extension amendment revised ({site_scope})',
+        f'"{primary_term}" scholarship "last date" {year} ({site_scope})',
+        f'"{primary_term}" application "open till" {year} ({site_scope})',
     ][: settings.max_search_attempts]
     requested_at = datetime.now(UTC)
     candidates: list[tuple[int, str]] = []
@@ -103,7 +112,6 @@ def search_nmmss(
             safe_parameters = {
                 "engine": "google",
                 "q": query,
-                "as_sitesearch": "pib.gov.in",
                 "num": 10,
                 "hl": "en",
                 "gl": "in",
@@ -195,7 +203,9 @@ def search_nmmss(
         ]
         discovery_mode = "registry_fallback"
     if not ordered_urls:
-        raise RuntimeError("SerpApi returned no reviewed NMMSS source for the selected cycle")
+        raise RuntimeError(
+            f"SerpApi returned no reviewed source for {programme['name']} in {academic_year}"
+        )
 
     created_at = None
     raw_created_at = result_search_metadata.get("created_at")
@@ -230,3 +240,8 @@ def search_nmmss(
             "discovery_mode": discovery_mode,
         },
     )
+
+
+# Compatibility for older imports and local scripts. New production code uses
+# the programme-neutral name above.
+search_nmmss = search_programme

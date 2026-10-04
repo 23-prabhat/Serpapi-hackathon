@@ -4,6 +4,7 @@ import hashlib
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
+import pytest
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
@@ -13,11 +14,25 @@ from app.db.models import Check, Programme, Report, Run, RunDocument
 from app.services import pipeline
 from app.services.extraction import CandidateDeadline, ExtractedDocument, ExtractedFacts
 from app.services.parsing import Block
+from app.services.registry import load_registry
 from app.services.retrieval import RetrievedSource
 from app.services.search import SearchOutcome
 
 
-def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch) -> None:
+@pytest.mark.parametrize(
+    ("programme_id", "application_type"),
+    [
+        ("nmmss", "fresh"),
+        ("pm-usp-csss", "renewal"),
+        ("aicte-pragati", "fresh"),
+        ("national-overseas-scholarship", "fresh"),
+        ("top-class-st", "fresh"),
+    ],
+)
+def test_pipeline_combines_original_and_separate_amendment_for_each_live_programme(
+    programme_id, application_type, tmp_path, monkeypatch
+) -> None:
+    programme = load_registry()[programme_id]
     engine = create_engine(f"sqlite:///{tmp_path / 'pipeline.db'}")
     Base.metadata.create_all(engine)
     test_sessions = sessionmaker(bind=engine, expire_on_commit=False)
@@ -29,20 +44,20 @@ def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch
     with test_sessions.begin() as session:
         session.add(
             Programme(
-                id="nmmss",
-                name="NMMSS",
-                provider="Ministry of Education",
+                id=programme_id,
+                name=programme["name"],
+                provider=programme["provider"],
                 registry_version="1",
-                support_status="phase1_supported",
+                support_status="live_supported",
             )
         )
         session.add(
             Check(
                 id=check_id,
-                programme_id="nmmss",
+                programme_id=programme_id,
                 requested_scope_json={
                     "academic_year": "2026-27",
-                    "application_type": "fresh",
+                    "application_type": application_type,
                     "applicant_group": None,
                 },
                 profile_json=None,
@@ -76,7 +91,7 @@ def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch
 
     def fake_search(*_args, **_kwargs) -> SearchOutcome:
         return SearchOutcome(
-            query="NMMSS 2026-27 deadline extension",
+            query=f"{programme['name']} 2026-27 deadline extension",
             urls=urls,
             provider_search_id="search_1",
             result_created_at=now,
@@ -107,7 +122,7 @@ def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch
         date_text = "October 31, 2026" if amendment else "October 15, 2026"
         row_label = "Student submission extended" if amendment else "Student submission"
         text = (
-            "National Means-cum-Merit Scholarship Scheme NMMSS 2026-27 fresh deadline\n"
+            f"{programme['name']} {programme_id} 2026-27 {application_type} deadline\n"
             f"{row_label} | {date_text}"
         )
         return (
@@ -125,7 +140,10 @@ def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch
             "parsed",
         )
 
-    def fake_extract(_settings, _programme, _year, _application_type, blocks):
+    def fake_extract(
+        _settings, _programme, _year, _application_type, blocks, *, deadline_only=False
+    ):
+        assert deadline_only is (programme_id == "national-overseas-scholarship")
         amendment = "extended" in blocks[0].text
         date_iso = "2026-10-31" if amendment else "2026-10-15"
         return (
@@ -133,7 +151,7 @@ def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch
                 records=[
                     ExtractedFacts(
                         academic_year="2026-27",
-                        application_types=["fresh"],
+                        application_types=[application_type],
                         applicant_group=None,
                         applies_to_all_groups=True,
                         scope_evidence_block_ids=["block_1"],
@@ -146,7 +164,7 @@ def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch
                                 date_iso=date_iso,
                                 time=None,
                                 timezone=None,
-                                application_types=["fresh"],
+                                application_types=[application_type],
                                 applicant_group=None,
                                 applies_to_all_groups=True,
                                 explicitly_revises_deadline=amendment,
@@ -165,7 +183,7 @@ def test_pipeline_combines_original_and_separate_amendment(tmp_path, monkeypatch
             {"total_tokens": 10},
         )
 
-    monkeypatch.setattr(pipeline, "search_nmmss", fake_search)
+    monkeypatch.setattr(pipeline, "search_programme", fake_search)
     monkeypatch.setattr(pipeline, "retrieve_source", fake_retrieve)
     monkeypatch.setattr(pipeline, "parse_source_bounded", fake_parse)
     monkeypatch.setattr(pipeline, "extract_facts", fake_extract)

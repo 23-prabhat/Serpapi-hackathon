@@ -6,7 +6,8 @@
 
 Five programmes are in the selected onboarding set. All have an official issuer
 or application-portal source for a 2026-27 cycle that the backend probe parsed.
-They are marked `phase0_selected`, not production-supported.
+The registry retains the reviewed `phase0_selected` onboarding marker; the live
+support policy now promotes every entry with that marker to `live_supported`.
 
 | Programme | Current-cycle source | Primary proof case | Initial concern |
 | --- | --- | --- | --- |
@@ -59,5 +60,5 @@ Credentials were verified without recording their values:
 - `openai/gpt-oss-120b` is selected as the only configured candidate.
 - All five selected programmes have reviewed source authority, current-cycle
   scope, parser evidence, and at least one passing development case.
-- Phase 0 is complete; these programmes remain `phase0_selected` until the
-  persisted Phase 1 path and later held-out evaluation promote them.
+- Phase 0 is complete. The persisted pipeline and later evaluation gates have
+  now promoted all five selected programmes to the public live workflow.

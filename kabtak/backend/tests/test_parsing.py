@@ -44,6 +44,32 @@ def test_html_table_preserves_visual_header_rows_without_th_tags() -> None:
     assert blocks[0].metadata["headers"] == ["Process", "Last Date"]
 
 
+def test_nsp_scheme_card_preserves_title_cycle_and_every_schedule_row() -> None:
+    blocks = parse_html(
+        b"""
+        <html><body>
+          <nav><h6>Academic Year 2026-27</h6></nav>
+          <main>
+            <div class="row border-bottom">
+              <h6>AICTE - Pragati Scholarship Scheme For Girl Students</h6>
+              <span>Scheme Open from : 01-06-2026</span>
+              <span>Student Application Open till : 31-10-2026</span>
+              <span>Institute Verification Open till:15-11-2026</span>
+            </div>
+          </main>
+        </body></html>
+        """
+    )
+
+    assert blocks[0].kind == "document_context"
+    assert blocks[0].text == "Academic Year 2026-27"
+    card = next(block for block in blocks if block.kind == "scheme_card")
+    assert "AICTE - Pragati Scholarship Scheme" in card.text
+    assert "Student Application Open till : 31-10-2026" in card.text
+    assert "Institute Verification Open till:15-11-2026" in card.text
+    assert not any(block.kind == "heading" for block in blocks)
+
+
 def test_source_files_are_versioned_and_never_overwritten(tmp_path) -> None:
     content = b"<!doctype html><html><body>notice</body></html>"
     digest = hashlib.sha256(content).hexdigest()

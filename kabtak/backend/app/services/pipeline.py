@@ -1,7 +1,8 @@
-"""One persisted live NMMSS run from discovery through report commit."""
+"""One persisted live programme run from discovery through report commit."""
 
 from __future__ import annotations
 
+import hashlib
 import re
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -43,7 +44,27 @@ from app.services.registry import load_registry
 from app.services.reporting import REPORT_SCHEMA_VERSION, build_report
 from app.services.retrieval import RetrievedSource, SourceRequestBudget, retrieve_source
 from app.services.rules.types import SourcedRecord
-from app.services.search import search_nmmss
+from app.services.search import search_programme
+
+DEADLINE_SCOPE_MARKERS = (
+    "deadline",
+    "last date",
+    "closing date",
+    "open till",
+    "closed on",
+    "submission of application",
+    "submission of applications",
+    "applications extended",
+    "application extended",
+    "inviting of applications",
+    "portal for first round",
+    "portal for second round",
+)
+# Groq's free tier currently allows 8K tokens per minute for the configured
+# model.  Fourteen thousand source characters leaves room for the extraction
+# schema, instructions, and response instead of making long official PDFs fail
+# with a provider-side rate-limit response.
+EXTRACTION_TEXT_BUDGET = 14_000
 
 
 def _utcnow() -> datetime:
@@ -117,29 +138,115 @@ def _normalize_scope_text(value: str) -> str:
     return " ".join(re.sub(r"[^a-z0-9]+", " ", value.lower()).split())
 
 
+def _programme_markers(programme: dict[str, Any]) -> set[str]:
+    return {
+        programme["id"].lower(),
+        programme["id"].lower().replace("-", " "),
+        _normalize_scope_text(programme["name"]),
+        *(
+            _normalize_scope_text(marker)
+            for marker in programme.get("search_terms", [])
+            if isinstance(marker, str)
+        ),
+    }
+
+
 def _has_requested_deadline_scope(
     blocks: list[Block], programme: dict[str, Any], academic_year: str
 ) -> bool:
     text = _normalize_scope_text("\n".join(block.text for block in blocks))
-    programme_markers = {
-        programme["id"].lower(),
-        programme["id"].lower().replace("-", " "),
-        _normalize_scope_text(programme["name"]),
-    }
-    deadline_markers = (
-        "deadline",
-        "last date",
-        "open till",
-        "submission of application",
-        "submission of applications",
-        "applications extended",
-        "application extended",
-    )
     return (
         _normalize_scope_text(academic_year) in text
-        and any(marker and marker in text for marker in programme_markers)
-        and any(marker in text for marker in deadline_markers)
+        and any(marker and marker in text for marker in _programme_markers(programme))
+        and any(marker in text for marker in DEADLINE_SCOPE_MARKERS)
     )
+
+
+def _blocks_for_extraction(
+    blocks: list[Block], programme: dict[str, Any], academic_year: str
+) -> list[Block]:
+    """Keep exact evidence blocks while bounding programme-specific model input."""
+
+    text_budget = min(
+        int(programme.get("extraction_text_budget", EXTRACTION_TEXT_BUDGET)),
+        EXTRACTION_TEXT_BUDGET,
+    )
+    markers = _programme_markers(programme)
+    normalized_cycle = _normalize_scope_text(academic_year)
+    scheme_cards = [block for block in blocks if block.kind == "scheme_card"]
+    if scheme_cards:
+        preferred_marker = _normalize_scope_text(programme["name"])
+        matching_cards = [
+            block for block in scheme_cards if preferred_marker in _normalize_scope_text(block.text)
+        ]
+        if not matching_cards:
+            matching_cards = [
+                block
+                for block in scheme_cards
+                if any(marker and marker in _normalize_scope_text(block.text) for marker in markers)
+            ]
+        matching_ids = {block.block_id for block in matching_cards}
+        candidates = [
+            block
+            for block in blocks
+            if normalized_cycle in _normalize_scope_text(block.text)
+            or block.block_id in matching_ids
+        ]
+    else:
+
+        def priority(item: tuple[int, Block]) -> tuple[int, int]:
+            index, block = item
+            text = _normalize_scope_text(block.text)
+            score = 0
+            if normalized_cycle in text:
+                score += 4
+            if any(marker and marker in text for marker in markers):
+                score += 4
+            if any(marker in text for marker in DEADLINE_SCOPE_MARKERS):
+                score += 5
+            if any(
+                marker in text
+                for marker in (
+                    "list of document required",
+                    "documents required",
+                    "required documents",
+                    "application procedure",
+                )
+            ):
+                score += 3
+            if any(marker in text for marker in ("eligibility", "eligible", "apply")):
+                score += 1
+            return (-score, index)
+
+        candidates = [block for _, block in sorted(enumerate(blocks), key=priority)]
+
+    selected: list[Block] = []
+    selected_ids: set[str] = set()
+    used = 0
+    for block in candidates:
+        rendered_size = len(block.block_id) + len(block.location) + len(block.text) + 8
+        if block.block_id in selected_ids or used + rendered_size > text_budget:
+            continue
+        selected.append(block)
+        selected_ids.add(block.block_id)
+        used += rendered_size
+    order = {block.block_id: index for index, block in enumerate(blocks)}
+    return sorted(selected, key=lambda block: order[block.block_id])
+
+
+def _extraction_scope_hash(
+    programme: dict[str, Any], academic_year: str, application_type: str
+) -> str:
+    cache_identity = "\n".join(
+        (
+            prompt_hash(),
+            programme["id"],
+            academic_year,
+            application_type,
+            str(programme.get("extraction_focus", "full")),
+        )
+    )
+    return hashlib.sha256(cache_identity.encode()).hexdigest()
 
 
 def process_run(run_id: str, owner_token: str, settings: Settings | None = None) -> None:
@@ -156,10 +263,11 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
     scope = check.requested_scope_json
     academic_year = scope["academic_year"]
     application_type = scope["application_type"]
+    extraction_scope_hash = _extraction_scope_hash(programme, academic_year, application_type)
     usage: dict[str, Any] = {"search_calls": 0, "source_requests": 0, "model": {}}
 
     _set_stage(run_id, owner_token, "searching")
-    search = search_nmmss(settings, programme, academic_year, run_id)
+    search = search_programme(settings, programme, academic_year, run_id)
     usage["search_calls"] = search.metadata["attempt_count"]
     with SessionLocal.begin() as session:
         session.add(
@@ -305,7 +413,7 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
                     select(Extraction).where(
                         Extraction.document_version_id == prepared.version_id,
                         Extraction.model_id == settings.llm_model,
-                        Extraction.prompt_hash == prompt_hash(),
+                        Extraction.prompt_hash == extraction_scope_hash,
                         Extraction.schema_version == SCHEMA_VERSION,
                     )
                 )
@@ -316,12 +424,16 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
                     extraction_id = cached.id
                     model_usage.append({"version_id": prepared.version_id, "cache_hit": True})
                 else:
+                    extraction_blocks = _blocks_for_extraction(
+                        prepared.blocks, programme, academic_year
+                    )
                     extracted, document_usage = extract_facts(
                         settings,
                         programme["name"],
                         academic_year,
                         application_type,
-                        prepared.blocks,
+                        extraction_blocks,
+                        deadline_only=programme.get("extraction_focus") == "deadline_only",
                     )
                     model_usage.append(
                         {
@@ -338,7 +450,7 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
                             id=extraction_id,
                             document_version_id=prepared.version_id,
                             model_id=settings.llm_model or "unknown",
-                            prompt_hash=prompt_hash(),
+                            prompt_hash=extraction_scope_hash,
                             schema_version=SCHEMA_VERSION,
                             facts_json=extracted.model_dump(mode="json"),
                             validation_json={
@@ -346,7 +458,7 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
                                 "validated_at": _utcnow().isoformat(),
                                 "evidence_ids": "valid",
                                 "dates": "supported_in_actor_action_context",
-                                "block_count": len(prepared.blocks),
+                                "block_count": len(extraction_blocks),
                             },
                             created_at=_utcnow(),
                         )
@@ -415,6 +527,7 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
         profile=check.profile_json,
         incomplete_source_attempts=bool(last_failure or last_extraction_failure),
         model_id=settings.llm_model or "unknown",
+        extraction_prompt_hash=extraction_scope_hash,
     )
     ReportRead.model_validate(report_json)
 
@@ -450,5 +563,5 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
             "rules": "phase3-2",
             "schema": REPORT_SCHEMA_VERSION,
             "model": settings.llm_model,
-            "prompt": prompt_hash(),
+            "prompt": extraction_scope_hash,
         }

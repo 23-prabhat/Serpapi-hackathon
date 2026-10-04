@@ -44,5 +44,6 @@ test-results/
 blob-report/
 dist/
 *.egg-info/
-docs/*
+docs/
 plan.md
+run.md

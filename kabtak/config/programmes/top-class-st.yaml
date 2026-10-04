@@ -4,12 +4,24 @@ name: National Fellowship and Scholarship for Higher Education of ST Students
 provider: Ministry of Tribal Affairs
 onboarding_status: phase0_selected
 supported_cycles:
+  - "2025-26"
   - "2026-27"
 application_types:
   - fresh
+  - renewal
+search_terms:
+  - National Fellowship and Scholarship for Higher Education of ST Students
+  - Top Class ST Scholarship
 locale:
   country: IN
   comparison_timezone: Asia/Kolkata
+reviewed_discovery_urls:
+  "2025-26":
+    - https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipfaq.pdf
+  "2026-27":
+    - https://scholarships.gov.in/All-Scholarships
+    - https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipguideline.pdf
+    - https://scholarships.gov.in/public/schemeGuidelines/tribalfellowshipfaq.pdf
 sources:
   - id: top-class-st-nsp
     host: scholarships.gov.in
@@ -17,6 +29,9 @@ sources:
       - /All-Scholarships
       - /public/schemeGuidelines/tribalfellowshipguideline.pdf
       - /public/schemeGuidelines/tribalfellowshipfaq.pdf
+    formats:
+      - html
+      - pdf
     role: application_portal
     may_establish:
       - deadline
@@ -25,4 +40,5 @@ sources:
       - portal_status_at_observation
 review_notes:
   - NSP calls this the former Top Class Education for Scheduled Tribe Students scheme.
+  - The official 2025-26 FAQ covers renewal applicants; a cycle-specific deadline is required before reporting a renewal date.
   - Student, defective-application, institute, and administrative dates must stay separate.

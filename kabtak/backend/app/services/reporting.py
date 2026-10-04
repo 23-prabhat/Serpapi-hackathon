@@ -25,6 +25,7 @@ def build_report(
     profile: dict[str, Any] | None,
     incomplete_source_attempts: bool,
     model_id: str,
+    extraction_prompt_hash: str | None = None,
 ) -> dict[str, Any]:
     resolved = resolve_deadlines(
         sources,
@@ -106,7 +107,7 @@ def build_report(
             "schema_version": REPORT_SCHEMA_VERSION,
             "input_mode": "live_search_and_retrieval",
             "model_id": model_id,
-            "prompt_hash": prompt_hash(),
+            "prompt_hash": extraction_prompt_hash or prompt_hash(),
         },
     }
 

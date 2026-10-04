@@ -40,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <span>Kabtak</span>
             </Link>
             <nav className="primary-nav" aria-label="Primary navigation">
+              <Link href="/#check">New check</Link>
               <Link href="/discover">Discover</Link>
               <Link href="/examples">Examples</Link>
               <Link href="/saved">Saved</Link>

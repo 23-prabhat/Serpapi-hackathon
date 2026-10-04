@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup, Tag
 
 from app.services.failures import ParsingFailedError, ProcessingError, UnsupportedPDFError
 
-PARSER_VERSION = "phase2-2"
+PARSER_VERSION = "phase2-3"
 SPACE_PATTERN = re.compile(r"\s+")
 SELECTED_HTML_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "table"}
 ACADEMIC_YEAR_PATTERN = re.compile(r"\bacademic\s+year\s+\d{4}\s*[-–]\s*\d{2}\b", re.I)
@@ -37,6 +37,23 @@ class Block:
 
 def normalize_text(value: str) -> str:
     return SPACE_PATTERN.sub(" ", value).strip()
+
+
+def _is_nsp_scheme_card(element: Tag) -> bool:
+    """Recognize one National Scholarship Portal scheme/schedule card."""
+
+    classes = set(element.get("class", []))
+    return (
+        element.name == "div"
+        and {"row", "border-bottom"}.issubset(classes)
+        and element.find("h6") is not None
+    )
+
+
+def _is_inside_nsp_scheme_card(element: Tag) -> bool:
+    return any(
+        isinstance(parent, Tag) and _is_nsp_scheme_card(parent) for parent in element.parents
+    )
 
 
 def _make_block(
@@ -87,12 +104,31 @@ def parse_html(content: bytes) -> list[Block]:
         )
     section = "document"
     table_number = 0
-    for element in root.find_all(SELECTED_HTML_TAGS):
+    for element in root.find_all([*SELECTED_HTML_TAGS, "div"]):
         if not isinstance(element, Tag):
+            continue
+        scheme_card = _is_nsp_scheme_card(element)
+        if element.name == "div" and not scheme_card:
+            continue
+        if not scheme_card and _is_inside_nsp_scheme_card(element):
             continue
         if element.name != "table" and element.find_parent("table") is not None:
             continue
         if element.name == "li" and element.find_parent("li") is not None:
+            continue
+        if scheme_card:
+            title_element = element.find("h6")
+            title = normalize_text(title_element.get_text(" ", strip=True))
+            details = [
+                normalize_text(item.get_text(" ", strip=True)) for item in element.find_all("span")
+            ]
+            text = "\n".join([title, *(detail for detail in details if detail)])
+            _make_block(
+                blocks,
+                kind="scheme_card",
+                location=f"scheme {title[:160]}",
+                text=text,
+            )
             continue
         if element.name == "table":
             table_number += 1

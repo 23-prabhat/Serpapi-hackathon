@@ -82,7 +82,7 @@ export function CheckExperience() {
         if (!active) return;
         setProgrammes(items);
         const firstSupported = items.find(
-          (item) => item.support_status === "phase1_supported",
+          (item) => item.support_status === "live_supported",
         );
         if (firstSupported) {
           setProgrammeId(firstSupported.id);
@@ -363,9 +363,9 @@ export function CheckExperience() {
           <label htmlFor="programme">Programme</label>
           <select id="programme" value={programmeId} onChange={(event) => setProgrammeId(event.target.value)} required>
             {programmes.length === 0 && <option value="nmmss">NMMSS</option>}
-            {programmes.map((item) => (
-              <option value={item.id} key={item.id} disabled={item.support_status !== "phase1_supported"}>
-                {item.name}{item.support_status !== "phase1_supported" ? " — coming soon" : ""}
+            {programmes.filter((item) => item.support_status === "live_supported").map((item) => (
+              <option value={item.id} key={item.id}>
+                {item.name}
               </option>
             ))}
           </select>

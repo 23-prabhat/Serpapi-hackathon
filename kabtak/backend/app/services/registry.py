@@ -1,4 +1,4 @@
-"""Reviewed programme registry loading and Phase 1 support policy."""
+"""Reviewed programme registry loading and live support policy."""
 
 from __future__ import annotations
 
@@ -14,7 +14,13 @@ from app.db.models import Programme
 from app.errors import APIError
 
 REGISTRY_DIR = Path(__file__).resolve().parents[3] / "config" / "programmes"
-PHASE1_PROGRAMME_ID = "nmmss"
+LIVE_ONBOARDING_STATUS = "phase0_selected"
+
+
+def is_live_supported(programme: dict[str, Any]) -> bool:
+    """Return whether a reviewed registry entry passed the live onboarding gate."""
+
+    return programme.get("onboarding_status") == LIVE_ONBOARDING_STATUS
 
 
 @lru_cache
@@ -35,9 +41,7 @@ def public_programmes() -> list[dict[str, Any]]:
             "provider": item["provider"],
             "supported_cycles": item["supported_cycles"],
             "application_types": item["application_types"],
-            "support_status": (
-                "phase1_supported" if item["id"] == PHASE1_PROGRAMME_ID else "coming_soon"
-            ),
+            "support_status": "live_supported" if is_live_supported(item) else "coming_soon",
         }
         for item in load_registry().values()
     ]
@@ -47,11 +51,11 @@ def require_supported_programme(
     programme_id: str, academic_year: str, application_type: str
 ) -> dict[str, Any]:
     item = load_registry().get(programme_id)
-    if item is None or programme_id != PHASE1_PROGRAMME_ID:
+    if item is None or not is_live_supported(item):
         raise APIError(
             422,
             "UNSUPPORTED_PROGRAMME",
-            "Phase 1 currently supports the National Means-cum-Merit Scholarship Scheme.",
+            "Select one of Kabtak's reviewed live scholarship programmes.",
         )
     if academic_year not in item["supported_cycles"]:
         raise APIError(422, "UNSUPPORTED_CYCLE", "Select a reviewed academic cycle.")
@@ -86,7 +90,7 @@ def validate_notice_url(programme: dict[str, Any], url: str | None) -> None:
 
 def seed_programmes(session: Session) -> None:
     for item in load_registry().values():
-        support_status = "phase1_supported" if item["id"] == PHASE1_PROGRAMME_ID else "coming_soon"
+        support_status = "live_supported" if is_live_supported(item) else "coming_soon"
         programme = session.get(Programme, item["id"])
         if programme is None:
             session.add(

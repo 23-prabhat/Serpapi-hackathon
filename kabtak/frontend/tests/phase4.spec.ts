@@ -6,9 +6,49 @@ const programme = {
   provider: "Ministry of Education",
   supported_cycles: ["2025-26", "2026-27"],
   application_types: ["fresh", "renewal"],
-  support_status: "phase1_supported",
+  support_status: "live_supported",
   last_checked_at: "2026-10-03T10:00:00Z",
 };
+
+const liveProgrammes = [
+  programme,
+  {
+    ...programme,
+    id: "pm-usp-csss",
+    name: "PM-USP Central Sector Scheme of Scholarship",
+  },
+  {
+    ...programme,
+    id: "aicte-pragati",
+    name: "AICTE Pragati Scholarship Scheme for Girl Students",
+    supported_cycles: ["2026-27"],
+    application_types: ["fresh", "renewal"],
+  },
+  {
+    ...programme,
+    id: "national-overseas-scholarship",
+    name: "National Overseas Scholarship",
+    supported_cycles: ["2025-26", "2026-27"],
+    application_types: ["fresh"],
+  },
+  {
+    ...programme,
+    id: "top-class-st",
+    name: "National Fellowship and Scholarship for Higher Education of ST Students",
+    supported_cycles: ["2025-26", "2026-27"],
+    application_types: ["fresh", "renewal"],
+  },
+];
+
+const catalogueProgrammes = [
+  ...liveProgrammes,
+  {
+    ...programme,
+    id: "azim-premji-scholarship",
+    name: "Azim Premji Scholarship",
+    support_status: "coming_soon",
+  },
+];
 
 const completedRun = {
   id: "run-1",
@@ -120,16 +160,65 @@ async function tabTo(page: Page, id: string) {
 }
 
 test("catalogue is keyboard reachable and has no page overflow at required widths", async ({ page }) => {
-  await page.route("**/api/v1/programmes", (route) => json(route, [programme]));
+  await page.route("**/api/v1/programmes", (route) => json(route, catalogueProgrammes));
   for (const width of [360, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/discover");
-    await expect(page.getByText("3 Oct 2026")).toBeVisible();
+    await expect(page.getByText("3 Oct 2026").first()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
   await page.goto("/discover");
   await tabTo(page, "catalogue-search");
   await expect(page.locator("#catalogue-search")).toBeFocused();
+});
+
+test("all five live programmes can be selected from the check form", async ({ page }) => {
+  await page.route("**/api/v1/programmes", (route) => json(route, catalogueProgrammes));
+  await page.route("**/api/v1/health", (route) => json(route, {
+    worker_ready: true,
+    live_search_enabled: true,
+    live_extraction_enabled: true,
+  }));
+
+  await page.goto("/");
+  const select = page.locator("#programme");
+  await expect(select.locator("option")).toHaveCount(5);
+  await expect(select.locator('option[value="azim-premji-scholarship"]')).toHaveCount(0);
+  for (const item of liveProgrammes) {
+    await select.selectOption(item.id);
+    await expect(select).toHaveValue(item.id);
+  }
+
+  await select.selectOption("top-class-st");
+  await expect(page.locator("#academic-year option")).toHaveCount(2);
+  await expect(page.locator("#application-type option")).toHaveCount(2);
+
+  await select.selectOption("national-overseas-scholarship");
+  await expect(page.locator("#academic-year option")).toHaveCount(2);
+  await expect(page.locator("#application-type option")).toHaveCount(1);
+});
+
+test("localhost is accepted as the configured loopback application's origin", async ({ page }) => {
+  await page.goto("/");
+  const result = await page.evaluate(async () => {
+    const response = await fetch("/api/v1/checks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Idempotency-Key": "origin-probe" },
+      body: "{}",
+    });
+    return { status: response.status, body: await response.json() };
+  });
+
+  expect(result.status).not.toBe(403);
+  expect(result.body?.error?.code).not.toBe("ORIGIN_NOT_ALLOWED");
+});
+
+test("primary navigation exposes an explicit new-check action", async ({ page }) => {
+  await page.goto("/discover");
+  const newCheck = page.getByRole("link", { name: "New check" });
+  await expect(newCheck).toHaveAttribute("href", "/#check");
+  await newCheck.click();
+  await expect(page.locator("#check")).toBeVisible();
 });
 
 test("offline replay opens its report and exact evidence without keys", async ({ page }) => {
@@ -196,6 +285,12 @@ test("saved lifecycle exposes evidence, save, refresh, and delete actions", asyn
 
   await page.goto("/checks/check-1");
   await expect(page.getByText(evidence.text)).toBeVisible();
+  await page.getByRole("button", { name: "View evidence 1 ↓" }).first().click();
+  await expect(page.locator(".evidence-inspector")).toBeFocused();
+  await expect(page.getByRole("link", { name: "Open original source ↗" })).toHaveAttribute(
+    "href",
+    evidence.source_url,
+  );
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByRole("button", { name: "Unsave" })).toBeVisible();
   await page.getByRole("button", { name: "Refresh sources" }).click();

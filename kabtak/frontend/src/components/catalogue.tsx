@@ -46,19 +46,19 @@ export function Catalogue() {
           <label htmlFor="catalogue-status">Availability</label>
           <select id="catalogue-status" value={status} onChange={(event) => setStatus(event.target.value)}>
             <option value="all">All reviewed entries</option>
-            <option value="phase1_supported">Live check available</option>
-            <option value="coming_soon">Catalogue only</option>
+            <option value="live_supported">Live check available</option>
+            <option value="coming_soon">Deferred entries</option>
           </select>
         </div>
       </section>
       {error && <div className="error-box" role="alert">{error}</div>}
       <section className="catalogue-grid" aria-live="polite">
         {filtered.map((item, index) => {
-          const supported = item.support_status === "phase1_supported";
+          const supported = item.support_status === "live_supported";
           return (
             <article className="catalogue-card brutal-card" key={item.id}>
               <span className="card-index">{String(index + 1).padStart(2, "0")}</span>
-              <p className="eyebrow">{supported ? "Live check available" : "Reviewed · catalogue only"}</p>
+              <p className="eyebrow">{supported ? "Live check available" : "Deferred · source unavailable"}</p>
               <h2>{item.name}</h2>
               <p>{item.provider}</p>
               <dl>
@@ -72,7 +72,7 @@ export function Catalogue() {
               {supported ? (
                 <Link className="card-link" href={`/?programme=${encodeURIComponent(item.id)}#check`}>Check this programme →</Link>
               ) : (
-                <span className="disabled-action">Live processing not enabled yet</span>
+                <span className="disabled-action">Official source access is not reliable yet</span>
               )}
             </article>
           );

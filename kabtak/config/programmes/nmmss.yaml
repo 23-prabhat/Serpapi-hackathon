@@ -9,6 +9,10 @@ supported_cycles:
 application_types:
   - fresh
   - renewal
+search_terms:
+  - NMMSS
+  - National Means-cum-Merit Scholarship Scheme
+  - National Means Cum Merit Scholarship
 locale:
   country: IN
   comparison_timezone: Asia/Kolkata

@@ -223,6 +223,9 @@ export function CheckDetail({ checkId }: { checkId: string }) {
           </p>
         </div>
         <div className="action-row">
+          <Link className="secondary-button" href="/#check">
+            New check
+          </Link>
           <button
             className="secondary-button"
             type="button"

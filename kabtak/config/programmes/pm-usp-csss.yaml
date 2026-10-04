@@ -9,9 +9,18 @@ supported_cycles:
 application_types:
   - fresh
   - renewal
+search_terms:
+  - PM-USP CSSS
+  - Central Sector Scheme of Scholarship for College and University Students
 locale:
   country: IN
   comparison_timezone: Asia/Kolkata
+reviewed_discovery_urls:
+  "2025-26":
+    - https://scholarships.gov.in/public/schemeGuidelines/FAQ_DOHE_CSSS.pdf
+  "2026-27":
+    - https://scholarships.gov.in/All-Scholarships
+    - https://scholarships.gov.in/ViewMoreAnnouncement
 sources:
   - id: pm-usp-moe-documents
     host: education.gov.in
@@ -27,11 +36,18 @@ sources:
     path_prefixes:
       - /All-Scholarships
       - /ViewMoreAnnouncement
+      - /public/schemeGuidelines/FAQ_DOHE_CSSS.pdf
+    formats:
+      - html
+      - pdf
     role: application_portal
     may_establish:
       - deadline
       - verification_deadline
       - portal_status_at_observation
+      - eligibility
+      - required_documents
+      - application_type
 review_notes:
   - Current NSP pages disagree on whether the renewal student deadline is September 30 or October 31, 2026.
   - Until an explicit dated extension is found, this must resolve as a conflict rather than choosing the later date.

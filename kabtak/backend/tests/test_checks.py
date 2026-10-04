@@ -136,3 +136,62 @@ async def test_admission_capacity_and_idempotency_are_checked_in_write_transacti
     assert duplicate.json()["run_id"] == first.json()["run_id"]
     assert full.status_code == 429
     assert full.json()["error"]["code"] == "QUEUE_FULL"
+
+
+@pytest.mark.anyio
+async def test_all_five_reviewed_programmes_can_start_a_live_check(tmp_path) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'five-programmes.db'}")
+    Base.metadata.create_all(engine)
+    test_session = sessionmaker(bind=engine, expire_on_commit=False)
+    with test_session() as session:
+        seed_programmes(session)
+
+    def override_session() -> Iterator[Session]:
+        with test_session() as session:
+            yield session
+
+    settings = Settings(
+        _env_file=None,
+        internal_api_token="five-programmes-token",
+        serpapi_api_key="test",
+        llm_provider="groq",
+        llm_model="test-model",
+        llm_api_key="test",
+        max_waiting_runs=10,
+    )
+    scopes = [
+        ("nmmss", "2026-27", "fresh"),
+        ("pm-usp-csss", "2026-27", "renewal"),
+        ("aicte-pragati", "2026-27", "fresh"),
+        ("national-overseas-scholarship", "2026-27", "fresh"),
+        ("top-class-st", "2026-27", "fresh"),
+    ]
+    app.dependency_overrides[get_session] = override_session
+    app.dependency_overrides[get_settings] = lambda: settings
+    try:
+        async with AsyncClient(
+            transport=ASGITransport(app=app),
+            base_url="http://testserver",
+            headers={"X-Internal-Token": settings.internal_api_token},
+        ) as client:
+            responses = []
+            for index, (programme_id, academic_year, application_type) in enumerate(scopes):
+                responses.append(
+                    await client.post(
+                        "/v1/checks",
+                        headers={"Idempotency-Key": f"five-programmes-{index}"},
+                        json={
+                            "programme_id": programme_id,
+                            "academic_year": academic_year,
+                            "application_type": application_type,
+                            "notice_url": None,
+                            "profile": None,
+                            "save": False,
+                        },
+                    )
+                )
+    finally:
+        app.dependency_overrides.clear()
+        engine.dispose()
+
+    assert [response.status_code for response in responses] == [202] * 5

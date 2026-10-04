@@ -4,18 +4,36 @@ name: National Overseas Scholarship for SC and Other Eligible Categories
 provider: Ministry of Social Justice and Empowerment
 onboarding_status: phase0_selected
 supported_cycles:
+  - "2025-26"
   - "2026-27"
 application_types:
   - fresh
+search_terms:
+  - National Overseas Scholarship
+  - NOS Scholarship SC
+# Keep Groq's free-tier extraction focused on the programme scope and
+# application-window pages. The full 18-page guideline otherwise produces a
+# truncated structured response before it can finish the deadline record.
+extraction_text_budget: 8000
+extraction_focus: deadline_only
 locale:
   country: IN
   comparison_timezone: Asia/Kolkata
+reviewed_discovery_urls:
+  "2025-26":
+    - https://nosmsje.gov.in/public/images/Scheme-guidelines-2025-26.pdf
+    - https://nosmsje.gov.in/public/images/How%20to%20Apply-%20NOS.pdf
+  "2026-27":
+    - https://nosmsje.gov.in/public/
+    - https://socialjustice.gov.in/writereaddata/UploadFile/68641776927848.pdf
 sources:
   - id: nos-portal
     host: nosmsje.gov.in
     path_prefixes:
       - /public/
       - /downloads
+    formats:
+      - html
     role: issuer_portal
     may_establish:
       - deadline
@@ -26,10 +44,13 @@ sources:
     host: socialjustice.gov.in
     path_prefixes:
       - /writereaddata/UploadFile/
+    formats:
+      - pdf
     role: issuer_document
     may_establish:
       - eligibility
       - application_process
 review_notes:
   - The four-day correction window permits edits only and is not a new-registration extension.
+  - NOS makes fresh awards rather than renewal applications; later selection rounds still use the fresh application type.
   - The 2026-27 first round is historical as of the Phase 0 reference date.

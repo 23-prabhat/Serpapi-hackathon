@@ -74,19 +74,29 @@ returns no qualifying result.
 
 ## Current scope
 
-The public live workflow supports the **National Means-cum-Merit Scholarship
-Scheme (NMMSS)** for reviewed 2025–26 and 2026–27 cycles, with fresh and renewal
-scope. Four additional programmes are present as reviewed evaluation/catalogue
-entries but deliberately remain `coming_soon`:
+The public live workflow supports five reviewed programmes:
 
+- National Means-cum-Merit Scholarship Scheme (NMMSS)
 - PM-USP Central Sector Scheme of Scholarship
 - National Overseas Scholarship
 - AICTE Pragati Scholarship
 - National Fellowship and Scholarship for Higher Education of ST Students
 
-Azim Premji Scholarship remains deferred because stable direct retrieval was not
-available. Kabtak accepts only allowlisted HTML and text-based PDF sources; it does
-not perform unrestricted crawling, OCR, portal login, or application submission.
+Each programme has documented cycles, application types, reviewed source policies,
+bounded SerpApi discovery, and policy-checked fallback sources. Azim Premji
+Scholarship remains deferred because stable direct retrieval was not available.
+Kabtak accepts only allowlisted HTML and text-based PDF sources; it does not perform
+unrestricted crawling, OCR, portal login, or application submission.
+
+### Future scope: any scholarship from an official link
+
+A future guarded mode will let a student provide an official notice link for a
+scholarship outside the catalogue, including programmes such as Amazon Future
+Engineer. Kabtak will validate the public URL, retrieve it with strict redirect,
+size, format, and request limits, extract scoped facts, and return the same cited
+report. If authority, cycle, deadline role, or evidence cannot be established, the
+output will be explicitly unresolved or unsupported rather than guessed. This is
+future scope and is not presented as an available P0 feature.
 
 ## Architecture
 
@@ -198,7 +208,8 @@ can be reproduced offline without SerpApi or Groq calls.
 
 ## Important limitations
 
-- Only NMMSS is advertised as a supported live programme.
+- Live checking is intentionally limited to the five reviewed programmes listed
+  above; arbitrary scholarship links are planned future scope.
 - Search cannot guarantee that every official amendment is indexed.
 - The evaluation measures 20 bounded questions over seven documents, not universal
   scholarship accuracy or live rediscovery.
@@ -244,12 +255,11 @@ audit commands in [run.md](run.md#stop-the-project) and review `git status`.
 
 ## Project status
 
-Phases 0–6 in [plan.md](plan.md) are implemented for the bounded prototype. The
-live workflow currently supports NMMSS only; four additional programmes are
-reviewed catalogue and evaluation entries, not advertised live integrations.
-The remaining programme-completion checklist is intentionally not claimed until
-those integrations pass the same live evidence, failure-path, and evaluation
-standards.
+Phases 0–6 in [plan.md](plan.md) are implemented for the bounded prototype. All
+five reviewed programmes are admitted by the live workflow and use the same
+search, retrieval, extraction, decision, evidence, failure, and history pipeline.
+Public repository/video verification and authenticated submission remain
+participant-only release steps.
 
 ## Contributing and responsible use
 

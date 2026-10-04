@@ -7,20 +7,37 @@ supported_cycles:
   - "2026-27"
 application_types:
   - fresh
+  - renewal
+search_terms:
+  - AICTE Pragati Scholarship
+  - Pragati Scholarship Scheme for Girl Students
 locale:
   country: IN
   comparison_timezone: Asia/Kolkata
+reviewed_discovery_urls:
+  "2026-27":
+    - https://scholarships.gov.in/All-Scholarships
+    - https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2010_G.pdf
+    - https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2010_F.pdf
 sources:
   - id: pragati-nsp
     host: scholarships.gov.in
     path_prefixes:
       - /All-Scholarships
       - /ViewMoreAnnouncement
+      - /public/schemeGuidelines/AICTE/AICTE_2010_G.pdf
+      - /public/schemeGuidelines/AICTE/AICTE_2010_F.pdf
+    formats:
+      - html
+      - pdf
     role: application_portal
     may_establish:
       - deadline
       - verification_deadline
       - portal_status_at_observation
+      - eligibility
+      - required_documents
+      - application_type
   - id: pragati-aicte-documents
     host: aicte-india.org
     path_prefixes:
@@ -31,4 +48,5 @@ sources:
       - required_documents
 review_notes:
   - NSP lists separate student, defective-application, institute, and DNO/SNO/MNO dates for 2026-27.
+  - The official FAQ documents the renewal procedure; a renewal deadline remains unresolved unless a cycle-specific source states it.
   - Older AICTE FAQ documents are useful parser cases but cannot establish current-cycle eligibility by themselves.

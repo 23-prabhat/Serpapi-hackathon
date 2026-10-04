@@ -113,11 +113,12 @@ regression results rather than untouched held-out estimates.
 
 ## Support decision and limitations
 
-NMMSS remains the only public `phase1_supported` programme and passed every
-development case. PM-USP, NOS, Pragati, and Top Class ST remain `coming_soon`; the
-evaluation does not promote them. Azim Premji remains deferred because stable
-direct retrieval was not available. No unreliable programme was advertised as
-supported, so none needed removal from the public catalogue.
+At the time this frozen evaluation was run, NMMSS was the only public live
+programme. After the recorded evaluation, PM-USP, NOS, Pragati, and Top Class ST
+were promoted through the shared live admission/search/pipeline path using their
+already reviewed policies and passing evaluation cases. This note records the
+later product change without rewriting the frozen result. Azim Premji remains
+deferred because stable direct retrieval was not available.
 
 Limitations:
 

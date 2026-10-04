@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 
 import type {
   Deadline,
@@ -64,11 +64,14 @@ export function ReportViewer({
   const [evidence, setEvidence] = useState<Evidence | null>(null);
   const [loadingEvidence, setLoadingEvidence] = useState(false);
   const [evidenceError, setEvidenceError] = useState("");
+  const evidenceInspectorRef = useRef<HTMLElement>(null);
   const deadline = report.student_deadline;
 
   async function showEvidence(reference: EvidenceReference, runId = report.run_id) {
     setLoadingEvidence(true);
     setEvidenceError("");
+    evidenceInspectorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    evidenceInspectorRef.current?.focus({ preventScroll: true });
     try {
       const response = await fetch(
         `/api/v1/runs/${runId}/evidence/${encodeURIComponent(reference.version_id)}/${encodeURIComponent(reference.block_id)}`,
@@ -151,6 +154,7 @@ export function ReportViewer({
         <EvidenceInspector
           evidence={evidence}
           error={evidenceError}
+          inspectorRef={evidenceInspectorRef}
           loading={loadingEvidence}
         />
       </div>
@@ -326,7 +330,7 @@ function EvidenceButtons({
           key={`${reference.version_id}-${reference.block_id}`}
           onClick={() => onSelect(reference)}
         >
-          Evidence {index + 1} ↗
+          View evidence {index + 1} ↓
         </button>
       ))}
     </div>
@@ -362,17 +366,24 @@ function EvidenceInspector({
   evidence,
   loading,
   error,
+  inspectorRef,
 }: {
   evidence: Evidence | null;
   loading: boolean;
   error: string;
+  inspectorRef: RefObject<HTMLElement | null>;
 }) {
   const headers = evidence?.metadata?.headers;
   const tableHeaders = Array.isArray(headers)
     ? headers.filter((item): item is string => typeof item === "string")
     : [];
   return (
-    <aside className="evidence-inspector brutal-card" aria-live="polite">
+    <aside
+      className="evidence-inspector brutal-card"
+      aria-live="polite"
+      ref={inspectorRef}
+      tabIndex={-1}
+    >
       <p className="eyebrow">Cited passage</p>
       {loading && <p className="evidence-loading">Loading preserved passage…</p>}
       {error && <div className="error-box" role="alert">{error}</div>}

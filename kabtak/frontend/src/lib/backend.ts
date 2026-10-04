@@ -9,10 +9,29 @@ function errorResponse(status: number, code: string, message: string) {
   );
 }
 
+const loopbackHosts = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+function isAcceptedOrigin(origin: string, configuredOrigin: string): boolean {
+  try {
+    const actual = new URL(origin);
+    const configured = new URL(configuredOrigin);
+    if (actual.origin === configured.origin) return true;
+
+    return (
+      actual.protocol === configured.protocol &&
+      actual.port === configured.port &&
+      loopbackHosts.has(actual.hostname) &&
+      loopbackHosts.has(configured.hostname)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function assertSameOrigin(request: Request): Response | null {
   const origin = request.headers.get("origin");
   const allowedOrigin = process.env.APP_ORIGIN ?? new URL(request.url).origin;
-  if (!origin || origin !== allowedOrigin) {
+  if (!origin || !isAcceptedOrigin(origin, allowedOrigin)) {
     return errorResponse(
       403,
       "ORIGIN_NOT_ALLOWED",

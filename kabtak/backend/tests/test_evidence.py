@@ -65,7 +65,7 @@ def populated_session(tmp_path) -> tuple[Session, str, str]:
         name="NMMSS",
         provider="Ministry of Education",
         registry_version="1",
-        support_status="phase1_supported",
+        support_status="live_supported",
     )
     check = Check(
         id=str(uuid4()),
