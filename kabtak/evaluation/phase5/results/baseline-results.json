@@ -1,0 +1,1078 @@
+{
+  "schema_version": 1,
+  "run_at": "2026-10-03T16:37:46.480793+00:00",
+  "identity": {
+    "model": "openai/gpt-oss-120b",
+    "prompt_sha256": "f7623d0c6a24a1f1ff1326635bfb419135260ae1b7a9e37beae94fa87893ac48",
+    "schema_sha256": "2f874bab7f49503200a8e85aa2dbc75d3e7b39cace9a5f9dd34a0cfa6c815f38"
+  },
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "model_calls": 20,
+  "serpapi_calls": 0,
+  "usage": {
+    "prompt_tokens": 18775,
+    "completion_tokens": 5751,
+    "total_tokens": 24526
+  },
+  "summary": {
+    "case_count": 20,
+    "correct": 8,
+    "incorrect": 3,
+    "unresolved": 7,
+    "failed": 2,
+    "ground_truth_matches": 11,
+    "answered_accuracy": 0.7273,
+    "answerable_coverage": 0.6471
+  },
+  "by_split": {
+    "development": {
+      "case_count": 12,
+      "correct": 4,
+      "incorrect": 3,
+      "unresolved": 5,
+      "failed": 0,
+      "ground_truth_matches": 7,
+      "answered_accuracy": 0.5714,
+      "answerable_coverage": 0.7778
+    },
+    "held_out": {
+      "case_count": 8,
+      "correct": 4,
+      "incorrect": 0,
+      "unresolved": 2,
+      "failed": 2,
+      "ground_truth_matches": 4,
+      "answered_accuracy": 1.0,
+      "answerable_coverage": 0.5
+    }
+  },
+  "cases": [
+    {
+      "case_id": "dev-nmmss-2026-fresh-deadline",
+      "split": "development",
+      "answerable": true,
+      "outcome": "incorrect",
+      "ground_truth_match": false,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": false,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "nmmss-2026-release:nmmss26-schedule"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 0.506316136,
+        "prompt_tokens": 1037,
+        "prompt_time": 0.108854663,
+        "completion_tokens": 357,
+        "completion_time": 0.750731255,
+        "total_tokens": 1394,
+        "total_time": 0.859585918,
+        "completion_tokens_details": {
+          "reasoning_tokens": 114
+        }
+      },
+      "elapsed_ms": 2709.73
+    },
+    {
+      "case_id": "dev-nmmss-2026-income-below",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "nmmss-2026-release:nmmss26-schedule"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "meets_checked_conditions",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 0.402628012,
+        "prompt_tokens": 1050,
+        "prompt_time": 0.194365459,
+        "completion_tokens": 385,
+        "completion_time": 0.837489851,
+        "total_tokens": 1435,
+        "total_time": 1.03185531,
+        "completion_tokens_details": {
+          "reasoning_tokens": 129
+        }
+      },
+      "elapsed_ms": 3126.91
+    },
+    {
+      "case_id": "dev-nmmss-2026-income-above",
+      "split": "development",
+      "answerable": true,
+      "outcome": "unresolved",
+      "ground_truth_match": false,
+      "checks": {
+        "deadline_resolution": false,
+        "student_deadline": false,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "candidate_dates": [],
+        "deadline_resolution": "insufficient",
+        "eligibility": "condition_not_met",
+        "limitations": [],
+        "other_deadlines": [],
+        "student_deadline": null
+      },
+      "usage": {
+        "queue_time": 0.474887495,
+        "prompt_tokens": 1050,
+        "prompt_time": 0.087046885,
+        "completion_tokens": 159,
+        "completion_time": 0.337100319,
+        "total_tokens": 1209,
+        "total_time": 0.424147204,
+        "completion_tokens_details": {
+          "reasoning_tokens": 97
+        }
+      },
+      "elapsed_ms": 3311.89
+    },
+    {
+      "case_id": "dev-nmmss-2026-income-missing",
+      "split": "development",
+      "answerable": true,
+      "outcome": "incorrect",
+      "ground_truth_match": false,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": false,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "nmmss-2026-release:nmmss26-schedule"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": [
+          "No applicant profile provided; cannot assess income eligibility."
+        ]
+      },
+      "usage": {
+        "queue_time": 0.51140834,
+        "prompt_tokens": 1033,
+        "prompt_time": 0.073053031,
+        "completion_tokens": 365,
+        "completion_time": 0.764306834,
+        "total_tokens": 1398,
+        "total_time": 0.837359865,
+        "completion_tokens_details": {
+          "reasoning_tokens": 96
+        }
+      },
+      "elapsed_ms": 2693.78
+    },
+    {
+      "case_id": "dev-nmmss-2026-renewal-deadline",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "nmmss-2026-release:nmmss26-schedule"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2026-release:nmmss26-schedule"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 0.322840141,
+        "prompt_tokens": 1029,
+        "prompt_time": 0.276782229,
+        "completion_tokens": 346,
+        "completion_time": 0.755534279,
+        "total_tokens": 1375,
+        "total_time": 1.032316508,
+        "completion_tokens_details": {
+          "reasoning_tokens": 91
+        }
+      },
+      "elapsed_ms": 3047.74
+    },
+    {
+      "case_id": "dev-nmmss-2025-fresh-history",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2025-09-30",
+          "timing": "date_passed",
+          "evidence_refs": [
+            "nmmss-2025-release:nmmss25-scope"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2025-10-15",
+            "timing": "date_passed",
+            "evidence_refs": [
+              "nmmss-2025-release:nmmss25-verification"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2025-10-31",
+            "timing": "date_passed",
+            "evidence_refs": [
+              "nmmss-2025-release:nmmss25-verification"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 0.217409752,
+        "prompt_tokens": 1089,
+        "prompt_time": 0.060471724,
+        "completion_tokens": 366,
+        "completion_time": 0.786397323,
+        "total_tokens": 1455,
+        "total_time": 0.846869047,
+        "completion_tokens_details": {
+          "reasoning_tokens": 111
+        }
+      },
+      "elapsed_ms": 4059.69
+    },
+    {
+      "case_id": "dev-nmmss-2025-renewal-history",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2025-09-30",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "nmmss-2025-release:nmmss25-scope"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2025-10-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2025-release:nmmss25-verification"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2025-10-31",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "nmmss-2025-release:nmmss25-verification"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 1.6525153590000001,
+        "prompt_tokens": 1096,
+        "prompt_time": 0.055954245,
+        "completion_tokens": 361,
+        "completion_time": 0.770319082,
+        "total_tokens": 1457,
+        "total_time": 0.826273327,
+        "completion_tokens_details": {
+          "reasoning_tokens": 106
+        }
+      },
+      "elapsed_ms": 3526.91
+    },
+    {
+      "case_id": "dev-nmmss-2025-income-boundary",
+      "split": "development",
+      "answerable": true,
+      "outcome": "incorrect",
+      "ground_truth_match": false,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": false,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "candidate_dates": [],
+        "deadline_resolution": "supported",
+        "eligibility": "meets_checked_conditions",
+        "limitations": [],
+        "other_deadlines": [],
+        "student_deadline": null
+      },
+      "usage": {
+        "queue_time": 5.806067426,
+        "prompt_tokens": 1110,
+        "prompt_time": 0.068729824,
+        "completion_tokens": 199,
+        "completion_time": 0.423779342,
+        "total_tokens": 1309,
+        "total_time": 0.492509166,
+        "completion_tokens_details": {
+          "reasoning_tokens": 113
+        }
+      },
+      "elapsed_ms": 8238.29
+    },
+    {
+      "case_id": "dev-nmmss-2025-income-over-boundary",
+      "split": "development",
+      "answerable": true,
+      "outcome": "unresolved",
+      "ground_truth_match": false,
+      "checks": {
+        "deadline_resolution": false,
+        "student_deadline": false,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "insufficient",
+        "student_deadline": null,
+        "other_deadlines": [],
+        "candidate_dates": [],
+        "eligibility": "condition_not_met",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 2.216495121,
+        "prompt_tokens": 1108,
+        "prompt_time": 0.068716885,
+        "completion_tokens": 148,
+        "completion_time": 0.310134741,
+        "total_tokens": 1256,
+        "total_time": 0.378851626,
+        "completion_tokens_details": {
+          "reasoning_tokens": 86
+        }
+      },
+      "elapsed_ms": 3537.36
+    },
+    {
+      "case_id": "dev-pmusp-renewal-conflict",
+      "split": "development",
+      "answerable": false,
+      "outcome": "unresolved",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "conflicting",
+        "student_deadline": null,
+        "candidate_dates": [
+          "2026-09-30",
+          "2026-10-31"
+        ],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "submit",
+            "date": "2026-09-30",
+            "timing": "unknown",
+            "evidence_refs": [
+              "pm-usp-2026-catalogue:pmusp-catalogue-renewal"
+            ]
+          },
+          {
+            "actor": "student",
+            "action": "submit",
+            "date": "2026-10-31",
+            "timing": "unknown",
+            "evidence_refs": [
+              "pm-usp-2026-announcement:pmusp-announcement-renewal"
+            ]
+          }
+        ],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 3.215596058,
+        "prompt_tokens": 1141,
+        "prompt_time": 0.127072841,
+        "completion_tokens": 292,
+        "completion_time": 0.622630478,
+        "total_tokens": 1433,
+        "total_time": 0.749703319,
+        "completion_tokens_details": {
+          "reasoning_tokens": 74
+        }
+      },
+      "elapsed_ms": 5479.25
+    },
+    {
+      "case_id": "dev-pmusp-fresh-not-established",
+      "split": "development",
+      "answerable": false,
+      "outcome": "unresolved",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "insufficient",
+        "student_deadline": null,
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "submit",
+            "date": "2026-10-31",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pm-usp-2026-announcement:pmusp-announcement-renewal"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pm-usp-2026-announcement:pmusp-announcement-renewal"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pm-usp-2026-announcement:pmusp-announcement-renewal"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": [
+          "Passages only specify renewal application deadlines; no fresh application deadline is provided."
+        ]
+      },
+      "usage": {
+        "queue_time": 1.9331403360000001,
+        "prompt_tokens": 1139,
+        "prompt_time": 0.061894881,
+        "completion_tokens": 366,
+        "completion_time": 0.777239149,
+        "total_tokens": 1505,
+        "total_time": 0.83913403,
+        "completion_tokens_details": {
+          "reasoning_tokens": 91
+        }
+      },
+      "elapsed_ms": 7724.96
+    },
+    {
+      "case_id": "dev-nos-exact-date-unavailable",
+      "split": "development",
+      "answerable": false,
+      "outcome": "unresolved",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "insufficient",
+        "student_deadline": null,
+        "other_deadlines": [],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": [
+          "The source specifies that the first‑round portal opens in April/May 2026 for a 40‑day application period followed by a 4‑day correction window, but it does not provide exact calendar dates for either the submission deadline or the correction window."
+        ]
+      },
+      "usage": {
+        "queue_time": 2.991396242,
+        "prompt_tokens": 1002,
+        "prompt_time": 0.048266967,
+        "completion_tokens": 286,
+        "completion_time": 0.61974016,
+        "total_tokens": 1288,
+        "total_time": 0.668007127,
+        "completion_tokens_details": {
+          "reasoning_tokens": 167
+        }
+      },
+      "elapsed_ms": 5775.42
+    },
+    {
+      "case_id": "heldout-pragati-deadline-roles",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "pragati-2026-catalogue:pragati-card"
+          ]
+        },
+        "candidate_dates": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          }
+        ],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 6.115742181,
+        "prompt_tokens": 976,
+        "prompt_time": 3.517527859,
+        "completion_tokens": 461,
+        "completion_time": 2.927545953,
+        "total_tokens": 1437,
+        "total_time": 6.445073812,
+        "prompt_tokens_details": {
+          "cached_tokens": 512
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 153
+        }
+      },
+      "elapsed_ms": 12859.5
+    },
+    {
+      "case_id": "heldout-pragati-correction-not-submission",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "pragati-2026-catalogue:pragati-card"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 4.404814699,
+        "prompt_tokens": 977,
+        "prompt_time": 0.047122539,
+        "completion_tokens": 491,
+        "completion_time": 1.065688189,
+        "total_tokens": 1468,
+        "total_time": 1.112810728,
+        "completion_tokens_details": {
+          "reasoning_tokens": 167
+        }
+      },
+      "elapsed_ms": 7424.86
+    },
+    {
+      "case_id": "heldout-pragati-due-today",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "timing": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "due_today_time_unknown",
+          "evidence_refs": [
+            "pragati-2026-catalogue:pragati-card"
+          ]
+        },
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "pragati-2026-catalogue:pragati-card"
+            ]
+          }
+        ],
+        "candidate_dates": [],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 7.455593513,
+        "prompt_tokens": 982,
+        "prompt_time": 0.266105096,
+        "completion_tokens": 405,
+        "completion_time": 0.859105639,
+        "total_tokens": 1387,
+        "total_time": 1.125210735,
+        "completion_tokens_details": {
+          "reasoning_tokens": 146
+        }
+      },
+      "elapsed_ms": 11214.49
+    },
+    {
+      "case_id": "heldout-pragati-profile-unsupported",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "unresolved",
+      "ground_truth_match": false,
+      "checks": {
+        "deadline_resolution": false,
+        "student_deadline": false,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "candidate_dates": [],
+        "deadline_resolution": "insufficient",
+        "eligibility": "more_information_needed",
+        "limitations": [],
+        "other_deadlines": [],
+        "student_deadline": null
+      },
+      "usage": {
+        "queue_time": 5.88528605,
+        "prompt_tokens": 988,
+        "prompt_time": 3.769431069,
+        "completion_tokens": 142,
+        "completion_time": 0.675828543,
+        "total_tokens": 1130,
+        "total_time": 4.445259612,
+        "prompt_tokens_details": {
+          "cached_tokens": 768
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 80
+        }
+      },
+      "elapsed_ms": 11215.37
+    },
+    {
+      "case_id": "heldout-topclass-deadline-roles",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            "top-class-st-2026-catalogue:topclass-card"
+          ]
+        },
+        "candidate_dates": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "top-class-st-2026-catalogue:topclass-card"
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "top-class-st-2026-catalogue:topclass-card"
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              "top-class-st-2026-catalogue:topclass-card"
+            ]
+          }
+        ],
+        "eligibility": "not_assessed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 7.448446744,
+        "prompt_tokens": 979,
+        "prompt_time": 0.066765383,
+        "completion_tokens": 460,
+        "completion_time": 0.99758246,
+        "total_tokens": 1439,
+        "total_time": 1.064347843,
+        "completion_tokens_details": {
+          "reasoning_tokens": 140
+        }
+      },
+      "elapsed_ms": 10796.56
+    },
+    {
+      "case_id": "heldout-topclass-correction-not-submission",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "failed",
+      "ground_truth_match": false,
+      "error_type": "RuntimeError",
+      "usage": {}
+    },
+    {
+      "case_id": "heldout-topclass-due-today",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "failed",
+      "ground_truth_match": false,
+      "error_type": "RuntimeError",
+      "usage": {}
+    },
+    {
+      "case_id": "heldout-topclass-profile-unsupported",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "unresolved",
+      "ground_truth_match": false,
+      "checks": {
+        "deadline_resolution": false,
+        "student_deadline": false,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "deadline_resolution": "insufficient",
+        "student_deadline": null,
+        "other_deadlines": [],
+        "candidate_dates": [],
+        "eligibility": "more_information_needed",
+        "limitations": []
+      },
+      "usage": {
+        "queue_time": 0.356176206,
+        "prompt_tokens": 989,
+        "prompt_time": 0.056956559,
+        "completion_tokens": 162,
+        "completion_time": 0.342853715,
+        "total_tokens": 1151,
+        "total_time": 0.399810274,
+        "completion_tokens_details": {
+          "reasoning_tokens": 100
+        }
+      },
+      "elapsed_ms": 64469.51
+    }
+  ]
+}

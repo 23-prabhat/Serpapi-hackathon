@@ -1,0 +1,259 @@
+schema_version: 1
+frozen_at: "2026-10-03T00:00:00+05:30"
+held_out_frozen_before_first_run: true
+cases:
+  - &nmmss26fresh
+    id: dev-nmmss-2026-fresh-deadline
+    split: development
+    programme_id: nmmss
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [nmmss-2026-release]
+    question: What is the fresh student deadline, and which later dates are only verification dates?
+    reference_time: "2026-10-03T00:00:00+05:30"
+    profile: null
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      other_deadlines:
+        - {actor: institution, action: verify, date: "2026-11-15"}
+        - {actor: administrator, action: verify, date: "2026-11-30"}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *nmmss26fresh
+    id: dev-nmmss-2026-income-below
+    question: Does a family income of INR 300,000 meet the checked income condition?
+    profile: {annual_family_income_inr: 300000}
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      eligibility: meets_checked_conditions
+      answerable: true
+
+  - <<: *nmmss26fresh
+    id: dev-nmmss-2026-income-above
+    question: Does a family income of INR 400,000 meet the checked income condition?
+    profile: {annual_family_income_inr: 400000}
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      eligibility: condition_not_met
+      answerable: true
+
+  - <<: *nmmss26fresh
+    id: dev-nmmss-2026-income-missing
+    question: What can be concluded when the applicant did not provide family income?
+    profile: {}
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      eligibility: more_information_needed
+      answerable: true
+
+  - <<: *nmmss26fresh
+    id: dev-nmmss-2026-renewal-deadline
+    application_type: renewal
+    question: What is the renewal student deadline?
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      eligibility: not_assessed
+      answerable: true
+
+  - &nmmss25fresh
+    id: dev-nmmss-2025-fresh-history
+    split: development
+    programme_id: nmmss
+    academic_year: "2025-26"
+    application_type: fresh
+    source_ids: [nmmss-2025-release]
+    question: What was the historical fresh student deadline?
+    reference_time: "2026-10-03T00:00:00+05:30"
+    profile: null
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2025-09-30"}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *nmmss25fresh
+    id: dev-nmmss-2025-renewal-history
+    application_type: renewal
+    question: What was the historical renewal student deadline and the two later verification dates?
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2025-09-30"}
+      other_deadlines:
+        - {actor: institution, action: verify, date: "2025-10-15"}
+        - {actor: administrator, action: verify, date: "2025-10-31"}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *nmmss25fresh
+    id: dev-nmmss-2025-income-boundary
+    question: Does income exactly at INR 350,000 meet the checked inclusive income condition?
+    profile: {annual_family_income_inr: 350000}
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2025-09-30"}
+      eligibility: meets_checked_conditions
+      answerable: true
+
+  - <<: *nmmss25fresh
+    id: dev-nmmss-2025-income-over-boundary
+    question: Does income of INR 350,001 meet the checked income condition?
+    profile: {annual_family_income_inr: 350001}
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2025-09-30"}
+      eligibility: condition_not_met
+      answerable: true
+
+  - id: dev-pmusp-renewal-conflict
+    split: development
+    programme_id: pm-usp-csss
+    academic_year: "2026-27"
+    application_type: renewal
+    source_ids: [pm-usp-2026-catalogue, pm-usp-2026-announcement]
+    question: Which renewal student deadline applies when the official portal pages disagree?
+    reference_time: "2026-10-03T00:00:00+05:30"
+    profile: null
+    expected:
+      deadline_resolution: conflicting
+      student_deadline: null
+      candidate_dates: ["2026-09-30", "2026-10-31"]
+      eligibility: not_assessed
+      answerable: false
+
+  - id: dev-pmusp-fresh-not-established
+    split: development
+    programme_id: pm-usp-csss
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [pm-usp-2026-catalogue, pm-usp-2026-announcement]
+    question: Do these renewal-only passages establish a fresh application deadline?
+    reference_time: "2026-10-03T00:00:00+05:30"
+    profile: null
+    expected:
+      deadline_resolution: insufficient
+      student_deadline: null
+      eligibility: not_assessed
+      answerable: false
+
+  - id: dev-nos-exact-date-unavailable
+    split: development
+    programme_id: national-overseas-scholarship
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [nos-2026-guidelines]
+    question: What is the exact first-round student deadline, and is the four-day period a new registration window?
+    reference_time: "2026-10-03T00:00:00+05:30"
+    profile: null
+    expected:
+      deadline_resolution: insufficient
+      student_deadline: null
+      eligibility: not_assessed
+      answerable: false
+
+  - &pragati
+    id: heldout-pragati-deadline-roles
+    split: held_out
+    programme_id: aicte-pragati
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [pragati-2026-catalogue]
+    question: What is the student deadline, keeping correction and verification dates separate?
+    reference_time: "2026-10-03T00:00:00+05:30"
+    profile: null
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      other_deadlines:
+        - {actor: student, action: correct, date: "2026-11-15"}
+        - {actor: institution, action: verify, date: "2026-11-15"}
+        - {actor: administrator, action: verify, date: "2026-11-30"}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *pragati
+    id: heldout-pragati-correction-not-submission
+    question: Does the November 15 defective-application date extend new student submissions?
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      other_deadlines:
+        - {actor: student, action: correct, date: "2026-11-15"}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *pragati
+    id: heldout-pragati-due-today
+    question: Is the student deadline still ahead at noon on October 31 when no cutoff time is stated?
+    reference_time: "2026-10-31T12:00:00+05:30"
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31", timing: due_today_time_unknown}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *pragati
+    id: heldout-pragati-profile-unsupported
+    question: Can the supplied income alone establish eligibility from this schedule card?
+    profile: {annual_family_income_inr: 500000}
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      eligibility: more_information_needed
+      answerable: true
+
+  - &topclass
+    id: heldout-topclass-deadline-roles
+    split: held_out
+    programme_id: top-class-st
+    academic_year: "2026-27"
+    application_type: fresh
+    source_ids: [top-class-st-2026-catalogue]
+    question: What is the student deadline, keeping correction and verification dates separate?
+    reference_time: "2026-10-03T00:00:00+05:30"
+    profile: null
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      other_deadlines:
+        - {actor: student, action: correct, date: "2026-11-15"}
+        - {actor: institution, action: verify, date: "2026-11-15"}
+        - {actor: administrator, action: verify, date: "2026-11-30"}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *topclass
+    id: heldout-topclass-correction-not-submission
+    question: Is the November 15 defective-application date a new submission deadline?
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      other_deadlines:
+        - {actor: student, action: correct, date: "2026-11-15"}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *topclass
+    id: heldout-topclass-due-today
+    question: How should the October 31 date be described on that date when no cutoff time is published?
+    reference_time: "2026-10-31T18:00:00+05:30"
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31", timing: due_today_time_unknown}
+      eligibility: not_assessed
+      answerable: true
+
+  - <<: *topclass
+    id: heldout-topclass-profile-unsupported
+    question: Can income alone establish eligibility from this schedule card?
+    profile: {annual_family_income_inr: 500000}
+    expected:
+      deadline_resolution: supported
+      student_deadline: {actor: student, action: submit, date: "2026-10-31"}
+      eligibility: more_information_needed
+      answerable: true

@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import re
 from datetime import date, time
+from time import sleep
 from typing import Any, Literal
 from urllib.parse import urlparse
 
@@ -20,7 +21,7 @@ from app.services.failures import (
 )
 from app.services.parsing import Block
 
-PROMPT_VERSION = "phase3-multi-source-records-v2"
+PROMPT_VERSION = "phase5-multi-source-records-v3"
 SCHEMA_VERSION = "4"
 GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -192,7 +193,11 @@ record unless the source itself supports it.
 Keep student submission, student correction, institution verification, and
 administrator verification separate. A later verification date is not a student
 submission extension. For NMMSS, Institute Nodal Officer/L1 is institution +
-verify and District Nodal Officer/L2 is administrator + verify. Set a deadline's
+verify and District Nodal Officer/L2 is administrator + verify.
+For NSP scheme cards, "Defective Application Verification" is student + correct,
+"Institute Verification" is institution + verify, and "DNO/SNO/MNO Verification"
+is administrator + verify. Return every listed schedule field; do not omit or label
+these reviewed template roles as unknown. Set a deadline's
 application_types and applicant group from explicit source evidence; unknown is not
 a wildcard. Use all only when the source explicitly covers all application types.
 Set applies_to_all_groups only when no narrower applicant group is stated.
@@ -261,7 +266,10 @@ def extract_facts(
             },
             "reasoning_effort": "low",
             "temperature": 0,
-            "max_completion_tokens": 3_000,
+            # The reviewed source cap and strict schema keep valid responses well
+            # below this ceiling. A smaller reservation also lets consecutive
+            # free-tier Groq calls fit within the provider's token-per-minute cap.
+            "max_completion_tokens": 1_500,
         }
         try:
             with httpx.Client(timeout=40) as client:
@@ -274,9 +282,15 @@ def extract_facts(
                     json=request_body,
                 )
             if not response.is_success:
+                try:
+                    provider_message = str(response.json().get("error", {}).get("message", ""))
+                except (TypeError, ValueError):
+                    provider_message = ""
                 last_error = ExtractionUnavailableError(
                     f"Groq extraction returned HTTP {response.status_code}"
                 )
+                if response.status_code == 429 and attempt < max_attempts:
+                    sleep(_rate_limit_delay(response.headers, provider_message))
                 continue
             payload = response.json()
             usage = payload.get("usage", {})
@@ -318,6 +332,25 @@ def extract_facts(
     raise last_error or ExtractionUnavailableError("Groq extraction request failed")
 
 
+def _rate_limit_delay(headers: httpx.Headers | dict[str, str], provider_message: str = "") -> float:
+    raw = headers.get("retry-after") or headers.get("x-ratelimit-reset-tokens") or "5"
+    try:
+        seconds = float(raw)
+    except ValueError:
+        match = re.fullmatch(r"(?:(\d+(?:\.\d+)?)m)?(?:(\d+(?:\.\d+)?)s)?", raw)
+        if match is None:
+            seconds = 5
+        else:
+            seconds = float(match.group(1) or 0) * 60 + float(match.group(2) or 0)
+    message_match = re.search(r"try again in\s+(\d+(?:\.\d+)?)\s*(ms|s|m)", provider_message, re.I)
+    if message_match:
+        value = float(message_match.group(1))
+        unit = message_match.group(2).casefold()
+        message_seconds = value / 1_000 if unit == "ms" else value * 60 if unit == "m" else value
+        seconds = max(seconds, message_seconds + 1)
+    return max(1, min(seconds, 30))
+
+
 def validate_evidence(facts: ExtractedFacts, blocks: list[Block]) -> None:
     block_index = {block.block_id: block for block in blocks}
     if any(block_id not in block_index for block_id in facts.scope_evidence_block_ids):
@@ -328,7 +361,9 @@ def validate_evidence(facts: ExtractedFacts, blocks: list[Block]) -> None:
     if facts.academic_year and facts.academic_year.casefold() not in scope_text:
         raise InvalidExtractionError("Academic year does not occur in cited scope evidence")
     for application_type in facts.application_types:
-        if application_type in {"fresh", "renewal"} and application_type not in scope_text:
+        if application_type in {"fresh", "renewal"} and not _application_scope_occurs(
+            application_type, scope_text
+        ):
             raise InvalidExtractionError("Application type does not occur in cited scope evidence")
     if facts.applicant_group and facts.applicant_group.casefold() not in scope_text:
         raise InvalidExtractionError("Applicant group does not occur in cited scope evidence")
@@ -338,7 +373,9 @@ def validate_evidence(facts: ExtractedFacts, blocks: list[Block]) -> None:
         cited_blocks = [block_index[block_id] for block_id in deadline.evidence_block_ids]
         if not any(_deadline_matches_context(deadline, block) for block in cited_blocks):
             raise InvalidExtractionError(
-                "Model deadline does not match the actor/action row in cited evidence"
+                "Model deadline "
+                f"{deadline.actor}/{deadline.action}/{deadline.date_iso} does not match "
+                "the actor/action row in cited evidence"
             )
         if deadline.supersedes_date_iso and not any(
             date_occurs_in_text(deadline.supersedes_date_iso, block_index[block_id].text)
@@ -374,6 +411,20 @@ def validate_evidence(facts: ExtractedFacts, blocks: list[Block]) -> None:
             raise InvalidExtractionError("Application link does not occur in cited evidence")
 
 
+def _application_scope_occurs(application_type: str, scope_text: str) -> bool:
+    if application_type in scope_text:
+        return True
+    # On NSP scheme cards, renewal schedules are explicitly suffixed "(for
+    # Renewal)" while the otherwise identical unqualified schedule is the fresh
+    # application schedule. Accept that reviewed template convention only when
+    # the cited scope contains the student-application field and no renewal label.
+    return (
+        application_type == "fresh"
+        and "student application" in scope_text
+        and "for renewal" not in scope_text
+    )
+
+
 def _deadline_matches_context(deadline: CandidateDeadline, block: Block) -> bool:
     if not date_occurs_in_text(deadline.date_iso, block.text):
         return False
@@ -407,10 +458,25 @@ def _row_matches_role(deadline: CandidateDeadline, row: str) -> bool:
             marker in normalized
             for marker in ("institute", "institution", "district", "administrator", "l1", "l2")
         )
+    if (
+        deadline.actor == "student"
+        and deadline.action == "correct"
+        and "defective application verification" in normalized
+    ):
+        return True
     actor_markers = {
         "student": ("student", "applicant"),
         "institution": ("institution", "institute", "college", "school", "l1"),
-        "administrator": ("administrator", "district", "state", "authority", "l2"),
+        "administrator": (
+            "administrator",
+            "district",
+            "state",
+            "authority",
+            "l2",
+            "dno",
+            "sno",
+            "mno",
+        ),
     }[deadline.actor]
     action_markers = {
         "submit": ("submit", "submission", "application"),

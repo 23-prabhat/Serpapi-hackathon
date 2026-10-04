@@ -1,0 +1,1139 @@
+{
+  "schema_version": 3,
+  "model": "openai/gpt-oss-120b",
+  "prompt_sha256": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1",
+  "documents": {
+    "nmmss-2025-release::fresh": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2025-26",
+            "application_types": [
+              "fresh"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "nmmss25-scope"
+            ],
+            "notice_type": "original",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "30th September, 2025",
+                "date_iso": "2025-09-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss25-scope"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "15.10.2025",
+                "date_iso": "2025-10-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "all"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss25-verification"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "31.10.2025",
+                "date_iso": "2025-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "all"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss25-verification"
+                ]
+              }
+            ],
+            "conditions": [
+              {
+                "operator": "lte",
+                "field": "annual_family_income_inr",
+                "value": 350000.0,
+                "unit": "INR_per_year",
+                "children": [],
+                "source_text": "parental income not more than Rs. 3.50 lakh per annum.",
+                "evidence_block_ids": [
+                  "nmmss25-income"
+                ]
+              }
+            ],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.219361336,
+            "prompt_tokens": 2220,
+            "prompt_time": 0.08884578,
+            "completion_tokens": 912,
+            "completion_time": 1.905407187,
+            "total_tokens": 3132,
+            "total_time": 1.994252967,
+            "completion_tokens_details": {
+              "reasoning_tokens": 304
+            }
+          }
+        ],
+        "total_tokens": 3132
+      },
+      "elapsed_ms": 2532
+    },
+    "nmmss-2025-release::renewal": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2025-26",
+            "application_types": [
+              "renewal"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "nmmss25-scope",
+              "nmmss25-verification",
+              "nmmss25-income"
+            ],
+            "notice_type": "original",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "30th September, 2025",
+                "date_iso": "2025-09-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss25-scope"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "15.10.2025",
+                "date_iso": "2025-10-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss25-verification"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "31.10.2025",
+                "date_iso": "2025-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss25-verification"
+                ]
+              }
+            ],
+            "conditions": [
+              {
+                "operator": "lte",
+                "field": "annual_family_income_inr",
+                "value": 350000.0,
+                "unit": "INR_per_year",
+                "children": [],
+                "source_text": "parental income not more than Rs. 3.50 lakh per annum.",
+                "evidence_block_ids": [
+                  "nmmss25-income"
+                ]
+              }
+            ],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.22879046,
+            "prompt_tokens": 2220,
+            "prompt_time": 0.235200593,
+            "completion_tokens": 890,
+            "completion_time": 1.876732928,
+            "total_tokens": 3110,
+            "total_time": 2.111933521,
+            "completion_tokens_details": {
+              "reasoning_tokens": 261
+            }
+          }
+        ],
+        "total_tokens": 3110
+      },
+      "elapsed_ms": 2748
+    },
+    "nmmss-2026-release::fresh": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "fresh"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "nmmss26-scope"
+            ],
+            "notice_type": "amendment",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "October 31, 2026",
+                "date_iso": "2026-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss26-schedule"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "November 15, 2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss26-schedule"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "November 30, 2026",
+                "date_iso": "2026-11-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss26-schedule"
+                ]
+              }
+            ],
+            "conditions": [
+              {
+                "operator": "lte",
+                "field": "annual_family_income_inr",
+                "value": 350000.0,
+                "unit": "INR_per_year",
+                "children": [],
+                "source_text": "The parental income of the applicant should not exceed ₹3.50 lakh per annum.",
+                "evidence_block_ids": [
+                  "nmmss26-income"
+                ]
+              }
+            ],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.326314158,
+            "prompt_tokens": 2160,
+            "prompt_time": 0.136349956,
+            "completion_tokens": 768,
+            "completion_time": 1.62068817,
+            "total_tokens": 2928,
+            "total_time": 1.7570381259999999,
+            "completion_tokens_details": {
+              "reasoning_tokens": 191
+            }
+          }
+        ],
+        "total_tokens": 2928
+      },
+      "elapsed_ms": 2338
+    },
+    "nmmss-2026-release::renewal": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "renewal"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "nmmss26-scope"
+            ],
+            "notice_type": "amendment",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "October 31, 2026",
+                "date_iso": "2026-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss26-schedule"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "November 15, 2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss26-schedule"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "November 30, 2026",
+                "date_iso": "2026-11-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": true,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "nmmss26-schedule"
+                ]
+              }
+            ],
+            "conditions": [
+              {
+                "operator": "lte",
+                "field": "annual_family_income_inr",
+                "value": 350000.0,
+                "unit": "INR_per_year",
+                "children": [],
+                "source_text": "The parental income of the applicant should not exceed ₹3.50 lakh per annum.",
+                "evidence_block_ids": [
+                  "nmmss26-income"
+                ]
+              }
+            ],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.354453837,
+            "prompt_tokens": 2160,
+            "prompt_time": 0.109760435,
+            "completion_tokens": 866,
+            "completion_time": 1.818815265,
+            "total_tokens": 3026,
+            "total_time": 1.9285757000000001,
+            "completion_tokens_details": {
+              "reasoning_tokens": 285
+            }
+          }
+        ],
+        "total_tokens": 3026
+      },
+      "elapsed_ms": 2646
+    },
+    "nos-2026-guidelines::fresh": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "unknown"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "nos-guideline-rounds"
+            ],
+            "notice_type": "original",
+            "deadlines": [],
+            "conditions": [],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": [
+              "Application type not specified in source block.",
+              "No explicit calendar dates or times for submission or correction deadlines are provided."
+            ]
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 2,
+        "attempts": [
+          {
+            "queue_time": 0.354783675,
+            "prompt_tokens": 2132,
+            "prompt_time": 0.104998927,
+            "completion_tokens": 243,
+            "completion_time": 0.509170831,
+            "total_tokens": 2375,
+            "total_time": 0.614169758,
+            "completion_tokens_details": {
+              "reasoning_tokens": 97
+            }
+          },
+          {
+            "queue_time": 0.326655842,
+            "prompt_tokens": 2302,
+            "prompt_time": 0.223526028,
+            "completion_tokens": 236,
+            "completion_time": 0.493770943,
+            "total_tokens": 2538,
+            "total_time": 0.717296971,
+            "prompt_tokens_details": {
+              "cached_tokens": 1792
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 88
+            }
+          }
+        ],
+        "total_tokens": 4913
+      },
+      "elapsed_ms": 2465
+    },
+    "pm-usp-2026-announcement::fresh": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "renewal"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "pmusp-announcement-year",
+              "pmusp-announcement-renewal"
+            ],
+            "notice_type": "original",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "31-10-2026",
+                "date_iso": "2026-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-announcement-renewal"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "15-11-2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-announcement-renewal"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "30/11/2026",
+                "date_iso": "2026-11-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-announcement-renewal"
+                ]
+              }
+            ],
+            "conditions": [],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 2,
+        "attempts": [
+          {
+            "queue_time": 0.357018525,
+            "prompt_tokens": 2112,
+            "prompt_time": 0.103254137,
+            "completion_tokens": 747,
+            "completion_time": 1.58137605,
+            "total_tokens": 2859,
+            "total_time": 1.684630187,
+            "completion_tokens_details": {
+              "reasoning_tokens": 219
+            }
+          },
+          {
+            "queue_time": 0.353275448,
+            "prompt_tokens": 2664,
+            "prompt_time": 0.152572873,
+            "completion_tokens": 600,
+            "completion_time": 1.271108607,
+            "total_tokens": 3264,
+            "total_time": 1.42368148,
+            "completion_tokens_details": {
+              "reasoning_tokens": 72
+            }
+          }
+        ],
+        "total_tokens": 6123
+      },
+      "elapsed_ms": 4466
+    },
+    "pm-usp-2026-announcement::renewal": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "renewal"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "pmusp-announcement-year",
+              "pmusp-announcement-renewal"
+            ],
+            "notice_type": "original",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "31-10-2026",
+                "date_iso": "2026-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-announcement-renewal"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "15-11-2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-announcement-renewal"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "30/11/2026",
+                "date_iso": "2026-11-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-announcement-renewal"
+                ]
+              }
+            ],
+            "conditions": [],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.40398728,
+            "prompt_tokens": 2112,
+            "prompt_time": 0.144856571,
+            "completion_tokens": 689,
+            "completion_time": 1.441925822,
+            "total_tokens": 2801,
+            "total_time": 1.586782393,
+            "completion_tokens_details": {
+              "reasoning_tokens": 153
+            }
+          }
+        ],
+        "total_tokens": 2801
+      },
+      "elapsed_ms": 2338
+    },
+    "pm-usp-2026-catalogue::fresh": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "unknown"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "pmusp-catalogue-year",
+              "pmusp-catalogue-renewal"
+            ],
+            "notice_type": "unknown",
+            "deadlines": [],
+            "conditions": [],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": [
+              "Application type not specified for the fresh scheme in the provided source blocks."
+            ]
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 2,
+        "attempts": [
+          {
+            "queue_time": 2.236283997,
+            "prompt_tokens": 2124,
+            "prompt_time": 0.367795477,
+            "completion_tokens": 300,
+            "completion_time": 0.62893081,
+            "total_tokens": 2424,
+            "total_time": 0.996726287,
+            "completion_tokens_details": {
+              "reasoning_tokens": 136
+            }
+          },
+          {
+            "queue_time": 0.217046664,
+            "prompt_tokens": 2312,
+            "prompt_time": 0.055585992,
+            "completion_tokens": 235,
+            "completion_time": 0.958745028,
+            "total_tokens": 2547,
+            "total_time": 1.01433102,
+            "prompt_tokens_details": {
+              "cached_tokens": 1792
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 77
+            }
+          }
+        ],
+        "total_tokens": 4971
+      },
+      "elapsed_ms": 5103
+    },
+    "pm-usp-2026-catalogue::renewal": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "renewal"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "pmusp-catalogue-year",
+              "pmusp-catalogue-renewal"
+            ],
+            "notice_type": "original",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "30-09-2026",
+                "date_iso": "2026-09-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-catalogue-renewal"
+                ]
+              },
+              {
+                "actor": "student",
+                "action": "correct",
+                "date_raw": "15-10-2026",
+                "date_iso": "2026-10-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-catalogue-renewal"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "15-10-2026",
+                "date_iso": "2026-10-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-catalogue-renewal"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "30-10-2026",
+                "date_iso": "2026-10-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "renewal"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pmusp-catalogue-renewal"
+                ]
+              }
+            ],
+            "conditions": [],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.506517591,
+            "prompt_tokens": 2124,
+            "prompt_time": 1.804372034,
+            "completion_tokens": 942,
+            "completion_time": 2.648934019,
+            "total_tokens": 3066,
+            "total_time": 4.453306053,
+            "prompt_tokens_details": {
+              "cached_tokens": 1792
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 312
+            }
+          }
+        ],
+        "total_tokens": 3066
+      },
+      "elapsed_ms": 5409
+    },
+    "pragati-2026-catalogue::fresh": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "fresh"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "pragati-year",
+              "pragati-card"
+            ],
+            "notice_type": "original",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "31-10-2026",
+                "date_iso": "2026-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pragati-card"
+                ]
+              },
+              {
+                "actor": "student",
+                "action": "correct",
+                "date_raw": "15-11-2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pragati-card"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "15-11-2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pragati-card"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "30-11-2026",
+                "date_iso": "2026-11-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "pragati-card"
+                ]
+              }
+            ],
+            "conditions": [],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.355722248,
+            "prompt_tokens": 2105,
+            "prompt_time": 0.121498995,
+            "completion_tokens": 791,
+            "completion_time": 1.653840244,
+            "total_tokens": 2896,
+            "total_time": 1.775339239,
+            "completion_tokens_details": {
+              "reasoning_tokens": 188
+            }
+          }
+        ],
+        "total_tokens": 2896
+      },
+      "elapsed_ms": 2546
+    },
+    "top-class-st-2026-catalogue::fresh": {
+      "extraction": {
+        "records": [
+          {
+            "academic_year": "2026-27",
+            "application_types": [
+              "fresh"
+            ],
+            "applicant_group": null,
+            "applies_to_all_groups": true,
+            "scope_evidence_block_ids": [
+              "topclass-year",
+              "topclass-card"
+            ],
+            "notice_type": "original",
+            "deadlines": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date_raw": "31-10-2026",
+                "date_iso": "2026-10-31",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "topclass-card"
+                ]
+              },
+              {
+                "actor": "student",
+                "action": "correct",
+                "date_raw": "15-11-2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "topclass-card"
+                ]
+              },
+              {
+                "actor": "institution",
+                "action": "verify",
+                "date_raw": "15-11-2026",
+                "date_iso": "2026-11-15",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "topclass-card"
+                ]
+              },
+              {
+                "actor": "administrator",
+                "action": "verify",
+                "date_raw": "30-11-2026",
+                "date_iso": "2026-11-30",
+                "time": null,
+                "timezone": null,
+                "application_types": [
+                  "fresh"
+                ],
+                "applicant_group": null,
+                "applies_to_all_groups": true,
+                "explicitly_revises_deadline": false,
+                "supersedes_date_iso": null,
+                "evidence_block_ids": [
+                  "topclass-card"
+                ]
+              }
+            ],
+            "conditions": [],
+            "required_documents": [],
+            "application_links": [],
+            "unresolved_items": []
+          }
+        ],
+        "document_unresolved_items": []
+      },
+      "usage": {
+        "attempt_count": 1,
+        "attempts": [
+          {
+            "queue_time": 0.356045971,
+            "prompt_tokens": 2108,
+            "prompt_time": 0.478220785,
+            "completion_tokens": 844,
+            "completion_time": 1.8392599889999999,
+            "total_tokens": 2952,
+            "total_time": 2.317480774,
+            "prompt_tokens_details": {
+              "cached_tokens": 1792
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 247
+            }
+          }
+        ],
+        "total_tokens": 2952
+      },
+      "elapsed_ms": 2952
+    }
+  },
+  "updated_at": "2026-10-03T16:16:10.841399+00:00"
+}

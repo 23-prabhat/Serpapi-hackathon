@@ -1,0 +1,2179 @@
+{
+  "schema_version": 1,
+  "run_at": "2026-10-04T04:40:22.953161+00:00",
+  "evaluation_kind": "held_out_informed_regression",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "model_calls": 11,
+  "serpapi_calls": 0,
+  "usage": {
+    "total_tokens": 39918,
+    "attempt_count": 14
+  },
+  "summary": {
+    "case_count": 20,
+    "correct": 17,
+    "incorrect": 0,
+    "unresolved": 3,
+    "failed": 0,
+    "ground_truth_matches": 20,
+    "answered_accuracy": 1.0,
+    "answerable_coverage": 1.0
+  },
+  "by_split": {
+    "development": {
+      "case_count": 12,
+      "correct": 9,
+      "incorrect": 0,
+      "unresolved": 3,
+      "failed": 0,
+      "ground_truth_matches": 12,
+      "answered_accuracy": 1.0,
+      "answerable_coverage": 1.0
+    },
+    "held_out": {
+      "case_count": 8,
+      "correct": 8,
+      "incorrect": 0,
+      "unresolved": 0,
+      "failed": 0,
+      "ground_truth_matches": 8,
+      "answered_accuracy": 1.0,
+      "answerable_coverage": 1.0
+    }
+  },
+  "cases": [
+    {
+      "case_id": "dev-nmmss-2026-fresh-deadline",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2026-fresh-deadline",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2026-release",
+              "block_id": "nmmss26-schedule"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [
+          {
+            "result": "unknown",
+            "reason": "profile_value_missing",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": null,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "The parental income of the applicant should not exceed ₹3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 12.44
+    },
+    {
+      "case_id": "dev-nmmss-2026-income-below",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2026-income-below",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2026-release",
+              "block_id": "nmmss26-schedule"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "meets_checked_conditions",
+        "conditions": [
+          {
+            "result": "true",
+            "reason": "condition_met",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": 300000,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "The parental income of the applicant should not exceed ₹3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.26
+    },
+    {
+      "case_id": "dev-nmmss-2026-income-above",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2026-income-above",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2026-release",
+              "block_id": "nmmss26-schedule"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "condition_not_met",
+        "conditions": [
+          {
+            "result": "false",
+            "reason": "condition_not_met",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": 400000,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "The parental income of the applicant should not exceed ₹3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.18
+    },
+    {
+      "case_id": "dev-nmmss-2026-income-missing",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2026-income-missing",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2026-release",
+              "block_id": "nmmss26-schedule"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "more_information_needed",
+        "conditions": [
+          {
+            "result": "unknown",
+            "reason": "profile_value_missing",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": null,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "The parental income of the applicant should not exceed ₹3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.15
+    },
+    {
+      "case_id": "dev-nmmss-2026-renewal-deadline",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2026-renewal-deadline",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2026-27",
+          "application_type": "renewal",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2026-release",
+              "block_id": "nmmss26-schedule"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [
+          {
+            "result": "unknown",
+            "reason": "profile_value_missing",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": null,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "The parental income of the applicant should not exceed ₹3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2026-release",
+                "block_id": "nmmss26-schedule"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.14
+    },
+    {
+      "case_id": "dev-nmmss-2025-fresh-history",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2025-fresh-history",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2025-26",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2025-09-30",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_passed",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2025-release",
+              "block_id": "nmmss25-scope"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2025-09-30. The 2025-10-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [
+          {
+            "result": "unknown",
+            "reason": "profile_value_missing",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": null,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "parental income not more than Rs. 3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2025-10-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2025-10-31",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.14
+    },
+    {
+      "case_id": "dev-nmmss-2025-renewal-history",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2025-renewal-history",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2025-26",
+          "application_type": "renewal",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2025-09-30",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_passed",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2025-release",
+              "block_id": "nmmss25-scope"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2025-09-30. The 2025-10-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [
+          {
+            "result": "unknown",
+            "reason": "profile_value_missing",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": null,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "parental income not more than Rs. 3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2025-10-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2025-10-31",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.14
+    },
+    {
+      "case_id": "dev-nmmss-2025-income-boundary",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2025-income-boundary",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2025-26",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2025-09-30",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_passed",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2025-release",
+              "block_id": "nmmss25-scope"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2025-09-30. The 2025-10-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "meets_checked_conditions",
+        "conditions": [
+          {
+            "result": "true",
+            "reason": "condition_met",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": 350000,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "parental income not more than Rs. 3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2025-10-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2025-10-31",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.15
+    },
+    {
+      "case_id": "dev-nmmss-2025-income-over-boundary",
+      "split": "development",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nmmss-2025-income-over-boundary",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "nmmss",
+          "programme_name": "National Means-cum-Merit Scholarship Scheme",
+          "academic_year": "2025-26",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2025-09-30",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_passed",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:nmmss-2025-release",
+              "block_id": "nmmss25-scope"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2025-09-30. The 2025-10-15 date applies to institution verify.",
+        "portal_status": "not_checked",
+        "eligibility": "condition_not_met",
+        "conditions": [
+          {
+            "result": "false",
+            "reason": "condition_not_met",
+            "operator": "lte",
+            "field": "annual_family_income_inr",
+            "profile_value": 350001,
+            "expected_value": 350000.0,
+            "unit": "INR_per_year",
+            "source_text": "parental income not more than Rs. 3.50 lakh per annum.",
+            "children": [],
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-income"
+              }
+            ]
+          }
+        ],
+        "other_deadlines": [
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2025-10-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2025-10-31",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_passed",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:nmmss-2025-release",
+                "block_id": "nmmss25-verification"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.13
+    },
+    {
+      "case_id": "dev-pmusp-renewal-conflict",
+      "split": "development",
+      "answerable": false,
+      "outcome": "unresolved",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-pmusp-renewal-conflict",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "pm-usp-csss",
+          "programme_name": "PM-USP Central Sector Scheme of Scholarship for College and University Students",
+          "academic_year": "2026-27",
+          "application_type": "renewal",
+          "applicant_group": null
+        },
+        "deadline_resolution": "conflicting",
+        "student_deadline": null,
+        "summary": "Applicable student submission dates conflict; no definitive date was selected.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-10-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pm-usp-2026-catalogue",
+                "block_id": "pmusp-catalogue-renewal"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-10-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pm-usp-2026-catalogue",
+                "block_id": "pmusp-catalogue-renewal"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-10-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pm-usp-2026-catalogue",
+                "block_id": "pmusp-catalogue-renewal"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pm-usp-2026-announcement",
+                "block_id": "pmusp-announcement-renewal"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pm-usp-2026-announcement",
+                "block_id": "pmusp-announcement-renewal"
+              }
+            ]
+          }
+        ],
+        "conflicts": [
+          {
+            "kind": "student_submission_date",
+            "candidate_dates": [
+              "2026-09-30",
+              "2026-10-31"
+            ],
+            "candidates": [
+              {
+                "actor": "student",
+                "action": "submit",
+                "date": "2026-09-30",
+                "time": null,
+                "timezone": null,
+                "comparison_timezone": "Asia/Kolkata",
+                "timing": "date_passed",
+                "evidence_refs": [
+                  {
+                    "version_id": "phase5:pm-usp-2026-catalogue",
+                    "block_id": "pmusp-catalogue-renewal"
+                  }
+                ]
+              },
+              {
+                "actor": "student",
+                "action": "submit",
+                "date": "2026-10-31",
+                "time": null,
+                "timezone": null,
+                "comparison_timezone": "Asia/Kolkata",
+                "timing": "date_ahead",
+                "evidence_refs": [
+                  {
+                    "version_id": "phase5:pm-usp-2026-announcement",
+                    "block_id": "pmusp-announcement-renewal"
+                  }
+                ]
+              }
+            ],
+            "message": "Applicable student submission dates disagree and no explicit same-scope amendment resolves them."
+          }
+        ],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.27
+    },
+    {
+      "case_id": "dev-pmusp-fresh-not-established",
+      "split": "development",
+      "answerable": false,
+      "outcome": "unresolved",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-pmusp-fresh-not-established",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "partial",
+        "scope": {
+          "programme_id": "pm-usp-csss",
+          "programme_name": "PM-USP Central Sector Scheme of Scholarship for College and University Students",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "insufficient",
+        "student_deadline": null,
+        "summary": "A student submission deadline was not established for the requested scope.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [
+          "No document record established the complete requested scope.",
+          "No exact student submission date was established."
+        ],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.08
+    },
+    {
+      "case_id": "dev-nos-exact-date-unavailable",
+      "split": "development",
+      "answerable": false,
+      "outcome": "unresolved",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:dev-nos-exact-date-unavailable",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "partial",
+        "scope": {
+          "programme_id": "national-overseas-scholarship",
+          "programme_name": "National Overseas Scholarship for SC and Other Eligible Categories",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "insufficient",
+        "student_deadline": null,
+        "summary": "A student submission deadline was not established for the requested scope.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [
+          "No document record established the complete requested scope.",
+          "No exact student submission date was established."
+        ],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.04
+    },
+    {
+      "case_id": "heldout-pragati-deadline-roles",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-pragati-deadline-roles",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "aicte-pragati",
+          "programme_name": "AICTE Pragati Scholarship Scheme for Girl Students (Technical Degree)",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:pragati-2026-catalogue",
+              "block_id": "pragati-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.15
+    },
+    {
+      "case_id": "heldout-pragati-correction-not-submission",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-pragati-correction-not-submission",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "aicte-pragati",
+          "programme_name": "AICTE Pragati Scholarship Scheme for Girl Students (Technical Degree)",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:pragati-2026-catalogue",
+              "block_id": "pragati-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.14
+    },
+    {
+      "case_id": "heldout-pragati-due-today",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "timing": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-pragati-due-today",
+        "mode": "live",
+        "reference_time": "2026-10-31T12:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "aicte-pragati",
+          "programme_name": "AICTE Pragati Scholarship Scheme for Girl Students (Technical Degree)",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "due_today_time_unknown",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:pragati-2026-catalogue",
+              "block_id": "pragati-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.14
+    },
+    {
+      "case_id": "heldout-pragati-profile-unsupported",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-pragati-profile-unsupported",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "aicte-pragati",
+          "programme_name": "AICTE Pragati Scholarship Scheme for Girl Students (Technical Degree)",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:pragati-2026-catalogue",
+              "block_id": "pragati-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "more_information_needed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:pragati-2026-catalogue",
+                "block_id": "pragati-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.13
+    },
+    {
+      "case_id": "heldout-topclass-deadline-roles",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-topclass-deadline-roles",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "top-class-st",
+          "programme_name": "National Fellowship and Scholarship for Higher Education of ST Students",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:top-class-st-2026-catalogue",
+              "block_id": "topclass-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.14
+    },
+    {
+      "case_id": "heldout-topclass-correction-not-submission",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-topclass-correction-not-submission",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "top-class-st",
+          "programme_name": "National Fellowship and Scholarship for Higher Education of ST Students",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:top-class-st-2026-catalogue",
+              "block_id": "topclass-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.13
+    },
+    {
+      "case_id": "heldout-topclass-due-today",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "timing": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-topclass-due-today",
+        "mode": "live",
+        "reference_time": "2026-10-31T18:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "top-class-st",
+          "programme_name": "National Fellowship and Scholarship for Higher Education of ST Students",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "due_today_time_unknown",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:top-class-st-2026-catalogue",
+              "block_id": "topclass-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "not_assessed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.13
+    },
+    {
+      "case_id": "heldout-topclass-profile-unsupported",
+      "split": "held_out",
+      "answerable": true,
+      "outcome": "correct",
+      "ground_truth_match": true,
+      "checks": {
+        "deadline_resolution": true,
+        "student_deadline": true,
+        "other_deadlines": true,
+        "candidate_dates": true,
+        "eligibility": true,
+        "citation_support": true
+      },
+      "output": {
+        "run_id": "phase5:heldout-topclass-profile-unsupported",
+        "mode": "live",
+        "reference_time": "2026-10-03T00:00:00+05:30",
+        "coverage": "complete_for_attempted_scope",
+        "scope": {
+          "programme_id": "top-class-st",
+          "programme_name": "National Fellowship and Scholarship for Higher Education of ST Students",
+          "academic_year": "2026-27",
+          "application_type": "fresh",
+          "applicant_group": null
+        },
+        "deadline_resolution": "supported",
+        "student_deadline": {
+          "actor": "student",
+          "action": "submit",
+          "date": "2026-10-31",
+          "time": null,
+          "timezone": null,
+          "comparison_timezone": "Asia/Kolkata",
+          "timing": "date_ahead",
+          "evidence_refs": [
+            {
+              "version_id": "phase5:top-class-st-2026-catalogue",
+              "block_id": "topclass-card"
+            }
+          ]
+        },
+        "summary": "The student submission date in this notice is 2026-10-31. The 2026-11-15 date applies to student correct.",
+        "portal_status": "not_checked",
+        "eligibility": "more_information_needed",
+        "conditions": [],
+        "other_deadlines": [
+          {
+            "actor": "student",
+            "action": "correct",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "institution",
+            "action": "verify",
+            "date": "2026-11-15",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          },
+          {
+            "actor": "administrator",
+            "action": "verify",
+            "date": "2026-11-30",
+            "time": null,
+            "timezone": null,
+            "comparison_timezone": "Asia/Kolkata",
+            "timing": "date_ahead",
+            "evidence_refs": [
+              {
+                "version_id": "phase5:top-class-st-2026-catalogue",
+                "block_id": "topclass-card"
+              }
+            ]
+          }
+        ],
+        "conflicts": [],
+        "amendments": [],
+        "required_documents": [],
+        "application_links": [],
+        "limitations": [],
+        "provenance": {
+          "rules_version": "phase3-2",
+          "schema_version": "4",
+          "input_mode": "live_search_and_retrieval",
+          "model_id": "openai/gpt-oss-120b",
+          "prompt_hash": "8292b88641dbba644b360495a4828c86db1efdaddde5949d77ed5e4d11e5b9b1"
+        }
+      },
+      "elapsed_ms": 0.13
+    }
+  ]
+}

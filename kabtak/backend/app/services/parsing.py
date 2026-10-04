@@ -22,6 +22,7 @@ from app.services.failures import ParsingFailedError, ProcessingError, Unsupport
 PARSER_VERSION = "phase2-2"
 SPACE_PATTERN = re.compile(r"\s+")
 SELECTED_HTML_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "table"}
+ACADEMIC_YEAR_PATTERN = re.compile(r"\bacademic\s+year\s+\d{4}\s*[-–]\s*\d{2}\b", re.I)
 
 
 @dataclass(frozen=True)
@@ -62,10 +63,28 @@ def _make_block(
 
 def parse_html(content: bytes) -> list[Block]:
     soup = BeautifulSoup(content, "html.parser")
+    # Some official portals put the active cycle inside navigation that is otherwise
+    # intentionally discarded as page chrome. Preserve only the bounded cycle label
+    # before removing navigation; without it, otherwise valid scheme cards lose the
+    # evidence needed to bind their dates to an academic year.
+    document_context = list(
+        dict.fromkeys(
+            normalize_text(match.group())
+            for text in soup.find_all(string=ACADEMIC_YEAR_PATTERN)
+            for match in ACADEMIC_YEAR_PATTERN.finditer(str(text))
+        )
+    )
     for unwanted in soup.select("script, style, noscript, svg, nav, footer"):
         unwanted.decompose()
     root = soup.find("main") or soup.find("article") or soup.body or soup
     blocks: list[Block] = []
+    for context in document_context:
+        _make_block(
+            blocks,
+            kind="document_context",
+            location="document metadata",
+            text=context,
+        )
     section = "document"
     table_number = 0
     for element in root.find_all(SELECTED_HTML_TAGS):

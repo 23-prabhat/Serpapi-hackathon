@@ -1,0 +1,144 @@
+schema_version: 1
+reviewed_at: "2026-10-03"
+documents:
+  - id: nmmss-2026-release
+    programme_id: nmmss
+    publisher_role: issuer_release
+    source_capabilities: [deadline, amendment, eligibility]
+    url: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2317657&lang=2&reg=48
+    blocks:
+      - block_id: nmmss26-scope
+        kind: excerpt
+        location: release body, scope excerpts
+        text: |-
+          The Union Ministry of Education has extended the last date for submission of applications under the National Means-cum-Merit Scholarship Scheme (NMMSS) for the academic year 2026-27 to October 31, 2026.
+          As on September 30, 2026, 88,522 fresh and 1,97,133 renewal applications had been submitted.
+      - block_id: nmmss26-schedule
+        kind: table
+        location: revised schedule table
+        text: |-
+          Process | Last Date
+          Submission of Application | October 31, 2026
+          Institute Nodal Officer (L1) Verification | November 15, 2026
+          District Nodal Officer (L2) Verification | November 30, 2026
+        metadata:
+          headers: [Process, Last Date]
+          rows:
+            - [Submission of Application, "October 31, 2026"]
+            - [Institute Nodal Officer (L1) Verification, "November 15, 2026"]
+            - [District Nodal Officer (L2) Verification, "November 30, 2026"]
+      - block_id: nmmss26-income
+        kind: excerpt
+        location: release body, eligibility paragraph
+        text: The parental income of the applicant should not exceed ₹3.50 lakh per annum.
+
+  - id: nmmss-2025-release
+    programme_id: nmmss
+    publisher_role: issuer_release
+    source_capabilities: [deadline, amendment, eligibility, application_process]
+    url: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2167076&lang=2&reg=48
+    blocks:
+      - block_id: nmmss25-scope
+        kind: excerpt
+        location: release body, scope excerpts
+        text: |-
+          The last date for submission of applications by the selected meritorious students on the National Scholarship Portal (NSP) for National Means cum Merit Scholarship Scheme (NMMSS) for the year 2025-26 has been extended to 30th September, 2025.
+          As of 30.08.2025, 85420 fresh and 172027 renewal applications have been finally submitted by the applicants.
+      - block_id: nmmss25-verification
+        kind: excerpt
+        location: release body, verification paragraph
+        text: On the NSP portal, there are two levels of verification of the scholarship application of selected students, Level-1 (L1) verification is at the Institute Nodal Officer (INO) and Level-2 (L2) is with the District Nodal Officer (DNO). The last date for INO level (L1) verification is 15.10.2025 and for DNO level (L2) verification is 31.10.2025.
+      - block_id: nmmss25-income
+        kind: excerpt
+        location: release body, eligibility paragraph
+        text: The eligibility parameters for availing the scholarship include parental income not more than Rs. 3.50 lakh per annum.
+
+  - id: pm-usp-2026-catalogue
+    programme_id: pm-usp-csss
+    publisher_role: application_portal
+    source_capabilities: [deadline, verification_deadline]
+    url: https://scholarships.gov.in/All-Scholarships
+    blocks:
+      - block_id: pmusp-catalogue-year
+        kind: document_context
+        location: page header
+        text: Academic Year 2026-27
+      - block_id: pmusp-catalogue-renewal
+        kind: scheme_card
+        location: PM-USP CSSS scheme card
+        text: |-
+          PM-USP – Central Sector Scheme Of Scholarship For College And University Students (CSSS) (Merit Based Scheme)
+          Scheme Open from (for Renewal): 01-06-2026
+          Student Application Closed on : 30-09-2026
+          Defective Application Verification Open till (for Renewal):15-10-2026
+          Institute Verification Open till (for Renewal):15-10-2026
+          DNO/SNO/MNO Verification Open till (for Renewal):30-10-2026
+
+  - id: pm-usp-2026-announcement
+    programme_id: pm-usp-csss
+    publisher_role: application_portal
+    source_capabilities: [deadline, verification_deadline]
+    url: https://scholarships.gov.in/ViewMoreAnnouncement
+    blocks:
+      - block_id: pmusp-announcement-year
+        kind: document_context
+        location: page header
+        text: Academic Year 2026-27
+      - block_id: pmusp-announcement-renewal
+        kind: announcement
+        location: announcements
+        text: >-
+          Renewal applications for the "PM-USP – Central Sector Scheme Of Scholarship For College And University Students (CSSS) (Merit Based Scheme)" and "PM USP Special Scholarship Scheme For Jammu Kashmir And Ladakh (Merit Based Scheme)" is currently open in NSP. Closing dates for student application is 31-10-2026 and closing date for institute verification is : 15-11-2026 and closing date for L2 verification is : 30/11/2026
+
+  - id: nos-2026-guidelines
+    programme_id: national-overseas-scholarship
+    publisher_role: issuer_document
+    source_capabilities: [eligibility, application_process]
+    url: https://socialjustice.gov.in/writereaddata/UploadFile/68641776927848.pdf
+    blocks:
+      - block_id: nos-guideline-rounds
+        kind: page_text
+        location: page 4
+        text: The selection year period would be April-March of each year. The portal shall be opened for calling of applications for the first round in April/May for a period of 40 days for inviting of applications online and after this period, the portal will be opened again for 4 days to allow the candidates to make corrections, if any, in the submitted applications and only online applications received shall be considered for award of selection. For example, for the selection year 2026-27, online portal for inviting applications of NOS Scholarship for first round will be opened in April/May 2026 for a period of 40 days for inviting of applications online and 4 days will be given for correction.
+
+  - id: pragati-2026-catalogue
+    programme_id: aicte-pragati
+    publisher_role: application_portal
+    source_capabilities: [deadline, verification_deadline]
+    url: https://scholarships.gov.in/All-Scholarships
+    blocks:
+      - block_id: pragati-year
+        kind: document_context
+        location: page header
+        text: Academic Year 2026-27
+      - block_id: pragati-card
+        kind: scheme_card
+        location: AICTE Pragati technical degree scheme card
+        text: |-
+          AICTE - Pragati Scholarship Scheme For Girl Students ( Technical Degree) (Merit Based Scheme)
+          Scheme Open from : 01-06-2026
+          Student Application Open till : 31-10-2026
+          Defective Application Verification Open till:15-11-2026
+          Institute Verification Open till:15-11-2026
+          DNO/SNO/MNO Verification Open till:30-11-2026
+
+  - id: top-class-st-2026-catalogue
+    programme_id: top-class-st
+    publisher_role: application_portal
+    source_capabilities: [deadline, verification_deadline]
+    url: https://scholarships.gov.in/All-Scholarships
+    blocks:
+      - block_id: topclass-year
+        kind: document_context
+        location: page header
+        text: Academic Year 2026-27
+      - block_id: topclass-card
+        kind: scheme_card
+        location: National Fellowship and Scholarship for Higher Education of ST Students card
+        text: |-
+          National Fellowship And Scholarship For Higher Education Of ST Students - Scholarship (Formally Top Class Education For Schedule Tribe Students) (Merit Based Scheme)
+          Scheme Open from : 01-06-2026
+          Student Application Open till : 31-10-2026
+          Defective Application Verification Open till:15-11-2026
+          Institute Verification Open till:15-11-2026
+          DNO/SNO/MNO Verification Open till:30-11-2026
