@@ -40,9 +40,18 @@ from app.services.failures import (
     SourceUnavailableError,
 )
 from app.services.parsing import PARSER_VERSION, Block, parse_source_bounded, persist_source_files
-from app.services.registry import load_registry
+from app.services.registry import (
+    ARBITRARY_LINK_PROGRAMME,
+    ARBITRARY_LINK_PROGRAMME_ID,
+    load_registry,
+)
 from app.services.reporting import REPORT_SCHEMA_VERSION, build_report
-from app.services.retrieval import RetrievedSource, SourceRequestBudget, retrieve_source
+from app.services.retrieval import (
+    RetrievedSource,
+    SourceRequestBudget,
+    retrieve_arbitrary_source,
+    retrieve_source,
+)
 from app.services.rules.types import SourcedRecord
 from app.services.search import search_programme
 
@@ -162,6 +171,26 @@ def _has_requested_deadline_scope(
     )
 
 
+def _has_arbitrary_deadline_scope(
+    blocks: list[Block], programme_name: str, academic_year: str
+) -> bool:
+    text = _normalize_scope_text("\n".join(block.text for block in blocks))
+    programme_text = _normalize_scope_text(programme_name)
+    ignored = {"scholarship", "scheme", "programme", "program", "the", "for", "and"}
+    name_tokens = {
+        token for token in programme_text.split() if len(token) >= 3 and token not in ignored
+    }
+    token_matches = sum(token in text.split() for token in name_tokens)
+    programme_matches = programme_text in text or (
+        bool(name_tokens) and token_matches >= min(2, len(name_tokens))
+    )
+    return (
+        _normalize_scope_text(academic_year) in text
+        and programme_matches
+        and any(marker in text for marker in DEADLINE_SCOPE_MARKERS)
+    )
+
+
 def _blocks_for_extraction(
     blocks: list[Block], programme: dict[str, Any], academic_year: str
 ) -> list[Block]:
@@ -241,6 +270,7 @@ def _extraction_scope_hash(
         (
             prompt_hash(),
             programme["id"],
+            programme["name"],
             academic_year,
             application_type,
             str(programme.get("extraction_focus", "full")),
@@ -259,39 +289,52 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
         check = persisted_run.check
         session.expunge(check)
 
-    programme = load_registry()[check.programme_id]
     scope = check.requested_scope_json
+    is_link_check = check.programme_id == ARBITRARY_LINK_PROGRAMME_ID
+    if is_link_check:
+        programme = {
+            **ARBITRARY_LINK_PROGRAMME,
+            "name": scope["programme_name"],
+            "provider": scope["source_host"],
+            "search_terms": [scope["programme_name"]],
+        }
+    else:
+        programme = load_registry()[check.programme_id]
     academic_year = scope["academic_year"]
     application_type = scope["application_type"]
     extraction_scope_hash = _extraction_scope_hash(programme, academic_year, application_type)
     usage: dict[str, Any] = {"search_calls": 0, "source_requests": 0, "model": {}}
 
     _set_stage(run_id, owner_token, "searching")
-    search = search_programme(settings, programme, academic_year, run_id)
-    usage["search_calls"] = search.metadata["attempt_count"]
-    with SessionLocal.begin() as session:
-        session.add(
-            SearchRequest(
-                id=str(uuid4()),
-                run_id=run_id,
-                query=search.query,
-                parameters_json=search.metadata["parameters"],
-                requested_at=_utcnow(),
-                result_created_at=search.result_created_at,
-                provider_search_id=search.provider_search_id,
-                response_path=search.response_path,
-                local_cache_hit=False,
-                outcome="success",
-                usage_json=search.metadata,
+    search_urls: list[str] = []
+    if not is_link_check:
+        search = search_programme(settings, programme, academic_year, run_id)
+        search_urls = search.urls
+        usage["search_calls"] = search.metadata["attempt_count"]
+        with SessionLocal.begin() as session:
+            session.add(
+                SearchRequest(
+                    id=str(uuid4()),
+                    run_id=run_id,
+                    query=search.query,
+                    parameters_json=search.metadata["parameters"],
+                    requested_at=_utcnow(),
+                    result_created_at=search.result_created_at,
+                    provider_search_id=search.provider_search_id,
+                    response_path=search.response_path,
+                    local_cache_hit=False,
+                    outcome="success",
+                    usage_json=search.metadata,
+                )
             )
-        )
 
     _set_stage(run_id, owner_token, "fetching")
     candidate_urls: list[str] = []
     if check.notice_url:
         candidate_urls.append(check.notice_url)
-    candidate_urls.extend(search.urls)
-    candidate_urls.extend(programme.get("reviewed_discovery_urls", {}).get(academic_year, []))
+    candidate_urls.extend(search_urls)
+    if not is_link_check:
+        candidate_urls.extend(programme.get("reviewed_discovery_urls", {}).get(academic_year, []))
     candidate_urls = list(dict.fromkeys(candidate_urls))
 
     prepared_documents: list[PreparedDocument] = []
@@ -302,15 +345,30 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
         candidate = None
         _require_owned_run(run_id, owner_token)
         try:
-            candidate = retrieve_source(settings, programme, url, request_budget)
+            candidate = (
+                retrieve_arbitrary_source(settings, url, request_budget)
+                if is_link_check
+                else retrieve_source(settings, programme, url, request_budget)
+            )
             parsed_blocks, parsed_format, parsed_status = parse_source_bounded(
                 candidate.content,
                 candidate.content_type,
                 candidate.resolved_url,
                 max_pages=settings.max_pdf_pages,
-                timeout_seconds=settings.source_parse_timeout_seconds,
+                timeout_seconds=max(
+                    settings.source_parse_timeout_seconds,
+                    settings.ocr_timeout_seconds + 5 if settings.ocr_enabled else 0,
+                ),
+                ocr_enabled=settings.ocr_enabled,
+                ocr_timeout_seconds=settings.ocr_timeout_seconds,
+                max_ocr_pages=settings.max_ocr_pages,
             )
-            if not _has_requested_deadline_scope(parsed_blocks, programme, academic_year):
+            scope_matches = (
+                _has_arbitrary_deadline_scope(parsed_blocks, programme["name"], academic_year)
+                if is_link_check
+                else _has_requested_deadline_scope(parsed_blocks, programme, academic_year)
+            )
+            if not scope_matches:
                 raise IrrelevantSourceError(
                     "Parsed source lacked programme, cycle, or deadline markers"
                 )
@@ -516,6 +574,18 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
         raise last_extraction_failure or InvalidExtractionError("No valid extraction remained")
 
     _set_stage(run_id, owner_token, "checking")
+    link_roles = {item.retrieved.source_policy["role"] for item in prepared_documents}
+    authority_established = bool(link_roles & {"government_publisher"})
+    link_limitations = []
+    if is_link_check:
+        link_limitations.append(
+            "This mode checked only the supplied source and did not search for amendments."
+        )
+        if not authority_established:
+            link_limitations.append(
+                "Publisher authority was not independently established for this host. "
+                "Confirm the notice with the scholarship issuer."
+            )
     report_json = build_report(
         run_id=run_id,
         reference_time=run.reference_time,
@@ -528,7 +598,27 @@ def process_run(run_id: str, owner_token: str, settings: Settings | None = None)
         incomplete_source_attempts=bool(last_failure or last_extraction_failure),
         model_id=settings.llm_model or "unknown",
         extraction_prompt_hash=extraction_scope_hash,
+        mode="link" if is_link_check else "live",
+        input_mode=("arbitrary_official_link" if is_link_check else "live_search_and_retrieval"),
+        additional_limitations=link_limitations,
     )
+    if is_link_check:
+        report_json["coverage"] = "partial"
+    if is_link_check and not authority_established and report_json["student_deadline"]:
+        candidate_deadline = report_json["student_deadline"]
+        report_json["student_deadline"] = None
+        report_json["deadline_resolution"] = "insufficient"
+        report_json["summary"] = (
+            "A student date was extracted, but the source host's authority was not established; "
+            "no definitive deadline was selected."
+        )
+        report_json["conflicts"].append(
+            {
+                "kind": "publisher_authority",
+                "message": "The supplied host could not be verified as the scholarship issuer.",
+                "candidates": [candidate_deadline],
+            }
+        )
     ReportRead.model_validate(report_json)
 
     _set_stage(run_id, owner_token, "finalizing")

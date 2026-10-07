@@ -38,6 +38,24 @@ This repository is a submission for the **SerpApi India Hackathon 2026** in the
 - Keeps checks and optional profiles local, with immutable run history and
   user-controlled retention.
 - Includes an offline historical replay that needs no API keys or worker.
+- Analyses one student-supplied official notice link with guarded retrieval and
+  an explicit unresolved result when publisher authority cannot be established.
+- Uses bounded local OCR for scanned English PDFs and marks OCR-derived reports
+  partial with an explicit recognition warning.
+- Offers a deterministic Hindi summary without translating or replacing the
+  original evidence, plus `.ics` export for supported student deadlines only.
+
+## Available workflows
+
+| Workflow | UI | Worker | SerpApi | Groq | Purpose |
+| --- | --- | --- | --- | --- | --- |
+| Reviewed catalogue check | `/` | Required | Required | Required | Searches reviewed official publishers and checks the selected programme and cycle. |
+| Official-link check | `/link-check` | Required | Not used | Required | Analyses one student-supplied public notice with guarded retrieval. |
+| Historical replay | `/examples` | Not required | Not used | Not used | Replays packaged evidence at a frozen reference time. |
+
+Completed reports are available at `/checks/{check_id}`. They include the selected
+student deadline, separated non-student dates, exact evidence receipts, limitations,
+history, Hindi explanation, and calendar export when the result supports it.
 
 ## Demo
 
@@ -55,7 +73,7 @@ before the deterministic decision step.
 
 Scholarship notices are often split across a scheme page, a dated press release,
 and a later extension. Kabtak uses the SerpApi Google Search API as the discovery
-layer for the live NMMSS workflow:
+layer for reviewed-catalogue checks:
 
 1. It runs a bounded set of deadline and amendment queries.
 2. Search is restricted to reviewed official publisher domains and the requested
@@ -85,18 +103,41 @@ The public live workflow supports five reviewed programmes:
 Each programme has documented cycles, application types, reviewed source policies,
 bounded SerpApi discovery, and policy-checked fallback sources. Azim Premji
 Scholarship remains deferred because stable direct retrieval was not available.
-Kabtak accepts only allowlisted HTML and text-based PDF sources; it does not perform
-unrestricted crawling, OCR, portal login, or application submission.
+The catalogue workflow accepts allowlisted HTML and PDF sources. The separate
+link workflow checks one direct public HTML or PDF source; it does not perform
+unrestricted crawling, portal login, or application submission.
 
-### Future scope: any scholarship from an official link
+### Any scholarship from an official link
 
-A future guarded mode will let a student provide an official notice link for a
-scholarship outside the catalogue, including programmes such as Amazon Future
-Engineer. Kabtak will validate the public URL, retrieve it with strict redirect,
-size, format, and request limits, extract scoped facts, and return the same cited
+A guarded mode lets a student provide an official notice link for a scholarship
+outside the catalogue. Kabtak validates the public URL, retrieves it with strict redirect,
+size, format, and request limits, extracts scoped facts, and returns the same cited
 report. If authority, cycle, deadline role, or evidence cannot be established, the
-output will be explicitly unresolved or unsupported rather than guessed. This is
-future scope and is not presented as an available P0 feature.
+output is explicitly unresolved or unsupported rather than guessed. The one-source
+mode does not use SerpApi and clearly warns that it has not searched for amendments.
+
+### Scanned-PDF OCR
+
+When a PDF contains no extractable text, the worker can render at most the configured
+page limit and run local English Tesseract OCR. OCR blocks retain their page number
+and engine metadata; reports remain partial and warn that recognition errors are
+possible. Text PDFs stay on the normal parser path. OCR is controlled by
+`OCR_ENABLED`, `OCR_TIMEOUT_SECONDS`, and `MAX_OCR_PAGES` in `kabtak/.env`.
+
+### Hindi report explanation
+
+A finished report can show a code-controlled Hindi explanation of its conclusion,
+deadline timing, application type, coverage, and known safety limitations. The
+original evidence and source-specific text are never machine-translated or replaced;
+unknown limitations remain identified and the original English list stays visible.
+
+### Calendar export
+
+A `.ics` download is offered only when deterministic rules select a supported student
+deadline. Date-only and uncertain-timezone deadlines become inclusive all-day events.
+Source-backed UTC and Asia/Kolkata times are exported as exact UTC instants. Conflicting
+or insufficient results never expose the calendar action, and every event asks the
+student to confirm the date on the cited official source.
 
 ## Architecture
 
@@ -107,32 +148,51 @@ flowchart LR
     API <--> DB[("SQLite")]
     Worker["one database-backed worker"] <--> DB
     Worker --> SerpApi["SerpApi Google Search"]
-    Worker --> Sources["reviewed official sources"]
+    Worker --> Sources["reviewed or guarded supplied source"]
     Worker --> Groq["Groq structured extraction"]
+    Worker --> OCR["Poppler + Tesseract OCR fallback"]
     Worker --> Snapshots["immutable source snapshots"]
     DB --> Report["rules + evidence-backed report"]
     Report --> API
 ```
 
-The API accepts and persists a check quickly. A separate worker claims one queued
-run, performs bounded discovery/retrieval/extraction, validates every evidence
-reference, applies deterministic deadline and eligibility rules, and commits the
-report. Refresh creates a new immutable run rather than overwriting history.
+The API accepts and persists a check quickly, returning a queued run instead of keeping
+one HTTP request open during network and model work. A separate Python worker claims
+one queued run, records heartbeats and progress, performs bounded discovery, guarded
+retrieval, HTML/PDF parsing and optional OCR, invokes structured extraction, validates
+every evidence reference, applies deterministic deadline and eligibility rules, and
+commits the report. Refresh creates a new immutable run rather than overwriting history.
+Only one worker should run against the local SQLite database. If it is stopped, live
+and official-link checks remain queued; saved reports and packaged replays still work.
 
 The local application has three processes:
 
 - Next.js 16 and React 19 for the responsive UI and server-only API proxy
 - FastAPI, Pydantic, SQLAlchemy, and Alembic for validation and persistence
-- A Python worker using HTTPX, Beautiful Soup, pdfplumber, SerpApi, and Groq
+- A Python worker using HTTPX, Beautiful Soup, pdfplumber, Poppler/Tesseract,
+  SerpApi, and Groq
 
 See [the detailed system design](docs/system-design.md) for schemas, state
 transitions, trust boundaries, and failure behavior.
 
 ## Quick start
 
-Requirements: Python 3.12, `uv`, Node.js 20.12 or newer, and pnpm 12. The offline
-historical replay needs no provider keys. A live check additionally needs SerpApi
-and Groq API keys.
+Requirements: Python 3.12, `uv`, Node.js 20.12 or newer, and pnpm 12. Scanned-PDF
+OCR additionally needs Poppler (`pdftoppm`) and Tesseract with English language data.
+The offline historical replay needs no provider keys. Catalogue checks need SerpApi
+and Groq keys; official-link checks need Groq but do not use SerpApi.
+
+Install the OCR executables on Fedora with:
+
+```bash
+sudo dnf install poppler-utils tesseract
+```
+
+On Ubuntu or Debian:
+
+```bash
+sudo apt install poppler-utils tesseract-ocr
+```
 
 ```bash
 cd kabtak
@@ -154,12 +214,14 @@ uv run alembic upgrade head
 cd ../frontend
 pnpm install --frozen-lockfile
 pnpm generate:api
+pnpm exec playwright install chromium
 ```
 
 Both FastAPI and Next.js now load the same `kabtak/.env`; no duplicated token is
-required. For a live check, set `SERPAPI_API_KEY`, `LLM_PROVIDER=groq`,
-`LLM_MODEL=openai/gpt-oss-120b`, and `LLM_API_KEY`. Then run the API, worker, and
-frontend in separate terminals as documented in [run.md](run.md).
+required. For catalogue checks, set `SERPAPI_API_KEY`, `LLM_PROVIDER=groq`,
+`LLM_MODEL=openai/gpt-oss-120b`, and `LLM_API_KEY`. Official-link checks use the
+same LLM settings but do not require `SERPAPI_API_KEY`. Then run the API, worker,
+and frontend in separate terminals as documented in [run.md](run.md).
 
 Open <http://127.0.0.1:3000/examples> and select **Open offline replay** for a
 credential-free test. The replay is visibly marked historical and uses a frozen
@@ -188,6 +250,11 @@ The release audit also installs and runs the project from a temporary clean Git
 checkout. See [the release checklist](docs/release-checklist.md) for the recorded
 result and [run.md](run.md) for all commands.
 
+The browser suite covers the reviewed catalogue, official-link intake, offline replay,
+save/refresh/delete lifecycle, evidence inspection, Hindi supported/conflicting/
+insufficient states, OCR limitation messaging, all-day calendar output, exact UTC and
+Asia/Kolkata times, and safe fallback when a published time has no verified timezone.
+
 ## Evaluation
 
 The frozen Phase 5 set contains 20 real-notice questions across five programmes,
@@ -208,14 +275,18 @@ can be reproduced offline without SerpApi or Groq calls.
 
 ## Important limitations
 
-- Live checking is intentionally limited to the five reviewed programmes listed
-  above; arbitrary scholarship links are planned future scope.
+- Catalogue search is intentionally limited to the five reviewed programmes listed
+  above. Link mode checks only the supplied source and may leave publisher authority unresolved.
 - Search cannot guarantee that every official amendment is indexed.
 - The evaluation measures 20 bounded questions over seven documents, not universal
   scholarship accuracy or live rediscovery.
 - The held-out result is a regression result, not an untouched estimate.
-- Only English HTML and text-based PDFs from reviewed source policies are handled;
-  scanned documents need OCR and are rejected safely.
+- OCR currently reads English scanned PDFs only, is limited to 10 pages by default,
+  and can make recognition mistakes; its output is never presented as full coverage.
+- The Hindi panel explains structured report fields; it does not translate the
+  source evidence or resolve language-dependent ambiguity in a notice.
+- Calendar export is available only after a student deadline is resolved as supported;
+  a time without a verified timezone is deliberately exported as an all-day event.
 - Groq free-tier rate limits can make live runtime nondeterministic.
 - Data is stored locally in SQLite; this prototype has no accounts or public
   multi-user deployment controls.
@@ -256,8 +327,9 @@ audit commands in [run.md](run.md#stop-the-project) and review `git status`.
 ## Project status
 
 Phases 0–6 in [plan.md](plan.md) are implemented for the bounded prototype. All
-five reviewed programmes are admitted by the live workflow and use the same
-search, retrieval, extraction, decision, evidence, failure, and history pipeline.
+five reviewed programmes use the same search, retrieval, extraction, decision,
+evidence, failure, and history pipeline. Guarded official-link analysis, scanned-PDF
+OCR, Hindi report explanations, and safe calendar export are implemented expansions.
 Public repository/video verification and authenticated submission remain
 participant-only release steps.
 

@@ -3,6 +3,7 @@
 import hashlib
 import io
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -109,5 +110,40 @@ def test_scanned_or_empty_pdf_is_an_explicit_unsupported_state() -> None:
     output = io.BytesIO()
     document.save(output)
 
-    with pytest.raises(UnsupportedPDFError, match="no extractable text"):
-        parse_pdf(output.getvalue())
+    with pytest.raises(UnsupportedPDFError, match="OCR is disabled"):
+        parse_pdf(output.getvalue(), ocr_enabled=False)
+
+
+@pytest.mark.skipif(
+    not shutil.which("tesseract") or not shutil.which("pdftoppm"),
+    reason="local OCR executables are not installed",
+)
+def test_scanned_pdf_uses_bounded_ocr_and_marks_its_evidence() -> None:
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("RGB", (1800, 1000), "white")
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default(size=62)
+    draw.multiline_text(
+        (100, 130),
+        "NMMSS Academic Year 2026-27\nStudent Application Deadline\n31 October 2026",
+        fill="black",
+        font=font,
+        spacing=35,
+    )
+    output = io.BytesIO()
+    image.save(output, format="PDF", resolution=150)
+
+    blocks, partial, used_ocr = parse_pdf(
+        output.getvalue(),
+        max_pages=2,
+        ocr_enabled=True,
+        ocr_timeout_seconds=20,
+        max_ocr_pages=2,
+    )
+
+    assert used_ocr is True
+    assert partial is False
+    assert blocks[0].kind == "ocr_page_text"
+    assert blocks[0].metadata["ocr_engine"] == "tesseract"
+    assert "31 October 2026" in blocks[0].text

@@ -20,7 +20,7 @@ class SourceUnavailableError(ProcessingError):
     def __init__(self, diagnostic: str | None = None) -> None:
         super().__init__(
             "SOURCE_UNAVAILABLE",
-            "The reviewed source is temporarily unavailable. Try the check again later.",
+            "The source is temporarily unavailable. Try the check again later.",
             retryable=True,
             diagnostic=diagnostic,
         )
@@ -30,7 +30,7 @@ class IrrelevantSourceError(ProcessingError):
     def __init__(self, diagnostic: str | None = None) -> None:
         super().__init__(
             "SOURCE_SCOPE_MISMATCH",
-            "The reviewed source did not establish a deadline for the requested programme cycle.",
+            "The source did not establish a deadline for the requested programme cycle.",
             retryable=False,
             diagnostic=diagnostic,
         )
@@ -40,7 +40,17 @@ class UnsupportedSourceError(ProcessingError):
     def __init__(self, diagnostic: str | None = None) -> None:
         super().__init__(
             "UNSUPPORTED_SOURCE_FORMAT",
-            "The reviewed source uses a format that Kabtak cannot safely process.",
+            "The source uses a format that Kabtak cannot safely process.",
+            retryable=False,
+            diagnostic=diagnostic,
+        )
+
+
+class UnsafeSourceURLError(ProcessingError):
+    def __init__(self, diagnostic: str | None = None) -> None:
+        super().__init__(
+            "UNSAFE_SOURCE_URL",
+            "This source link cannot be retrieved safely. Use a direct public publisher URL.",
             retryable=False,
             diagnostic=diagnostic,
         )
@@ -50,7 +60,7 @@ class UnsupportedPDFError(ProcessingError):
     def __init__(self, diagnostic: str | None = None) -> None:
         super().__init__(
             "UNSUPPORTED_PDF",
-            "The reviewed PDF is scanned, encrypted, or could not be parsed safely.",
+            "The PDF is scanned, encrypted, or could not be parsed safely.",
             retryable=False,
             diagnostic=diagnostic,
         )
@@ -60,7 +70,7 @@ class ParsingFailedError(ProcessingError):
     def __init__(self, diagnostic: str | None = None) -> None:
         super().__init__(
             "PARSING_FAILED",
-            "The reviewed source could not be converted into reliable evidence blocks.",
+            "The source could not be converted into reliable evidence blocks.",
             retryable=False,
             diagnostic=diagnostic,
         )

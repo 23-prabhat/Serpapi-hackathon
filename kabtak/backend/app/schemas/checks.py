@@ -3,7 +3,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 
 from app.schemas.runs import RunRead
 
@@ -34,6 +34,38 @@ class CheckCreate(BaseModel):
     applicant_group: str | None = Field(default=None, max_length=200)
     profile: ApplicantProfile | None = None
     save: bool = False
+
+
+class LinkCheckCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    programme_name: str = Field(min_length=3, max_length=300)
+    academic_year: str = Field(pattern=r"^\d{4}-\d{2}$")
+    application_type: ApplicationType
+    notice_url: HttpUrl
+    applicant_group: str | None = Field(default=None, max_length=200)
+    profile: ApplicantProfile | None = None
+    save: bool = False
+    official_source_confirmed: bool
+
+    @field_validator("programme_name")
+    @classmethod
+    def normalize_programme_name(cls, value: str) -> str:
+        return " ".join(value.split())
+
+    @field_validator("application_type")
+    @classmethod
+    def require_known_application_type(cls, value: ApplicationType) -> ApplicationType:
+        if value == ApplicationType.UNKNOWN:
+            raise ValueError("select fresh or renewal")
+        return value
+
+    @field_validator("official_source_confirmed")
+    @classmethod
+    def require_source_confirmation(cls, value: bool) -> bool:
+        if not value:
+            raise ValueError("confirm that the link is from the publisher or institution")
+        return value
 
 
 class CheckAccepted(BaseModel):

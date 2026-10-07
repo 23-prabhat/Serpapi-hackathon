@@ -26,6 +26,9 @@ def build_report(
     incomplete_source_attempts: bool,
     model_id: str,
     extraction_prompt_hash: str | None = None,
+    mode: str = "live",
+    input_mode: str = "live_search_and_retrieval",
+    additional_limitations: list[str] | None = None,
 ) -> dict[str, Any]:
     resolved = resolve_deadlines(
         sources,
@@ -51,7 +54,11 @@ def build_report(
         )
     )
     parse_statuses = {source.parse_status for source in applicable}
-    if any(status != "parsed" for status in parse_statuses):
+    if any(status.startswith("ocr") for status in parse_statuses):
+        limitations.append(
+            "Text from a scanned PDF was produced by OCR and may contain recognition errors."
+        )
+    if any("partial" in status for status in parse_statuses):
         limitations.append("The source document was only partially parsed.")
     if incomplete_source_attempts:
         limitations.append("One or more candidate sources could not be used.")
@@ -62,6 +69,8 @@ def build_report(
         limitations.append(resolved["scope_limitation"])
     if resolved["resolution"] == "insufficient":
         limitations.append("No exact student submission date was established.")
+    limitations.extend(additional_limitations or [])
+    limitations = list(dict.fromkeys(limitations))
 
     eligibility, conditions = evaluate_conditions(applicable, profile)
     if profile is not None and limitations and eligibility == "meets_checked_conditions":
@@ -76,7 +85,7 @@ def build_report(
 
     return {
         "run_id": run_id,
-        "mode": "live",
+        "mode": mode,
         "reference_time": reference_time.isoformat(),
         "coverage": (
             "complete_for_attempted_scope"
@@ -105,7 +114,7 @@ def build_report(
         "provenance": {
             "rules_version": "phase3-2",
             "schema_version": REPORT_SCHEMA_VERSION,
-            "input_mode": "live_search_and_retrieval",
+            "input_mode": input_mode,
             "model_id": model_id,
             "prompt_hash": extraction_prompt_hash or prompt_hash(),
         },

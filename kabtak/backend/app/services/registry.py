@@ -15,6 +15,14 @@ from app.errors import APIError
 
 REGISTRY_DIR = Path(__file__).resolve().parents[3] / "config" / "programmes"
 LIVE_ONBOARDING_STATUS = "phase0_selected"
+ARBITRARY_LINK_PROGRAMME_ID = "official-link-intake"
+ARBITRARY_LINK_PROGRAMME = {
+    "schema_version": 1,
+    "id": ARBITRARY_LINK_PROGRAMME_ID,
+    "name": "Official scholarship notice",
+    "provider": "Publisher supplied by link",
+    "locale": {"country": "IN", "comparison_timezone": "Asia/Kolkata"},
+}
 
 
 def is_live_supported(programme: dict[str, Any]) -> bool:
@@ -89,8 +97,11 @@ def validate_notice_url(programme: dict[str, Any], url: str | None) -> None:
 
 
 def seed_programmes(session: Session) -> None:
-    for item in load_registry().values():
+    items = [*load_registry().values(), ARBITRARY_LINK_PROGRAMME]
+    for item in items:
         support_status = "live_supported" if is_live_supported(item) else "coming_soon"
+        if item["id"] == ARBITRARY_LINK_PROGRAMME_ID:
+            support_status = "link_supported"
         programme = session.get(Programme, item["id"])
         if programme is None:
             session.add(

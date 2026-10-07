@@ -8,7 +8,10 @@ import multiprocessing
 import os
 import queue
 import re
+import shutil
+import subprocess
 import tempfile
+import time
 from dataclasses import asdict, dataclass, field
 from io import BytesIO
 from pathlib import Path
@@ -19,7 +22,7 @@ from bs4 import BeautifulSoup, Tag
 
 from app.services.failures import ParsingFailedError, ProcessingError, UnsupportedPDFError
 
-PARSER_VERSION = "phase2-3"
+PARSER_VERSION = "phase6-ocr-1"
 SPACE_PATTERN = re.compile(r"\s+")
 SELECTED_HTML_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "table"}
 ACADEMIC_YEAR_PATTERN = re.compile(r"\bacademic\s+year\s+\d{4}\s*[-–]\s*\d{2}\b", re.I)
@@ -180,11 +183,113 @@ def _normalize_table(table: list[list[str | None]] | None) -> list[list[str]]:
     return rows
 
 
-def parse_pdf(content: bytes, max_pages: int = 20) -> tuple[list[Block], bool]:
+def _ocr_pdf(
+    content: bytes,
+    *,
+    page_count: int,
+    max_pages: int,
+    timeout_seconds: int,
+) -> list[Block]:
+    """Render and OCR a bounded number of pages using explicit local binaries."""
+
+    pdftoppm = shutil.which("pdftoppm")
+    tesseract = shutil.which("tesseract")
+    if not pdftoppm or not tesseract:
+        raise UnsupportedPDFError("OCR requires the pdftoppm and tesseract executables")
+
+    page_limit = min(page_count, max_pages)
+    deadline = time.monotonic() + timeout_seconds
     blocks: list[Block] = []
+    with tempfile.TemporaryDirectory(prefix="kabtak-ocr-") as directory:
+        workdir = Path(directory)
+        pdf_path = workdir / "source.pdf"
+        pdf_path.write_bytes(content)
+        image_prefix = workdir / "page"
+        try:
+            subprocess.run(
+                [
+                    pdftoppm,
+                    "-f",
+                    "1",
+                    "-l",
+                    str(page_limit),
+                    "-scale-to",
+                    "2500",
+                    "-png",
+                    str(pdf_path),
+                    str(image_prefix),
+                ],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                timeout=max(1, deadline - time.monotonic()),
+            )
+        except (subprocess.SubprocessError, OSError):
+            raise UnsupportedPDFError("PDF pages could not be rendered for OCR") from None
+
+        images = sorted(
+            workdir.glob("page-*.png"),
+            key=lambda path: int(path.stem.rsplit("-", 1)[-1]),
+        )
+        for image_path in images:
+            page_number = int(image_path.stem.rsplit("-", 1)[-1])
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise UnsupportedPDFError("OCR exceeded its time limit")
+            output_base = workdir / f"text-{page_number}"
+            try:
+                subprocess.run(
+                    [
+                        tesseract,
+                        str(image_path),
+                        str(output_base),
+                        "-l",
+                        "eng",
+                        "--psm",
+                        "6",
+                    ],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.PIPE,
+                    timeout=max(1, remaining),
+                )
+            except (subprocess.SubprocessError, OSError):
+                raise UnsupportedPDFError("Tesseract could not read a rendered PDF page") from None
+            text_path = output_base.with_suffix(".txt")
+            if not text_path.exists() or text_path.stat().st_size > 2_000_000:
+                continue
+            text = normalize_text(text_path.read_text(encoding="utf-8", errors="replace"))
+            _make_block(
+                blocks,
+                kind="ocr_page_text",
+                location=f"page {page_number} (OCR)",
+                text=text,
+                metadata={
+                    "page": page_number,
+                    "ocr": True,
+                    "ocr_engine": "tesseract",
+                    "ocr_language": "eng",
+                },
+            )
+    if not blocks:
+        raise UnsupportedPDFError("OCR produced no readable text")
+    return blocks
+
+
+def parse_pdf(
+    content: bytes,
+    max_pages: int = 20,
+    *,
+    ocr_enabled: bool = False,
+    ocr_timeout_seconds: int = 25,
+    max_ocr_pages: int = 10,
+) -> tuple[list[Block], bool, bool]:
+    blocks: list[Block] = []
+    page_count = 0
     try:
         with pdfplumber.open(BytesIO(content)) as document:
-            partial = len(document.pages) > max_pages
+            page_count = len(document.pages)
+            partial = page_count > max_pages
             for page_number, page in enumerate(document.pages[:max_pages], start=1):
                 text = normalize_text(page.extract_text() or "")
                 _make_block(
@@ -211,14 +316,40 @@ def parse_pdf(content: bytes, max_pages: int = 20) -> tuple[list[Block], bool]:
     except Exception:
         raise UnsupportedPDFError("PDF library could not open or parse the document") from None
     if not blocks:
-        raise UnsupportedPDFError("PDF has no extractable text; scanned PDFs require OCR")
-    return blocks, partial
+        if not ocr_enabled:
+            raise UnsupportedPDFError("PDF has no extractable text and OCR is disabled")
+        blocks = _ocr_pdf(
+            content,
+            page_count=page_count,
+            max_pages=min(max_pages, max_ocr_pages),
+            timeout_seconds=ocr_timeout_seconds,
+        )
+        partial = page_count > min(max_pages, max_ocr_pages)
+        return blocks, partial, True
+    return blocks, partial, False
 
 
-def parse_source(content: bytes, content_type: str, url: str, max_pages: int = 20):
+def parse_source(
+    content: bytes,
+    content_type: str,
+    url: str,
+    max_pages: int = 20,
+    *,
+    ocr_enabled: bool = False,
+    ocr_timeout_seconds: int = 25,
+    max_ocr_pages: int = 10,
+):
     is_pdf = content_type == "application/pdf" or urlparse_suffix(url) == ".pdf"
     if is_pdf:
-        blocks, partial = parse_pdf(content, max_pages=max_pages)
+        blocks, partial, used_ocr = parse_pdf(
+            content,
+            max_pages=max_pages,
+            ocr_enabled=ocr_enabled,
+            ocr_timeout_seconds=ocr_timeout_seconds,
+            max_ocr_pages=max_ocr_pages,
+        )
+        if used_ocr:
+            return blocks, "pdf", "ocr_partial_page_limit" if partial else "ocr"
         return blocks, "pdf", "partial_page_limit" if partial else "parsed"
     try:
         return parse_html(content), "html", "parsed"
@@ -234,9 +365,25 @@ def _parse_worker(
     content_type: str,
     url: str,
     max_pages: int,
+    ocr_enabled: bool,
+    ocr_timeout_seconds: int,
+    max_ocr_pages: int,
 ) -> None:
     try:
-        result_queue.put(("ok", parse_source(content, content_type, url, max_pages)))
+        result_queue.put(
+            (
+                "ok",
+                parse_source(
+                    content,
+                    content_type,
+                    url,
+                    max_pages,
+                    ocr_enabled=ocr_enabled,
+                    ocr_timeout_seconds=ocr_timeout_seconds,
+                    max_ocr_pages=max_ocr_pages,
+                ),
+            )
+        )
     except ProcessingError as exc:
         result_queue.put(("error", exc.code, exc.public_message, exc.retryable, type(exc).__name__))
     except Exception as exc:  # noqa: BLE001 - child errors become a safe parser state.
@@ -250,12 +397,24 @@ def parse_source_bounded(
     *,
     max_pages: int = 20,
     timeout_seconds: int = 10,
+    ocr_enabled: bool = False,
+    ocr_timeout_seconds: int = 25,
+    max_ocr_pages: int = 10,
 ) -> tuple[list[Block], str, str]:
     context = multiprocessing.get_context("spawn")
     result_queue = context.Queue(maxsize=1)
     process = context.Process(
         target=_parse_worker,
-        args=(result_queue, content, content_type, url, max_pages),
+        args=(
+            result_queue,
+            content,
+            content_type,
+            url,
+            max_pages,
+            ocr_enabled,
+            ocr_timeout_seconds,
+            max_ocr_pages,
+        ),
         daemon=True,
     )
     process.start()

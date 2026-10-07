@@ -187,14 +187,19 @@ export function CheckForm({ initialProgrammeId }: { initialProgrammeId?: string 
             />
           </div>
           <div className="field">
-            <label htmlFor="notice-url">Official notice URL <span>optional</span></label>
+            <label htmlFor="notice-url">Reviewed official notice URL <span>optional</span></label>
             <input
               id="notice-url"
               type="url"
               value={noticeUrl}
               onChange={(event) => setNoticeUrl(event.target.value)}
               placeholder="https://…"
+              aria-describedby="notice-url-help"
             />
+            <small id="notice-url-help">
+              Currently limited to reviewed sources for this programme. To use another publisher
+              notice, <Link href="/link-check">check an official link directly</Link>.
+            </small>
           </div>
         </div>
 

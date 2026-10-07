@@ -19,6 +19,7 @@ from app.schemas.runs import FactChangeRead, RunComparisonRead, RunRead
 from app.services.admission import begin_immediate
 from app.services.evidence import load_version_blocks
 from app.services.failures import InvalidExtractionError
+from app.services.registry import ARBITRARY_LINK_PROGRAMME_ID
 
 router = APIRouter()
 
@@ -84,11 +85,16 @@ async def retry_run(
             "REPLAY_RETRY_UNSUPPORTED",
             "Start the offline historical example again instead.",
         )
-    if not settings.live_search_enabled or not settings.live_extraction_enabled:
+    needs_search = parent.check.programme_id != ARBITRARY_LINK_PROGRAMME_ID
+    if not settings.live_extraction_enabled or (needs_search and not settings.live_search_enabled):
         raise APIError(
             503,
             "LIVE_INTEGRATIONS_DISABLED",
-            "Live SerpApi and Groq credentials are required for this retry.",
+            (
+                "The configured extraction model is required for this retry."
+                if not needs_search
+                else "Live SerpApi and Groq credentials are required for this retry."
+            ),
             retryable=True,
         )
     active = session.scalar(

@@ -183,6 +183,32 @@ def test_failed_candidate_source_makes_coverage_partial() -> None:
     assert "could not be used" in " ".join(result["limitations"])
 
 
+def test_ocr_evidence_is_visible_as_partial_with_a_recognition_warning() -> None:
+    result = build_report(
+        run_id="run_1",
+        reference_time=datetime(2026, 10, 3, tzinfo=UTC),
+        programme=PROGRAMME,
+        academic_year="2026-27",
+        application_type="fresh",
+        sources=[
+            SourcedRecord(
+                extracted(),
+                "version_1",
+                frozenset({"deadline"}),
+                parse_status="ocr",
+            )
+        ],
+        applicant_group=None,
+        profile=None,
+        incomplete_source_attempts=False,
+        model_id="test-model",
+    )
+
+    assert result["coverage"] == "partial"
+    assert "recognition errors" in " ".join(result["limitations"])
+    assert "partially parsed" not in " ".join(result["limitations"])
+
+
 def test_report_includes_source_backed_documents_and_application_links() -> None:
     facts = extracted()
     facts.required_documents = [

@@ -4,6 +4,7 @@ import hashlib
 import json
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
+from urllib.parse import urlparse
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Header, Response
@@ -14,10 +15,16 @@ from app.config import Settings, get_settings
 from app.db.models import Check, Run
 from app.db.session import get_session
 from app.errors import APIError
-from app.schemas.checks import CheckAccepted, CheckCreate, CheckRead, CheckUpdate
+from app.schemas.checks import CheckAccepted, CheckCreate, CheckRead, CheckUpdate, LinkCheckCreate
 from app.schemas.runs import RunRead
 from app.services.admission import begin_immediate
-from app.services.registry import require_supported_programme, validate_notice_url
+from app.services.failures import ProcessingError
+from app.services.registry import (
+    ARBITRARY_LINK_PROGRAMME_ID,
+    require_supported_programme,
+    validate_notice_url,
+)
+from app.services.retrieval import validate_arbitrary_url_syntax
 
 router = APIRouter()
 
@@ -42,13 +49,14 @@ def _run_read(run: Run) -> RunRead:
 
 def _check_read(check: Check) -> CheckRead:
     completed = [run for run in check.runs if run.report is not None]
+    scope = check.requested_scope_json
     return CheckRead(
         id=check.id,
         programme_id=check.programme_id,
-        programme_name=check.programme.name,
-        academic_year=check.requested_scope_json["academic_year"],
-        application_type=check.requested_scope_json["application_type"],
-        applicant_group=check.requested_scope_json.get("applicant_group"),
+        programme_name=scope.get("programme_name", check.programme.name),
+        academic_year=scope["academic_year"],
+        application_type=scope["application_type"],
+        applicant_group=scope.get("applicant_group"),
         profile=check.profile_json,
         notice_url=check.notice_url,
         saved_at=check.saved_at,
@@ -71,6 +79,16 @@ def _ensure_live_integrations(settings: Settings) -> None:
             503,
             "LIVE_INTEGRATIONS_DISABLED",
             "Live SerpApi and Groq credentials are required for this check.",
+            retryable=True,
+        )
+
+
+def _ensure_link_integration(settings: Settings) -> None:
+    if not settings.live_extraction_enabled:
+        raise APIError(
+            503,
+            "LIVE_EXTRACTION_DISABLED",
+            "The configured extraction model is required for an official-link check.",
             retryable=True,
         )
 
@@ -161,6 +179,81 @@ async def create_check(
     return CheckAccepted(check_id=check_id, run_id=run_id)
 
 
+@router.post("/link", response_model=CheckAccepted, status_code=202)
+async def create_link_check(
+    payload: LinkCheckCreate,
+    response: Response,
+    session: Annotated[Session, Depends(get_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    idempotency_key: Annotated[str | None, Header(alias="Idempotency-Key")] = None,
+) -> CheckAccepted:
+    idempotency_key = _require_idempotency_key(idempotency_key)
+    request_json = payload.model_dump(mode="json")
+    request_hash = hashlib.sha256(
+        json.dumps(request_json, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+    begin_immediate(session)
+    existing = session.scalar(
+        select(Run).where(
+            Run.operation_scope == "check:link:create", Run.idempotency_key == idempotency_key
+        )
+    )
+    if existing is not None:
+        if existing.request_hash != request_hash:
+            raise APIError(
+                409,
+                "IDEMPOTENCY_CONFLICT",
+                "This Idempotency-Key was already used with different inputs.",
+            )
+        response.status_code = 200
+        return CheckAccepted(check_id=existing.check_id, run_id=existing.id, status=existing.status)
+
+    _ensure_link_integration(settings)
+    notice_url = str(payload.notice_url)
+    try:
+        validate_arbitrary_url_syntax(notice_url)
+    except ProcessingError as exc:
+        raise APIError(422, "UNSAFE_SOURCE_URL", exc.public_message) from None
+    _queue_has_capacity(session, settings)
+
+    now = datetime.now(UTC)
+    check_id = str(uuid4())
+    run_id = str(uuid4())
+    hostname = (urlparse(notice_url).hostname or "").rstrip(".").lower()
+    check = Check(
+        id=check_id,
+        programme_id=ARBITRARY_LINK_PROGRAMME_ID,
+        requested_scope_json={
+            "input_mode": "arbitrary_official_link",
+            "programme_name": payload.programme_name,
+            "source_host": hostname,
+            "academic_year": payload.academic_year,
+            "application_type": payload.application_type.value,
+            "applicant_group": payload.applicant_group,
+        },
+        profile_json=payload.profile.model_dump(mode="json") if payload.profile else None,
+        notice_url=notice_url,
+        saved_at=now if payload.save else None,
+        created_at=now,
+        expires_at=None if payload.save else now + timedelta(days=1),
+    )
+    run = Run(
+        id=run_id,
+        check_id=check_id,
+        kind="link",
+        status="queued",
+        stage="queued",
+        operation_scope="check:link:create",
+        idempotency_key=idempotency_key,
+        request_hash=request_hash,
+        reference_time=now,
+        created_at=now,
+    )
+    session.add_all([check, run])
+    session.commit()
+    return CheckAccepted(check_id=check_id, run_id=run_id)
+
+
 @router.get("", response_model=list[CheckRead])
 async def list_checks(
     session: Annotated[Session, Depends(get_session)],
@@ -232,7 +325,10 @@ async def refresh_check(
             "REPLAY_REFRESH_UNSUPPORTED",
             "Historical replays cannot be refreshed as live checks.",
         )
-    _ensure_live_integrations(settings)
+    if check.programme_id == ARBITRARY_LINK_PROGRAMME_ID:
+        _ensure_link_integration(settings)
+    else:
+        _ensure_live_integrations(settings)
     _queue_has_capacity(session, settings)
     now = datetime.now(UTC)
     run = Run(

@@ -722,6 +722,72 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "LinkCheckCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "academic_year": {
+            "pattern": "^\\d{4}-\\d{2}$",
+            "title": "Academic Year",
+            "type": "string"
+          },
+          "applicant_group": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applicant Group"
+          },
+          "application_type": {
+            "$ref": "#/components/schemas/ApplicationType"
+          },
+          "notice_url": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "title": "Notice Url",
+            "type": "string"
+          },
+          "official_source_confirmed": {
+            "title": "Official Source Confirmed",
+            "type": "boolean"
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApplicantProfile"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "programme_name": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Programme Name",
+            "type": "string"
+          },
+          "save": {
+            "default": false,
+            "title": "Save",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "programme_name",
+          "academic_year",
+          "application_type",
+          "notice_url",
+          "official_source_confirmed"
+        ],
+        "title": "LinkCheckCreate",
+        "type": "object"
+      },
       "ProgrammeRead": {
         "properties": {
           "application_types": {
@@ -1369,6 +1435,81 @@
           }
         },
         "summary": "Create Check",
+        "tags": [
+          "checks"
+        ]
+      }
+    },
+    "/v1/checks/link": {
+      "post": {
+        "operationId": "create_link_check_v1_checks_link_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-internal-token",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Internal-Token"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkCheckCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Link Check",
         "tags": [
           "checks"
         ]

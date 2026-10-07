@@ -1,8 +1,10 @@
 """Persisted check admission and idempotency tests."""
 
+import asyncio
 from collections.abc import Iterator
 
 import pytest
+from fastapi import Response
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -10,7 +12,10 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.config import Settings, get_settings
 from app.db.base import Base
 from app.db.session import get_session
+from app.errors import APIError
 from app.main import app
+from app.routes.checks import create_link_check
+from app.schemas.checks import LinkCheckCreate
 from app.services.registry import seed_programmes
 
 
@@ -195,3 +200,57 @@ async def test_all_five_reviewed_programmes_can_start_a_live_check(tmp_path) -> 
         engine.dispose()
 
     assert [response.status_code for response in responses] == [202] * 5
+
+
+def test_official_link_check_needs_extraction_but_not_serpapi(tmp_path) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'link-check.db'}")
+    Base.metadata.create_all(engine)
+    test_session = sessionmaker(bind=engine, expire_on_commit=False)
+    with test_session() as session:
+        seed_programmes(session)
+
+    settings = Settings(
+        _env_file=None,
+        internal_api_token="link-check-token",
+        serpapi_api_key=None,
+        llm_provider="groq",
+        llm_model="test-model",
+        llm_api_key="test",
+    )
+    request = LinkCheckCreate(
+        programme_name="National Merit Scholarship",
+        academic_year="2026-27",
+        application_type="fresh",
+        notice_url="https://education.gov.in/scholarships/notice",
+        applicant_group=None,
+        profile=None,
+        official_source_confirmed=True,
+        save=False,
+    )
+    with test_session() as session:
+        accepted = asyncio.run(
+            create_link_check(
+                request,
+                Response(),
+                session,
+                settings,
+                idempotency_key="link-check-key",
+            )
+        )
+    with test_session() as session, pytest.raises(APIError) as unsafe:
+        unsafe_request = LinkCheckCreate.model_validate(
+            {**request.model_dump(mode="json"), "notice_url": "https://127.0.0.1/notice"}
+        )
+        asyncio.run(
+            create_link_check(
+                unsafe_request,
+                Response(),
+                session,
+                settings,
+                idempotency_key="unsafe-link-key",
+            )
+        )
+    engine.dispose()
+
+    assert accepted.status == "queued"
+    assert unsafe.value.code == "UNSAFE_SOURCE_URL"

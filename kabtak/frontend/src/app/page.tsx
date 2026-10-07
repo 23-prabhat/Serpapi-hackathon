@@ -21,6 +21,7 @@ export default async function Home(props: PageProps<"/">) {
           for you, keeps institution deadlines separate, and shows the proof.
           <span className="hero-links">
             <Link href="/discover">Browse the catalogue</Link>
+            <Link href="/link-check">Check any official link</Link>
             <Link href="/examples">Try an offline example</Link>
           </span>
         </p>

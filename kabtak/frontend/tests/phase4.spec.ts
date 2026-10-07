@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+
 import { expect, test, type Page, type Route } from "@playwright/test";
 
 const programme = {
@@ -159,6 +161,18 @@ async function tabTo(page: Page, id: string) {
   throw new Error(`Keyboard focus never reached #${id}`);
 }
 
+async function downloadCalendarText(page: Page) {
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Add to calendar (.ics)" }).click();
+  const download = await downloadPromise;
+  const path = await download.path();
+  expect(path).not.toBeNull();
+  return {
+    filename: download.suggestedFilename(),
+    text: (await readFile(path!, "utf8")).replaceAll("\r\n ", ""),
+  };
+}
+
 test("catalogue is keyboard reachable and has no page overflow at required widths", async ({ page }) => {
   await page.route("**/api/v1/programmes", (route) => json(route, catalogueProgrammes));
   for (const width of [360, 768, 1440]) {
@@ -219,6 +233,49 @@ test("primary navigation exposes an explicit new-check action", async ({ page })
   await expect(newCheck).toHaveAttribute("href", "/#check");
   await newCheck.click();
   await expect(page.locator("#check")).toBeVisible();
+});
+
+test("P1 roadmap is absent from the public UI and route table", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "P1 roadmap" })).toHaveCount(0);
+  await expect(page.locator(".p1-preview, .p1-roadmap, .coverage-meter")).toHaveCount(0);
+
+  const response = await page.goto("/roadmap");
+  expect(response?.status()).toBe(404);
+});
+
+test("official-link intake works without SerpApi and submits the guarded scope", async ({ page }) => {
+  let submitted: Record<string, unknown> | null = null;
+  await page.route("**/api/v1/health", (route) => json(route, {
+    worker_ready: true,
+    live_search_enabled: false,
+    live_extraction_enabled: true,
+  }));
+  await page.route("**/api/v1/checks/link", async (route) => {
+    submitted = route.request().postDataJSON() as Record<string, unknown>;
+    return json(route, {
+      check_id: "link-check-1",
+      run_id: "link-run-1",
+      status: "queued",
+      poll_after_ms: 2000,
+    }, 202);
+  });
+
+  await page.goto("/link-check");
+  await page.getByLabel("Scholarship name").fill("National Merit Scholarship");
+  await page.getByLabel("Official public notice URL").fill(
+    "https://education.gov.in/scholarships/notice",
+  );
+  await page.getByLabel(/I found this link/).check();
+  await page.getByRole("button", { name: /Analyse this link/i }).click();
+  await page.waitForURL("**/checks/link-check-1");
+
+  expect(submitted).toMatchObject({
+    programme_name: "National Merit Scholarship",
+    academic_year: "2026-27",
+    application_type: "fresh",
+    official_source_confirmed: true,
+  });
 });
 
 test("offline replay opens its report and exact evidence without keys", async ({ page }) => {
@@ -304,6 +361,155 @@ test("saved lifecycle exposes evidence, save, refresh, and delete actions", asyn
   expect(deleted).toBe(true);
 });
 
+test("finished reports provide a Hindi explanation and supported-deadline calendar", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 900 });
+  await page.route("**/api/v1/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname === "/api/v1/checks/check-1") return json(route, check);
+    if (url.pathname.endsWith("/report")) return json(route, report());
+    if (url.pathname.endsWith("/changes")) {
+      return json(route, {
+        run_id: "run-1",
+        previous_run_id: null,
+        classification: "initial_report",
+        summary: "First report",
+        outcome_changed: false,
+        source_versions_changed: false,
+        profile_changed: false,
+        software_versions_changed: false,
+        changes: [],
+      });
+    }
+    return json(route, evidence);
+  });
+
+  await page.goto("/checks/check-1");
+  await page.getByRole("button", { name: "हिंदी में समझें" }).click();
+  const hindi = page.locator("#hindi-report-summary");
+  await expect(hindi.locator(".hindi-summary")).toHaveAttribute("lang", "hi");
+  await expect(hindi).toContainText("31 अक्टूबर 2026");
+  await expect(hindi).toContainText("मूल साक्ष्य का अनुवाद नहीं किया गया है");
+
+  const calendar = await downloadCalendarText(page);
+  expect(calendar.filename).toBe(
+    "national-means-cum-merit-scholarship-scheme-deadline.ics",
+  );
+  expect(calendar.text).toContain("DTSTART;VALUE=DATE:20261031");
+  expect(calendar.text).toContain("DTEND;VALUE=DATE:20261101");
+  expect(calendar.text).toContain("student application deadline");
+});
+
+test("Hindi timing and limitation text follows every report state", async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 900 });
+  let activeReport = {
+    ...report(),
+    student_deadline: {
+      ...report().student_deadline!,
+      timing: "due_today_time_unknown",
+    },
+    limitations: [
+      "Text from a scanned PDF was produced by OCR and may contain recognition errors.",
+      "A source-specific limitation that is not translated.",
+    ],
+  };
+  await page.route("**/api/v1/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname === "/api/v1/checks/check-1") return json(route, check);
+    if (url.pathname.endsWith("/report")) return json(route, activeReport);
+    if (url.pathname.endsWith("/changes")) {
+      return json(route, {
+        run_id: "run-1",
+        previous_run_id: null,
+        classification: "initial_report",
+        summary: "First report",
+        outcome_changed: false,
+        source_versions_changed: false,
+        profile_changed: false,
+        software_versions_changed: false,
+        changes: [],
+      });
+    }
+    return json(route, evidence);
+  });
+
+  await page.goto("/checks/check-1");
+  await page.getByRole("button", { name: "हिंदी में समझें" }).click();
+  const hindi = page.locator("#hindi-report-summary");
+  await expect(hindi).toContainText("अंतिम तिथि आज है, लेकिन सटीक समय उपलब्ध नहीं है");
+  await expect(hindi).toContainText("OCR से पढ़ा गया है");
+  await expect(hindi).toContainText("1 अतिरिक्त सीमा दर्ज है");
+  await expect(page.getByRole("button", { name: "हिंदी सार छिपाएँ" })).toBeVisible();
+
+  activeReport = {
+    ...activeReport,
+    student_deadline: {
+      ...activeReport.student_deadline,
+      timing: "date_passed",
+    },
+  };
+  await page.reload();
+  await page.getByRole("button", { name: "हिंदी में समझें" }).click();
+  await expect(page.locator("#hindi-report-summary")).toContainText(
+    "यह अंतिम तिथि बीत चुकी है",
+  );
+});
+
+test("calendar export preserves UTC and IST times without inventing an unknown timezone", async ({ page }) => {
+  let activeReport = {
+    ...report(),
+    student_deadline: {
+      ...report().student_deadline!,
+      time: "18:30",
+      timezone: "UTC" as string | null,
+      timing: "before_cutoff",
+    },
+  };
+  await page.route("**/api/v1/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname === "/api/v1/checks/check-1") return json(route, check);
+    if (url.pathname.endsWith("/report")) return json(route, activeReport);
+    if (url.pathname.endsWith("/changes")) {
+      return json(route, {
+        run_id: "run-1",
+        previous_run_id: null,
+        classification: "initial_report",
+        summary: "First report",
+        outcome_changed: false,
+        source_versions_changed: false,
+        profile_changed: false,
+        software_versions_changed: false,
+        changes: [],
+      });
+    }
+    return json(route, evidence);
+  });
+
+  await page.goto("/checks/check-1");
+  const utcCalendar = await downloadCalendarText(page);
+  expect(utcCalendar.text).toContain("DTSTART:20261031T183000Z");
+
+  activeReport = {
+    ...activeReport,
+    student_deadline: { ...activeReport.student_deadline, timezone: "Asia/Kolkata" },
+  };
+  await page.reload();
+  const istCalendar = await downloadCalendarText(page);
+  expect(istCalendar.text).toContain("DTSTART:20261031T130000Z");
+  expect(istCalendar.text).not.toContain("TZID=");
+
+  activeReport = {
+    ...activeReport,
+    student_deadline: { ...activeReport.student_deadline, timezone: null },
+  };
+  await page.reload();
+  const unknownTimezoneCalendar = await downloadCalendarText(page);
+  expect(unknownTimezoneCalendar.text).toContain("DTSTART;VALUE=DATE:20261031");
+  expect(unknownTimezoneCalendar.text).not.toContain("T183000");
+  expect(unknownTimezoneCalendar.text).toContain(
+    "timezone was not established or supported\\, so this is exported as an all-day event",
+  );
+});
+
 test("conflicting evidence remains unresolved", async ({ page }) => {
   const conflictReport = {
     ...report(),
@@ -327,6 +533,64 @@ test("conflicting evidence remains unresolved", async ({ page }) => {
   });
 
   await page.goto("/checks/check-1");
-  await expect(page.getByText("Not established")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Not established" })).toBeVisible();
   await expect(page.getByRole("alert").filter({ hasText: "Conflicting dates" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Add to calendar (.ics)" })).toHaveCount(0);
+  await page.getByRole("button", { name: "हिंदी में समझें" }).click();
+  await expect(page.locator("#hindi-report-summary")).toContainText(
+    "लागू छात्र तिथियों में विरोध है",
+  );
+});
+
+test("an unverified link publisher stays unresolved in the report UI", async ({ page }) => {
+  const candidate = report().student_deadline;
+  const linkReport = {
+    ...report(),
+    mode: "link",
+    deadline_resolution: "insufficient",
+    student_deadline: null,
+    summary: "A date was extracted, but publisher authority was not established.",
+    conflicts: [{
+      kind: "publisher_authority",
+      message: "The supplied host could not be verified as the scholarship issuer.",
+      candidates: [candidate],
+    }],
+    limitations: ["This mode checked only the supplied source and did not search for amendments."],
+  };
+  await page.route("**/api/v1/**", async (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname === "/api/v1/checks/check-1") {
+      return json(route, {
+        ...check,
+        programme_id: "official-link-intake",
+        programme_name: "National Merit Scholarship",
+      });
+    }
+    if (url.pathname.endsWith("/report")) return json(route, linkReport);
+    if (url.pathname.endsWith("/changes")) {
+      return json(route, {
+        run_id: "run-1",
+        previous_run_id: null,
+        classification: "initial_report",
+        summary: "First report",
+        outcome_changed: false,
+        source_versions_changed: false,
+        profile_changed: false,
+        software_versions_changed: false,
+        changes: [],
+      });
+    }
+    return json(route, evidence);
+  });
+
+  await page.goto("/checks/check-1");
+  await expect(page.getByText("Single-link evidence check")).toBeVisible();
+  await expect(page.getByText("Publisher authority unresolved")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Not established" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Add to calendar (.ics)" })).toHaveCount(0);
+  await page.getByRole("button", { name: "हिंदी में समझें" }).click();
+  const hindi = page.locator("#hindi-report-summary");
+  await expect(hindi).toContainText("अंतिम तिथि स्थापित नहीं हो सकी");
+  await expect(hindi).toContainText("संशोधित या बढ़ाई गई अंतिम तिथियाँ");
+  await expect(hindi).toContainText("प्रकाशित करने वाली संस्था का अधिकार सत्यापित नहीं हो सका");
 });

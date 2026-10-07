@@ -223,7 +223,10 @@ export function CheckDetail({ checkId }: { checkId: string }) {
           </p>
         </div>
         <div className="action-row">
-          <Link className="secondary-button" href="/#check">
+          <Link
+            className="secondary-button"
+            href={check.programme_id === "official-link-intake" ? "/link-check" : "/#check"}
+          >
             New check
           </Link>
           <button
@@ -256,7 +259,10 @@ export function CheckDetail({ checkId }: { checkId: string }) {
       )}
 
       {selectedRun && (selectedRun.status === "queued" || selectedRun.status === "running") && (
-        <RunProgress run={selectedRun} />
+        <RunProgress
+          run={selectedRun}
+          linkMode={check.programme_id === "official-link-intake"}
+        />
       )}
 
       {selectedRun && (selectedRun.status === "failed" || selectedRun.status === "interrupted") && (
@@ -305,8 +311,11 @@ export function CheckDetail({ checkId }: { checkId: string }) {
   );
 }
 
-function RunProgress({ run }: { run: Run }) {
+function RunProgress({ run, linkMode }: { run: Run; linkMode: boolean }) {
   const activeIndex = STAGES.findIndex(([key]) => key === run.stage);
+  const stages = linkMode
+    ? STAGES.map((stage, index) => index === 0 ? [stage[0], "Validating the supplied source"] as const : stage)
+    : STAGES;
   return (
     <section className="status-card brutal-card" aria-live="polite">
       <div className="loader-mark" aria-hidden="true"><span /><span /><span /></div>
@@ -314,7 +323,7 @@ function RunProgress({ run }: { run: Run }) {
       <h2>We’re checking the record.</h2>
       <p className="muted">You can close this page. The persisted run will continue locally.</p>
       <ol className="stage-list">
-        {STAGES.map(([key, label], index) => {
+        {stages.map(([key, label], index) => {
           const done = activeIndex > index || run.stage === "finished";
           const active = run.stage === key || (run.stage === "queued" && index === 0);
           return (

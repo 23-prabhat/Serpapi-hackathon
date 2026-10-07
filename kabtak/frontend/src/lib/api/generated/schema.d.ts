@@ -22,6 +22,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/checks/link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Link Check */
+        post: operations["create_link_check_v1_checks_link_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/checks/{check_id}": {
         parameters: {
             query?: never;
@@ -463,6 +480,29 @@ export interface components {
             /** Worker Ready */
             worker_ready: boolean;
         };
+        /** LinkCheckCreate */
+        LinkCheckCreate: {
+            /** Academic Year */
+            academic_year: string;
+            /** Applicant Group */
+            applicant_group?: string | null;
+            application_type: components["schemas"]["ApplicationType"];
+            /**
+             * Notice Url
+             * Format: uri
+             */
+            notice_url: string;
+            /** Official Source Confirmed */
+            official_source_confirmed: boolean;
+            profile?: components["schemas"]["ApplicantProfile"] | null;
+            /** Programme Name */
+            programme_name: string;
+            /**
+             * Save
+             * @default false
+             */
+            save: boolean;
+        };
         /** ProgrammeRead */
         ProgrammeRead: {
             /** Application Types */
@@ -692,6 +732,42 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["CheckCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckAccepted"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_link_check_v1_checks_link_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+                "x-internal-token"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinkCheckCreate"];
             };
         };
         responses: {

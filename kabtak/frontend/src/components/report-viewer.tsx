@@ -10,6 +10,7 @@ import type {
   RunComparison,
 } from "@/lib/api/types";
 import { formatDateTime, pretty, readJson } from "@/lib/client-api";
+import { ReportAccessTools } from "@/components/report-access-tools";
 
 type Condition = {
   result?: string;
@@ -111,6 +112,9 @@ export function ReportViewer({
   }, [deadline, report.run_id]);
 
   const conflicts = (report.conflicts ?? []) as Array<Record<string, unknown>>;
+  const hasAuthorityConflict = conflicts.some(
+    (conflict) => conflict.kind === "publisher_authority",
+  );
   const amendments = (report.amendments ?? []) as Array<Record<string, unknown>>;
   const conditions = (report.conditions ?? []) as Condition[];
   const otherDeadlines = report.other_deadlines ?? [];
@@ -127,6 +131,15 @@ export function ReportViewer({
           <span>Offline packaged evidence at a frozen time—not a current opportunity or live search.</span>
         </div>
       )}
+
+      {report.mode === "link" && (
+        <div className="state-banner replay-banner" role="status">
+          <strong>Single-link evidence check</strong>
+          <span>This report did not search for amendments. Review its publisher and coverage limitations before relying on the date.</span>
+        </div>
+      )}
+
+      <ReportAccessTools report={report} />
 
       <div className="conclusion-evidence-grid">
         <article className="answer-card brutal-card">
@@ -226,7 +239,7 @@ export function ReportViewer({
       {conflicts.length > 0 && (
         <section className="report-section conflict-panel" role="alert">
           <p className="eyebrow">Unresolved evidence</p>
-          <h3>Conflicting dates</h3>
+          <h3>{hasAuthorityConflict ? "Publisher authority unresolved" : "Conflicting dates"}</h3>
           {conflicts.map((conflict, index) => (
             <div key={index}>
               <p>{String(conflict.message ?? "Applicable sources disagree.")}</p>
@@ -246,7 +259,7 @@ export function ReportViewer({
         <p className="eyebrow">Published next steps</p>
         <h3 id="next-steps-title">Documents and official links</h3>
         {requiredDocuments.length === 0 && applicationLinks.length === 0 ? (
-          <p className="empty-note">No required-document list or official application link was established from the reviewed evidence.</p>
+          <p className="empty-note">No required-document list or official application link was established from the source evidence.</p>
         ) : (
           <div className="fact-list">
             {requiredDocuments.map((item, index) => (
