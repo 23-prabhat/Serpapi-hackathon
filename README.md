@@ -59,10 +59,10 @@ history, Hindi explanation, and calendar export when the result supports it.
 
 ## Demo
 
-- [Watch the local working demo](kabtak/demo/kabtak-local-demo.webm) (WebM, under
-  three minutes, no provider keys used during the recording)
 - [Run the same offline replay yourself](run.md#offline-example-without-api-usage)
-- [Read the demo and upload notes](kabtak/demo/README.md)
+
+The working demo recording and its upload notes are kept locally in the ignored
+`kabtak/demo/` directory and are not included in this repository.
 
 The recording opens the packaged historical example, runs the current decision
 rules locally, and inspects its preserved evidence receipt. The live workflow uses
