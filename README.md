@@ -8,7 +8,9 @@
   <a href="#demo">Demo</a> ·
   <a href="#what-kabtak-does">Features</a> ·
   <a href="#quick-start">Quick start</a> ·
+  <a href="#run-the-application">Run</a> ·
   <a href="#architecture">Architecture</a> ·
+  <a href="#how-decisions-and-evidence-work">Decision model</a> ·
   <a href="#evaluation">Evaluation</a> ·
   <a href="#documentation">Documentation</a>
 </p>
@@ -60,7 +62,7 @@ history, Hindi explanation, and calendar export when the result supports it.
 ## Demo
 
 - [Watch the working demo on YouTube](https://www.youtube.com/watch?v=QK3M5dc2Ukk)
-- [Run the same offline replay yourself](run.md#offline-example-without-api-usage)
+- [Run the same offline replay yourself](#offline-replay-without-api-usage)
 
 > **Disclosure:** The voice used in the demo video is AI-generated.
 
@@ -175,8 +177,52 @@ The local application has three processes:
 - A Python worker using HTTPX, Beautiful Soup, pdfplumber, Poppler/Tesseract,
   SerpApi, and Groq
 
-See [the detailed system design](docs/system-design.md) for schemas, state
-transitions, trust boundaries, and failure behavior.
+### Request lifecycle
+
+1. Next.js submits a validated check through its same-origin API proxy.
+2. FastAPI creates the check and a queued run in a short database transaction.
+3. The worker claims the run, searches, retrieves and parses bounded source material,
+   extracts candidate facts, validates their evidence references, and applies rules.
+4. The worker atomically stores an immutable report and terminal run state.
+5. The browser polls status and then renders the report and its evidence receipts.
+
+A browser refresh or closed tab does not cancel a run. Worker heartbeats allow abandoned
+work to become explicitly interrupted, and a retry creates a new run rather than editing
+the old one. SQLite is intentionally used for one local writer; this is not a distributed
+or public multi-user architecture.
+
+## How decisions and evidence work
+
+Kabtak compares facts only after matching programme, academic cycle, applicant group,
+application type, actor, and action. An institute verification date therefore cannot
+replace a student submission date, and a newer notice does not supersede an older one
+unless an authorized amendment establishes the same scope.
+
+The deadline rules behave conservatively:
+
+- one supported student-submission date is reported with its evidence;
+- an explicit same-scope amendment may replace an earlier date while preserving both;
+- different actors or actions remain separate;
+- unresolved disagreement becomes a conflict with no selected deadline; and
+- missing cycle, actor, scope, or evidence produces an insufficient result rather than
+  a guess.
+
+Eligibility uses a closed set of deterministic comparisons and three-valued logic:
+`true`, `false`, or `unknown`. Missing profile data, unsupported exceptions, and
+unresolved conditions remain unknown. The UI says `meets_checked_conditions`,
+`condition_not_met`, `more_information_needed`, or `not_assessed`; it never predicts
+an award or turns a partial rule set into “you are eligible.” Profile values are used
+locally by the rule engine and are not included in search queries or extraction prompts.
+
+Downloaded source bytes and parsed blocks are content-addressed and retained as immutable
+versions. Extracted facts must cite existing block IDs, and dates and values are checked
+against their cited context before a report can be committed. Parser, model, prompt,
+schema, and rules versions are recorded so an old report stays explainable after the
+software changes.
+
+Run state and answer quality are deliberately separate. A `completed` run may validly
+report `supported`, `conflicting`, or `insufficient` evidence. `failed` and `interrupted`
+describe processing failures, not scholarship conclusions.
 
 ## Quick start
 
@@ -203,9 +249,23 @@ cp --no-clobber .env.example .env
 openssl rand -hex 32
 ```
 
-Put the generated value in `INTERNAL_API_TOKEN` inside `kabtak/.env`. The file is
-split into clearly labelled shared, frontend-only, and backend/worker-only
-sections. Add SerpApi and Groq keys only when you want to run live discovery.
+Put the generated value and any provider credentials in `kabtak/.env`:
+
+```dotenv
+APP_ORIGIN=http://127.0.0.1:3000
+INTERNAL_API_TOKEN=paste-the-generated-token-here
+BACKEND_URL=http://127.0.0.1:8000
+SERPAPI_API_KEY=paste-your-serpapi-key-here
+LLM_PROVIDER=groq
+LLM_MODEL=openai/gpt-oss-120b
+LLM_API_KEY=paste-your-groq-key-here
+```
+
+The template is split into shared, frontend-server-only, and backend/worker-only
+sections. Secrets have no `NEXT_PUBLIC_` prefix and never need to reach browser code.
+Older `kabtak/backend/.env` and `kabtak/frontend/.env.local` files are supported as
+migration overrides; remove them after copying their values to the shared file so they
+cannot silently override the token or provider settings.
 
 ```bash
 cd backend
@@ -223,12 +283,97 @@ pnpm exec playwright install chromium
 Both FastAPI and Next.js now load the same `kabtak/.env`; no duplicated token is
 required. For catalogue checks, set `SERPAPI_API_KEY`, `LLM_PROVIDER=groq`,
 `LLM_MODEL=openai/gpt-oss-120b`, and `LLM_API_KEY`. Official-link checks use the
-same LLM settings but do not require `SERPAPI_API_KEY`. Then run the API, worker,
-and frontend in separate terminals as documented in [run.md](run.md).
+same LLM settings but do not require `SERPAPI_API_KEY`.
 
-Open <http://127.0.0.1:3000/examples> and select **Open offline replay** for a
-credential-free test. The replay is visibly marked historical and uses a frozen
-reference time; it cannot be mistaken for a current opportunity.
+## Run the application
+
+Keep these three processes running in separate terminals.
+
+Terminal 1 — FastAPI:
+
+```bash
+cd kabtak/backend
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+Terminal 2 — worker:
+
+```bash
+cd kabtak/backend
+uv run python -m app.worker
+```
+
+Terminal 3 — Next.js:
+
+```bash
+cd kabtak/frontend
+pnpm dev
+```
+
+Open <http://127.0.0.1:3000>. Run only one worker against the local database.
+The principal routes are:
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Start a reviewed catalogue check. |
+| `/link-check` | Check one supplied official HTML or PDF notice. |
+| `/discover` | Browse the local reviewed programme catalogue without using search credits. |
+| `/saved` | View checks explicitly saved on this machine. |
+| `/examples` | Run packaged historical replays without provider calls. |
+| `/checks/{check_id}` | View progress, reports, evidence, actions, and immutable history. |
+
+### Offline replay without API usage
+
+Start FastAPI and Next.js, but no worker is required. Open
+<http://127.0.0.1:3000/examples> and select **Open offline replay**. The replay uses
+packaged evidence and the current deterministic rules without SerpApi, Groq, or source
+site calls. It is visibly marked historical, uses a frozen reference time, and cannot
+be mistaken for a current opportunity.
+
+### Live smoke test
+
+For a full provider-backed test, select NMMSS, academic year `2026-27`, application
+type `Fresh`, and leave the optional notice URL empty. A successful run moves through
+searching, fetching, extracting, checking, and finalizing. Inspect an evidence receipt
+instead of relying on an old expected date if the official source has changed.
+
+### API surface
+
+Browser calls use `/api/v1/...` through Next.js; the corresponding FastAPI routes use
+`/v1/...`. The main contracts are:
+
+| Method and FastAPI route | Purpose |
+| --- | --- |
+| `GET /v1/health` | Database, worker-heartbeat, and live/replay readiness. |
+| `GET /v1/programmes` | Reviewed local programme catalogue. |
+| `POST /v1/checks` | Create a check and queued run. |
+| `POST /v1/checks/link` | Create a guarded one-source link check. |
+| `GET /v1/checks/{id}` | Check metadata and immutable run history. |
+| `GET /v1/runs/{id}` | Current status, stage, timestamps, and safe errors. |
+| `GET /v1/runs/{id}/report` | Stored report after successful processing. |
+| `GET /v1/runs/{id}/evidence/{versionId}/{blockId}` | Verified cited passage. |
+| `POST /v1/checks/{id}/refresh` | New live run with the same fixed check inputs. |
+| `POST /v1/runs/{id}/retry` | New run linked to a failed or interrupted run. |
+| `GET /v1/examples` / `POST /v1/examples/{id}/replay` | List or replay packaged examples. |
+
+State-changing creation, refresh, retry, and replay requests use an idempotency key.
+Repeating the same request returns the original work; reusing a key for different input
+returns a conflict. Unsupported input is rejected before external work begins.
+
+### Common startup problems
+
+- `LIVE_INTEGRATIONS_DISABLED`: check both provider keys, `LLM_PROVIDER`, and
+  `LLM_MODEL` in `kabtak/.env`.
+- `UNAUTHORIZED` or proxy errors: remove or reconcile legacy environment files, then
+  restart all three processes so the internal token matches.
+- `ORIGIN_NOT_ALLOWED`: make `APP_ORIGIN` match the browser protocol and port, then
+  restart Next.js. Localhost, `127.0.0.1`, and `[::1]` are treated as loopback hosts.
+- Database-table errors: run `uv run alembic upgrade head` from `kabtak/backend`.
+- Worker-lock errors: stop the other worker before starting a new one.
+- A run remains queued: confirm the worker terminal is running and inspect
+  <http://127.0.0.1:3000/api/v1/health> through the frontend proxy.
+
+Stop each process with `Ctrl+C`.
 
 ## Verification
 
@@ -247,16 +392,39 @@ pnpm test:e2e
 cd ../backend
 uv run python ../evaluation/phase5/run_evaluation.py --mode all --offline
 uv run pytest ../evaluation/phase5/tests
+
+cd ../evaluation
+../backend/.venv/bin/pytest phase0/tests
 ```
 
-The release audit also installs and runs the project from a temporary clean Git
-checkout. See [the release checklist](docs/release-checklist.md) for the recorded
-result and [run.md](run.md) for all commands.
+The offline Phase 5 command uses committed outputs, makes no SerpApi or Groq calls,
+and does not rewrite tracked result artifacts. Omitting `--offline` deliberately repeats
+the rate-limited model comparison and may consume provider quota.
+
+The recorded October 4, 2026 release audit installed both lockfiles in a temporary
+clean Git checkout, migrated a fresh database, and passed 95 backend tests, 5 Phase 0
+tests, 4 Phase 5 tests, 5 browser tests, Ruff, ESLint, TypeScript, and a production
+frontend build. This is a dated audit record, not a substitute for rerunning the commands
+above after changes.
 
 The browser suite covers the reviewed catalogue, official-link intake, offline replay,
 save/refresh/delete lifecycle, evidence inspection, Hindi supported/conflicting/
 insufficient states, OCR limitation messaging, all-day calendar output, exact UTC and
 Asia/Kolkata times, and safe fallback when a published time has no verified timezone.
+
+Before committing, confirm that local secrets and runtime data remain ignored:
+
+```bash
+git check-ignore -v \
+  kabtak/.env \
+  kabtak/backend/.env \
+  kabtak/frontend/.env.local \
+  kabtak/data/kabtak.db \
+  kabtak/data/sources/example.html
+
+git status --short
+git diff --cached --name-only
+```
 
 ## Evaluation
 
@@ -302,30 +470,39 @@ Profiles, database files, downloaded source snapshots, logs, provider keys, loca
 environment files, coverage output, and browser artifacts are excluded by
 `kabtak/.gitignore`. The committed `kabtak/.env.example` contains placeholders and
 comments only; `kabtak/.env` is ignored. The committed fixtures contain bounded
-public-source passages and synthetic profiles only. Before publishing, run the
-audit commands in [run.md](run.md#stop-the-project) and review `git status`.
+public-source passages and synthetic profiles only.
 
-## AI use disclosure
+Unsaved checks are stored locally for 24 hours after their latest terminal run unless
+the user saves them. Saving removes the expiry; deleting a terminal check removes its
+profile-bearing inputs, reports, runs, and related private records. Shared public source
+versions remain only while another retained report needs them. Profile values are never
+placed in logs, idempotency keys, search queries, or source caches.
 
-- **OpenAI Codex** assisted with architecture review, implementation, tests,
-  debugging, evaluation tooling, and documentation. The developer remains
-  responsible for reviewing and submitting the result.
-- **Groq-hosted `openai/gpt-oss-120b`** is the configured runtime model for
-  structured fact extraction and was also used for the measured baseline.
-  Deterministic code—not free-form model prose—selects the final deadline and
-  eligibility result.
+Retrieved URLs are limited by reviewed host/path policies in catalogue mode. Link mode
+accepts only public HTTP(S) HTML or PDF targets and rejects embedded credentials, unsafe
+ports and schemes, local/private/link-local destinations, risky redirects, unsupported
+content, oversized responses, and exhausted request budgets. Remote source text is data,
+not executable instructions, and remote HTML is never injected into the page.
+
+These controls are for a loopback, single-user prototype. Public multi-user hosting would
+require authenticated ownership and authorization on every check, report, and evidence
+route, per-user quotas, HTTPS, session/CSRF controls, stronger operational isolation, and
+a storage architecture designed for multiple instances.
 
 ## Documentation
 
-- `kabtak/frontend/` — Next.js application and Playwright tests
-- `kabtak/backend/` — FastAPI application, worker, migrations, and pytest suite
-- `kabtak/.env.example` — single annotated configuration template for both apps
-- `kabtak/config/programmes/` — reviewed programme/source policies
-- `kabtak/examples/` — safe offline historical replay fixtures
-- `kabtak/evaluation/` — development probes and measured Phase 5 evaluation
-- `docs/system-design.md` — technical source of truth
-- `run.md` — complete local setup, run, test, and troubleshooting guide
-- `docs/submission-draft.md` — copy-ready submission content and owner-only fields
+- [`kabtak/frontend/`](kabtak/frontend/) — Next.js application, API proxy, and Playwright tests
+- [`kabtak/backend/`](kabtak/backend/) — FastAPI application, worker, migrations, and pytest suite
+- [`kabtak/.env.example`](kabtak/.env.example) — annotated shared configuration template
+- [`kabtak/config/programmes/`](kabtak/config/programmes/) — reviewed programme and source policies
+- [`kabtak/examples/`](kabtak/examples/) — safe offline historical replay fixtures
+- [`kabtak/evaluation/`](kabtak/evaluation/) — development probes and measured evaluation
+- [Phase 5 evaluation report](kabtak/evaluation/phase5/report.md) — method, results, fixes, and caveats
+
+This root README intentionally contains the public setup, operating model, decision
+rules, safety boundaries, verification record, and troubleshooting guidance needed by
+a fresh-clone viewer. Local planning, submission notes, recordings, and owner-only
+release checklists are not required to understand or run the tracked project.
 
 ## Contributing and responsible use
 
