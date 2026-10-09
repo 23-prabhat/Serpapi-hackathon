@@ -59,7 +59,10 @@ history, Hindi explanation, and calendar export when the result supports it.
 
 ## Demo
 
+- [Watch the working demo on YouTube](https://www.youtube.com/watch?v=QK3M5dc2Ukk)
 - [Run the same offline replay yourself](run.md#offline-example-without-api-usage)
+
+> **Disclosure:** The voice used in the demo video is AI-generated.
 
 The working demo recording and its upload notes are kept locally in the ignored
 `kabtak/demo/` directory and are not included in this repository.
