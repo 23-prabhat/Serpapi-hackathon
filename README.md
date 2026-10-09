@@ -327,15 +327,6 @@ audit commands in [run.md](run.md#stop-the-project) and review `git status`.
 - `run.md` — complete local setup, run, test, and troubleshooting guide
 - `docs/submission-draft.md` — copy-ready submission content and owner-only fields
 
-## Project status
-
-Phases 0–6 in [plan.md](plan.md) are implemented for the bounded prototype. All
-five reviewed programmes use the same search, retrieval, extraction, decision,
-evidence, failure, and history pipeline. Guarded official-link analysis, scanned-PDF
-OCR, Hindi report explanations, and safe calendar export are implemented expansions.
-Public repository/video verification and authenticated submission remain
-participant-only release steps.
-
 ## Contributing and responsible use
 
 Keep changes evidence-first: add or update programme policy, fixtures, tests, and
